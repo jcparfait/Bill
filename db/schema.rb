@@ -10,12 +10,12 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_05_25_150905) do
+ActiveRecord::Schema[8.1].define(version: 2026_05_26_101526) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
   create_table "chats", force: :cascade do |t|
-    t.bigint "cocktail_id", null: false
+    t.bigint "cocktail_id"
     t.datetime "created_at", null: false
     t.string "title"
     t.datetime "updated_at", null: false
