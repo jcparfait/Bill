@@ -10,8 +10,7 @@ class ChatsController < ApplicationController
   end
 
   def create
-    @chat = current_user.chats.new(title: "Untitled conversation")
-
+    @chat = current_user.chats.new(title: Chat::DEFAULT_TITLE)
     if @chat.save
       redirect_to chat_path(@chat)
     else
