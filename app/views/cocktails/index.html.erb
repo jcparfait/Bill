@@ -1,15 +1,40 @@
-<h1>My Cocktails</h1>
+<div class="cocktails-page">
+  <div class="cocktails-header">
+    <div>
+      <span class="menu-subtitle">The Bartender</span>
+      <h1>My Cocktails</h1>
+    </div>
 
-<%= link_to "Create a cocktail", new_cocktail_path %>
-
-<% @cocktails.each do |cocktail| %>
-
-  <div>
-    <h2><%= cocktail.name %></h2>
-
-    <p><%= cocktail.mood %></p>
-
-    <%= link_to "See details", cocktail_path(cocktail) %>
+    <%= link_to "＋ New Cocktail", new_cocktail_path, class: "new-cocktail-btn" %>
   </div>
 
-<% end %>
+  <div class="cocktails-list">
+    <% @cocktails.each do |cocktail| %>
+
+      <%= link_to cocktail_path(cocktail), class: "cocktail-card" do %>
+
+        <div class="cocktail-card-content">
+
+          <div class="cocktail-glass">
+            🥃
+          </div>
+
+          <div class="cocktail-info">
+            <h2><%= cocktail.name %></h2>
+
+            <p class="cocktail-mood">
+              <%= cocktail.mood %>
+            </p>
+          </div>
+
+          <div class="cocktail-arrow">
+            →
+          </div>
+
+        </div>
+
+      <% end %>
+
+    <% end %>
+  </div>
+</div>
