@@ -1,0 +1,28 @@
+<h1><%= @cocktail.name %></h1>
+
+<p>
+  <strong>Mood:</strong>
+  <%= @cocktail.mood %>
+</p>
+
+<p>
+  <strong>Ingredients:</strong>
+  <%= @cocktail.ingredients %>
+</p>
+
+<p>
+  <strong>Recipe:</strong>
+  <%= @cocktail.recipe %>
+</p>
+
+<%= link_to "Edit", edit_cocktail_path(@cocktail) %>
+
+<%= link_to "Delete",
+  cocktail_path(@cocktail),
+  data: {
+    turbo_method: :delete,
+    turbo_confirm: "Are you sure?"
+  } %>
+
+
+ <%= link_to "Back to cocktails",cocktails_path %>
