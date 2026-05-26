@@ -25,14 +25,14 @@
       </div>
     <% end %>
   <% else %>
-    <p>No messages yet. Ask the bartender something.</p>
+    <p>Hello, how are you today ?</p>
   <% end %>
 
   <div class="mt-4">
     <%= simple_form_for [@chat, @message] do |f| %>
       <%= f.input :content,
                   label: "Ask the bartender",
-                  placeholder: "I had a terrible day. What would you serve me?" %>
+                  placeholder: "" %>
 
       <%= f.submit "Send", class: "btn btn-primary" %>
     <% end %>
