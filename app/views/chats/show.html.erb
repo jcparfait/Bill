@@ -1,0 +1,40 @@
+<div class="container py-5">
+  <%= link_to "← My conversations", chats_path, class: "btn btn-link p-0 mb-3" %>
+
+  <h1><%= @chat.title %></h1>
+
+  <% if @chat.cocktail.present? %>
+    <div class="card mb-4">
+      <div class="card-body">
+        <h2>Recommended cocktail: <%= @chat.cocktail.name %></h2>
+        <p><strong>Ingredients:</strong> <%= @chat.cocktail.ingredients %></p>
+        <p><strong>Recipe:</strong> <%= @chat.cocktail.recipe %></p>
+      </div>
+    </div>
+  <% end %>
+
+  <h2>Conversation</h2>
+
+  <% if @chat.messages.any? %>
+    <% @chat.messages.each do |message| %>
+      <div class="card mb-2">
+        <div class="card-body">
+          <strong><%= message.role.capitalize %></strong>
+          <p class="mb-0"><%= message.content %></p>
+        </div>
+      </div>
+    <% end %>
+  <% else %>
+    <p>No messages yet. Ask the bartender something.</p>
+  <% end %>
+
+  <div class="mt-4">
+    <%= simple_form_for [@chat, @message] do |f| %>
+      <%= f.input :content,
+                  label: "Ask the bartender",
+                  placeholder: "I had a terrible day. What would you serve me?" %>
+
+      <%= f.submit "Send", class: "btn btn-primary" %>
+    <% end %>
+  </div>
+</div>
