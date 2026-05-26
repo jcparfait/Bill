@@ -22,15 +22,40 @@
     <%= stylesheet_link_tag "application", "data-turbo-track": "reload" %>
     <%= javascript_importmap_tags %>
   </head>
-    <body>
-      <%= link_to "Skip to main content", "#main-content", class: "visually-hidden-focusable" %>
-      <header>
-        <%= render "shared/navbar" %> <!-- 👈 Add this for navbar -->
-      </header>
+   <body>
+    <nav class="bartender-navbar">
+      <div class="navbar-brand">
+        <div class="navbar-icon">♔</div>
+        <div class="navbar-title">
+          <span>The</span>
+          <strong>Bartender</strong>
+        </div>
+      </div>
 
-      <main id="main-content">
+      <div class="navbar-links">
+        <%= link_to "New Chat", new_chat_path, class: "navbar-link" %>
+        <%= link_to "Chats", chats_path, class: "navbar-link" %>
+        <%= link_to "My Cocktails", cocktails_path, class: "navbar-link" %>
+      </div>
+
+      <div class="navbar-actions">
+        <% if user_signed_in? %>
+          <%= link_to "Log out", destroy_user_session_path,
+              data: { turbo_method: :delete },
+              class: "navbar-logout" %>
+        <% else %>
+          <%= link_to "Log in", new_user_session_path, class: "navbar-logout" %>
+        <% end %>
+      </div>
+    </nav>
+
+    <div class="app-layout">
+
+      <main id="main-content" class="app-content">
         <%= yield %>
       </main>
-      <%= render "shared/flashes" %>
-    </body>
+    </div>
+
+    <%= render "shared/flashes" %>
+  </body>
 </html>
