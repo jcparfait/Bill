@@ -1,9 +1,16 @@
 <div id="new_message_container">
-  <%= simple_form_for [chat, message], html: { class: "chat-form" } do |f| %>
+  <%= simple_form_for [chat, message],
+                      html: {
+                        class: "chat-form",
+                        data: { controller: "submit-on-enter" }
+                      } do |f| %>
     <%= f.input :content,
                 label: false,
                 placeholder: "Confie toi à bill",
-                input_html: { class: "chat-input" } %>
+                input_html: {
+                  class: "chat-input",
+                  data: { action: "keydown->submit-on-enter#submit" }
+                } %>
 
     <%= f.submit "Envoyer", class: "chat-submit-btn" %>
   <% end %>
