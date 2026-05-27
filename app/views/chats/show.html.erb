@@ -1,7 +1,7 @@
 <div class="chat-page">
 
   <div class="chat-header">
-    <%= link_to "← My conversations", chats_path, class: "back-link" %>
+    <%= link_to "← Mes conversations", chats_path, class: "back-link" %>
 
     <div class="chat-title-block">
       <span class="chat-subtitle">Conversation</span>
@@ -31,64 +31,21 @@
 
   <div class="messages-container">
 
-    <% if @chat.messages.any? %>
-
-      <% @chat.messages.each do |message| %>
-
-        <div class="message-row <%= message.role == 'user' ? 'user-row' : 'assistant-row' %>">
-
-          <div class="message-bubble <%= message.role == 'user' ? 'user-bubble' : 'assistant-bubble' %>">
-
-            <div class="message-role">
-              <%= message.role == "user" ? "You" : "The Bartender" %>
-            </div>
-
-            <p>
-              <%= message.content %>
-            </p>
-
+    <div id="messages" class="messages-container">
+      <% if @chat.messages.any? %>
+        <%= render "messages/messages", messages: @chat.messages %>
+      <% else %>
+        <div class="message-row assistant-row">
+          <div class="message-bubble assistant-bubble">
+            <div class="message-role">The Bartender</div>
+            <p>Bonjour, qu'est-ce que je peux faire pour vous ?</p>
           </div>
-
         </div>
-
       <% end %>
+    </div>
 
-    <% else %>
-
-      <div class="message-row assistant-row">
-
-        <div class="message-bubble assistant-bubble">
-          <div class="message-role">
-            The Bartender
-          </div>
-
-          <p>
-            Good evening. What brings you here tonight?
-          </p>
-        </div>
-
+    <div class="chat-input-container">
+      <%= render "messages/form", chat: @chat, message: @message %>
+    </div>
       </div>
-
-    <% end %>
-
   </div>
-
-  <div class="chat-input-container">
-
-    <%= simple_form_for [@chat, @message], html: { class: "chat-form" } do |f| %>
-
-      <%= f.input :content,
-                  label: false,
-                  placeholder: "Tell the bartender how your evening is going...",
-                  input_html: {
-                    class: "chat-input"
-                  } %>
-
-      <%= f.submit "Send",
-                  class: "chat-submit-btn" %>
-
-    <% end %>
-
-  </div>
-
-</div>

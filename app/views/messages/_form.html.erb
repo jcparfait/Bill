@@ -1,0 +1,10 @@
+<div id="new_message_container">
+  <%= simple_form_for [chat, message], html: { class: "chat-form" } do |f| %>
+    <%= f.input :content,
+                label: false,
+                placeholder: "Confie toi à bill",
+                input_html: { class: "chat-input" } %>
+
+    <%= f.submit "Envoyer", class: "chat-submit-btn" %>
+  <% end %>
+</div>
