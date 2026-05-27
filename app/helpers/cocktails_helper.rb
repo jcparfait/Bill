@@ -1,7 +1,7 @@
 module CocktailsHelper
   def cocktail_image(cocktail)
     filename = cocktail.name.parameterize(separator: '_')
-    image_path = "cocktails/#{filename}.jpg"
+    image_path = "cocktail/#{filename}.jpg"
 
     begin
       image_tag(image_path, alt: cocktail.name, class: "cocktail-image")
