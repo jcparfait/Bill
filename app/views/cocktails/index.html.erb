@@ -1,40 +1,72 @@
 <div class="cocktails-page">
-  <div class="cocktails-header">
-    <div>
-      <span class="menu-subtitle">The Bartender</span>
+
+  <div class="cocktails-hero">
+
+    <div class="cocktails-hero-overlay">
+
+      <span class="menu-subtitle">
+        THE BARTENDER
+      </span>
+
       <h1>My Cocktails</h1>
+
+      <p>
+        A collection of moods, memories
+        and quiet evenings.
+      </p>
+
     </div>
 
-    <%= link_to "＋ New Cocktail", new_cocktail_path, class: "new-cocktail-btn" %>
   </div>
 
-  <div class="cocktails-list">
-    <% @cocktails.each do |cocktail| %>
+  <div class="cocktails-content">
 
-      <%= link_to cocktail_path(cocktail), class: "cocktail-card" do %>
+    <div class="cocktails-header">
 
-        <div class="cocktail-card-content">
+      <%= link_to "＋ New Cocktail",
+      new_cocktail_path,
+      class: "new-cocktail-btn" %>
 
-          <div class="cocktail-glass">
-            🥃
+    </div>
+
+    <div class="cocktails-list">
+
+      <% @cocktails.each do |cocktail| %>
+
+        <%= link_to cocktail_path(cocktail),
+        class: "cocktail-card" do %>
+
+          <div class="cocktail-card-content">
+
+            <div class="cocktail-glass">
+             <%= image_tag "cocktails/#{cocktail.name.parameterize}.jpg",
+                  alt: cocktail.name %>
+            </div>
+
+            <div class="cocktail-info">
+
+              <h2>
+                <%= cocktail.name %>
+              </h2>
+
+              <p class="cocktail-mood">
+                <%= cocktail.mood %>
+              </p>
+
+            </div>
+
+            <div class="cocktail-arrow">
+              →
+            </div>
+
           </div>
 
-          <div class="cocktail-info">
-            <h2><%= cocktail.name %></h2>
-
-            <p class="cocktail-mood">
-              <%= cocktail.mood %>
-            </p>
-          </div>
-
-          <div class="cocktail-arrow">
-            →
-          </div>
-
-        </div>
+        <% end %>
 
       <% end %>
 
-    <% end %>
+    </div>
+
   </div>
+
 </div>
