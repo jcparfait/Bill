@@ -7,16 +7,14 @@
       rgba(0,0,0,0.45),
       rgba(0,0,0,0.88)
     ),
-    url("bill.png");
+    url("bill.jpg");
 
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
-
   z-index: 1;
-
-  margin-left: 260px;
-
+  margin-left: 200px;
+  // padding: 48px;
   display: flex;
   align-items: flex-end;
   justify-content: center;
