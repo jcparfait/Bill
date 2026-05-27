@@ -3,16 +3,28 @@ class MessagesController < ApplicationController
 
   def create
     @chat = current_user.chats.find(params[:chat_id])
+
     @message = Message.new(message_params)
     @message.chat = @chat
     @message.role = "user"
 
     if @message.save
       ruby_llm_chat = RubyLLM.chat
-      response = ruby_llm_chat.with_instructions(SYSTEM_PROMPT).ask(@message.content)
-      Message.create(role: "bartender", content: response.content, chat: @chat)
+
+      build_conversation_history(ruby_llm_chat)
+
+      response = ruby_llm_chat
+                 .with_instructions(SYSTEM_PROMPT)
+                 .ask(@message.content)
+
+      Message.create!(
+        role: "bartender",
+        content: response.content,
+        chat: @chat
+      )
 
       @chat.generate_title_from_first_message
+
       redirect_to chat_path(@chat)
     else
       render "chats/show", status: :unprocessable_entity
@@ -20,6 +32,27 @@ class MessagesController < ApplicationController
   end
 
   private
+
+  def build_conversation_history(ruby_llm_chat)
+    previous_messages = @chat.messages
+                             .where.not(id: @message.id)
+                             .order(:created_at)
+
+    previous_messages.each do |message|
+      ruby_llm_chat.add_message(
+        role: llm_role_for(message),
+        content: message.content
+      )
+    end
+  end
+
+  def llm_role_for(message)
+    if message.role == "bartender"
+      "assistant"
+    else
+      message.role
+    end
+  end
 
   def message_params
     params.require(:message).permit(:content)
