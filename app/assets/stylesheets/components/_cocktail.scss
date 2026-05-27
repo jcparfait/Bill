@@ -1,0 +1,110 @@
+// app/assets/stylesheets/components/_cocktail.scss
+
+.cocktail-show {
+  max-width: 680px;
+  margin: 24px auto;  /* était 48px */
+  padding: 0 24px;
+  font-family: "Georgia", serif;
+  color: #3b2f1e;
+}
+
+.cocktail-header {
+  margin-bottom: 40px;
+  text-align: center;
+
+  h1 {
+    font-size: 42px;
+    font-weight: 400;
+    letter-spacing: 2px;
+    color: #2c1e0e;
+    margin-bottom: 16px;
+  }
+}
+
+.mood-tag {
+  display: inline-block;
+  background: rgba(29, 44, 30, 0.85);
+  color: #d8b477;
+  padding: 6px 20px;
+  border-radius: 20px;
+  font-size: 14px;
+  letter-spacing: 1.5px;
+  text-transform: capitalize;
+}
+
+.cocktail-details {
+  border-top: 1px solid rgba(212, 170, 104, 0.4);
+  padding-top: 32px;
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+}
+
+.cocktail-section {
+  h3 {
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: 3px;
+    color: #8b7355;
+    margin-bottom: 12px;
+    font-weight: 600;
+  }
+
+  p {
+    font-size: 17px;
+    line-height: 1.7;
+    color: #3b2f1e;
+  }
+}
+
+.cocktail-actions {
+  margin-top: 48px;
+  padding-top: 32px;
+  border-top: 1px solid rgba(212, 170, 104, 0.4);
+  display: flex;
+  gap: 16px;
+  justify-content: center;
+}
+
+.btn-cocktail {
+  text-decoration: none;
+  font-family: "Georgia", serif;
+  font-size: 14px;
+  letter-spacing: 1px;
+  padding: 12px 28px;
+  border-radius: 8px;
+  transition: all 0.2s ease;
+  cursor: pointer;
+}
+
+.btn-edit {
+  background: rgba(29, 44, 30, 0.85);
+  color: #d8b477;
+
+  &:hover {
+    background: rgba(29, 44, 30, 1);
+    color: #f4d49b;
+  }
+}
+
+.btn-delete {
+  background: transparent;
+  color: #8b4513;
+  border: 1px solid rgba(139, 69, 19, 0.4);
+
+  &:hover {
+    background: rgba(139, 69, 19, 0.1);
+    color: #6b2f0a;
+  }
+}
+
+.btn-back {
+  background: transparent;
+  color: #8b7355;
+  border: 1px solid rgba(139, 115, 85, 0.4);
+
+  &:hover {
+    background: rgba(139, 115, 85, 0.08);
+    color: #5a4a36;
+  }
+}
