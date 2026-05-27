@@ -1,40 +1,51 @@
-<div class="container py-5">
-  <%= link_to "← My conversations", chats_path, class: "btn btn-link p-0 mb-3" %>
+<div class="chat-page">
 
-  <h1><%= @chat.title %></h1>
+  <div class="chat-header">
+    <%= link_to "← Mes conversations", chats_path, class: "back-link" %>
+
+    <div class="chat-title-block">
+      <span class="chat-subtitle">Conversation</span>
+      <h1><%= @chat.title %></h1>
+    </div>
+  </div>
 
   <% if @chat.cocktail.present? %>
-    <div class="card mb-4">
-      <div class="card-body">
-        <h2>Recommended cocktail: <%= @chat.cocktail.name %></h2>
-        <p><strong>Ingredients:</strong> <%= @chat.cocktail.ingredients %></p>
-        <p><strong>Recipe:</strong> <%= @chat.cocktail.recipe %></p>
+    <div class="cocktail-recommendation">
+      <div class="cocktail-badge">
+        🍸 Bartender's Choice
+      </div>
+
+      <h2><%= @chat.cocktail.name %></h2>
+
+      <div class="cocktail-section">
+        <strong>Ingredients</strong>
+        <p><%= @chat.cocktail.ingredients %></p>
+      </div>
+
+      <div class="cocktail-section">
+        <strong>Recipe</strong>
+        <p><%= @chat.cocktail.recipe %></p>
       </div>
     </div>
   <% end %>
 
-  <h2>Conversation</h2>
+  <div class="messages-container">
 
-  <% if @chat.messages.any? %>
-    <% @chat.messages.each do |message| %>
-      <div class="card mb-2">
-        <div class="card-body">
-          <strong><%= message.role.capitalize %></strong>
-          <p class="mb-0"><%= message.content %></p>
+    <div id="messages" class="messages-container">
+      <% if @chat.messages.any? %>
+        <%= render "messages/messages", messages: @chat.messages %>
+      <% else %>
+        <div class="message-row assistant-row">
+          <div class="message-bubble assistant-bubble">
+            <div class="message-role">The Bartender</div>
+            <p>Bonjour, qu'est-ce que je peux faire pour vous ?</p>
+          </div>
         </div>
+      <% end %>
+    </div>
+
+    <div class="chat-input-container">
+      <%= render "messages/form", chat: @chat, message: @message %>
+    </div>
       </div>
-    <% end %>
-  <% else %>
-    <p>Hello, how are you today ?</p>
-  <% end %>
-
-  <div class="mt-4">
-    <%= simple_form_for [@chat, @message] do |f| %>
-      <%= f.input :content,
-                  label: "Ask the bartender",
-                  placeholder: "" %>
-
-      <%= f.submit "Send", class: "btn btn-primary" %>
-    <% end %>
   </div>
-</div>
