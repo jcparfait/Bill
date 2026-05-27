@@ -5,29 +5,32 @@ body {
   background: #050403;
 }
 
-
 .cocktails-hero {
-  height: 260px;
+  height: 340px;
 
   background-image:
     linear-gradient(
-      rgba(0,0,0,0.45),
+      rgba(0,0,0,0.30),
       rgba(0,0,0,0.45)
     ),
-    url("cocktails-hero.jpg");
+    url("bartender-speaking.jpg");
 
-  background-size: cover;
+  background-size: 100%;
 
-  background-position: center 30%;
+  background-position: center 32%;
+
+  background-repeat: no-repeat;
 
   border-radius: 28px;
 
   display: flex;
   align-items: center;
 
-  padding: 48px;
+  padding: 56px;
 
   margin-bottom: 36px;
+
+  overflow: hidden;
 }
 
 .cocktails-hero-overlay {
