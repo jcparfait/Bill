@@ -1,36 +1,111 @@
-<div class="container py-5">
-  <div class="d-flex justify-content-between align-items-center mb-4">
-    <h1>My conversations</h1>
+<div class="chats-page">
 
-    <%= link_to "New conversation", new_chat_path, class: "btn btn-primary" %>
+  <div class="chats-hero">
+
+    <div class="chats-hero-overlay">
+
+      <span class="menu-subtitle">
+        THE BARTENDER
+      </span>
+
+      <h1>Conversations</h1>
+
+      <p>
+        Fragments of evenings,
+        moods and quiet thoughts.
+      </p>
+
+    </div>
+
   </div>
 
-  <% if @chats.any? %>
-    <% @chats.each do |chat| %>
-      <div class="card mb-3">
-        <div class="card-body">
-          <h2><%= chat.title %></h2>
+  <div class="chats-content">
 
-          <% if chat.cocktail.present? %>
-            <p class="text-muted">
-              Recommended cocktail: <%= chat.cocktail.name %>
-            </p>
-          <% else %>
-            <p class="text-muted">
-              No cocktail recommended yet.
-            </p>
-          <% end %>
+    <div class="chats-header">
 
-          <%= link_to "Open conversation", chat_path(chat), class: "btn btn-primary" %>
+      <%= link_to "＋ New Conversation",
+      new_chat_path,
+      class: "new-chat-btn" %>
 
-          <%= link_to "Delete",
-                      chat_path(chat),
-                      data: { turbo_method: :delete, turbo_confirm: "Are you sure?" },
-                      class: "btn btn-outline-danger" %>
-        </div>
+    </div>
+
+    <% if @chats.any? %>
+
+      <div class="chats-list">
+
+        <% @chats.each do |chat| %>
+
+          <div class="chat-card">
+
+            <div class="chat-card-content">
+
+              <div class="chat-icon">
+                ✦
+              </div>
+
+              <div class="chat-info">
+
+                <h2>
+                  <%= chat.title.presence || "Untitled conversation" %>
+                </h2>
+
+                <p class="chat-mood">
+                  <% if chat.cocktail.present? %>
+
+
+                    Recommended cocktail:
+                    <%= chat.cocktail.name %>
+
+
+                  <% else %>
+
+
+                    No cocktail recommended yet.
+
+
+                  <% end %>
+                </p>
+
+              </div>
+
+              <div class="chat-actions">
+
+                <%= link_to "Open",
+                chat_path(chat),
+                class: "chat-open-btn" %>
+
+                <%= link_to "Delete",
+                chat_path(chat),
+                data: {
+                  turbo_method: :delete,
+                  turbo_confirm: "Delete this conversation?"
+                },
+                class: "chat-delete-btn" %>
+
+              </div>
+
+            </div>
+
+          </div>
+
+        <% end %>
+
       </div>
+
+    <% else %>
+
+      <div class="empty-chats">
+
+        <h2>No conversations yet.</h2>
+
+        <p>
+          Start your first conversation with the bartender.
+        </p>
+
+      </div>
+
     <% end %>
-  <% else %>
-    <p>You have no conversations yet.</p>
-  <% end %>
+
+  </div>
+
 </div>
