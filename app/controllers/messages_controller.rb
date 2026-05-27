@@ -80,7 +80,6 @@ class MessagesController < ApplicationController
 
   def create
     @chat = current_user.chats.find(params[:chat_id])
-
     @message = Message.new(message_params)
     @message.chat = @chat
     @message.role = "user"
@@ -102,9 +101,22 @@ class MessagesController < ApplicationController
 
       @chat.generate_title_from_first_exchange
 
-      redirect_to chat_path(@chat)
+      respond_to do |format|
+        format.turbo_stream
+        format.html { redirect_to chat_path(@chat) }
+      end
     else
-      render "chats/show", status: :unprocessable_entity
+      respond_to do |format|
+        format.turbo_stream do
+          render turbo_stream: turbo_stream.update(
+            "new_message_container",
+            partial: "messages/form",
+            locals: { chat: @chat, message: @message }
+          )
+        end
+
+        format.html { render "chats/show", status: :unprocessable_entity }
+      end
     end
   end
 
