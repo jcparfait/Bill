@@ -28,14 +28,14 @@
 
     </div>
 
-    <div class="cocktails-list">
+    <div class="cocktails-grid">
 
       <% @cocktails.each do |cocktail| %>
 
         <%= link_to cocktail_path(cocktail),
         class: "cocktail-card" do %>
 
-          <div class="cocktail-card-content">
+          <div class="cocktail-card-content compact">
 
             <div class="cocktail-glass">
              <%= image_tag "cocktails/#{cocktail.name.parameterize}.jpg",
@@ -43,21 +43,15 @@
             </div>
 
             <div class="cocktail-info">
+                  <h2><%= cocktail.name %></h2>
+                  <p class="cocktail-mood">
+                    <%= cocktail.mood %>
+                  </p>
 
-              <h2>
-                <%= cocktail.name %>
-              </h2>
-
-              <p class="cocktail-mood">
-                <%= cocktail.mood %>
-              </p>
-
+                  <p class="cocktail-description">
+                    A signature cocktail crafted for quiet evenings.
+                  </p>
             </div>
-
-            <div class="cocktail-arrow">
-              →
-            </div>
-
           </div>
 
         <% end %>
