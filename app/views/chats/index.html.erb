@@ -24,7 +24,8 @@
     <div class="chats-header">
 
       <%= link_to "＋ Nouvelle Conversation",
-      new_chat_path,
+      chats_path,
+      data: { turbo_method: :post },
       class: "new-chat-btn" %>
 
     </div>

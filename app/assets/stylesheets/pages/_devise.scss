@@ -1,25 +1,51 @@
+body.logged-out {
+  margin: 0;
+  padding: 0;
+}
+
+body.logged-out #main-content,
+body.logged-out .auth-layout {
+  margin: 0 !important;
+  padding: 0 !important;
+  width: 100%;
+  min-height: 100vh;
+}
+
 .auth-page {
   min-height: 100vh;
   width: 100%;
   padding: 80px 24px;
-  background: #f3eadc;
+
   display: flex;
   justify-content: center;
-  align-items: flex-start;
+  align-items: center;
+
+  background:
+    linear-gradient(rgba(0, 0, 0, 0.0), rgba(0, 0, 0, 0.0)),
+    asset-url("bar-vide.jpg");
+
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
 }
 
 .auth-card {
   width: 100%;
-  max-width: 480px;
-  background: #132317;
-  color: #f3eadc;
-  border-radius: 24px;
+  max-width: 460px;
+
+  background: rgba(20, 20, 20, 0.86);
+  backdrop-filter: blur(6px);
+
   padding: 40px;
-  box-shadow: 0 24px 80px rgba(0, 0, 0, 0.22);
+  border-radius: 20px;
+  color: #f3eadc;
+
+  box-shadow: 0 24px 80px rgba(0, 0, 0, 0.35);
 }
 
 .auth-brand {
   margin-bottom: 32px;
+  text-align: center;
 }
 
 .auth-kicker {
@@ -59,15 +85,6 @@
   box-shadow: 0 0 0 0.2rem rgba(199, 169, 108, 0.18) !important;
 }
 
-.auth-input::placeholder {
-  color: rgba(243, 234, 220, 0.45);
-}
-
-.auth-checkbox {
-  margin-top: 16px;
-  color: rgba(243, 234, 220, 0.85);
-}
-
 .auth-actions {
   margin-top: 28px;
 }
@@ -100,58 +117,30 @@
   text-decoration: underline;
 }
 
-.auth-danger-zone {
-  margin-top: 40px;
-  padding-top: 24px;
-  border-top: 1px solid rgba(230, 204, 143, 0.2);
-}
-
-.auth-danger-zone h2 {
-  font-size: 20px;
-  color: #e6cc8f;
-}
-
-.auth-delete-btn {
-  background: transparent;
-  color: #e6cc8f;
-  border: 1px solid rgba(230, 204, 143, 0.4);
-  border-radius: 999px;
-  padding: 10px 18px;
-}
-
 @media (max-width: 768px) {
   .auth-page {
-    margin-left: 0;
     padding: 40px 16px;
+    align-items: center;
   }
 
   .auth-card {
     padding: 28px;
   }
-}
 
-body.logged-out {
-  margin: 0;
-  padding: 0;
-  background: #f3eadc !important;
+  .auth-brand h1 {
+    font-size: 30px;
+  }
 }
-
-body.logged-out #main-content,
-body.logged-out .auth-layout {
-  margin: 0 !important;
+.field_with_errors {
+  background: transparent !important;
   padding: 0 !important;
-  width: 100%;
-  min-height: 100vh;
-  background: #f3eadc !important;
+  display: contents;
 }
 
-body.logged-out .auth-page {
-  margin: 0 !important;
-  padding: 80px 24px;
-  width: 100%;
-  min-height: 100vh;
-  background: #f3eadc !important;
-  display: flex;
-  justify-content: center;
-  align-items: flex-start;
+.field_with_errors label {
+  color: #f3eadc !important;
+}
+
+.field_with_errors .auth-input {
+  border-color: rgba(0, 0, 0, 0.75) !important;
 }
