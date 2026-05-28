@@ -2,7 +2,7 @@ class CocktailsController < ApplicationController
   before_action :set_cocktail, only: %i[show edit update destroy]
 
   def index
-    @cocktails = current_user.cocktails
+    @cocktails = current_user.cocktails.order(created_at: :desc)
   end
 
   def show
