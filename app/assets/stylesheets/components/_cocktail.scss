@@ -176,14 +176,99 @@ margin-left: 105px;
     flex-direction: column-reverse;
     gap: 32px;
   }
-
   .cocktail-photo {
     flex: none;
     width: 100%;
     position: static;
   }
-
   .cocktail-info {
     max-width: 100%;
   }
+  .cocktail-new .cocktail-back {
+    position: static;
+    margin-bottom: 16px;
+  }
+}
+
+// Page New Cocktail
+.cocktail-new {
+  max-width: 580px;
+  margin: 0 auto;
+  padding: 24px;
+  font-family: "Georgia", serif;
+  color: #3b2f1e;
+  position: relative;
+  min-height: 100vh;
+  background: #f5e7d8;
+
+  .cocktail-back {
+    position: absolute;
+    left: -220px;
+    top: 30px;
+  }
+
+  h1 {
+    font-size: 32px;
+    font-weight: 400;
+    letter-spacing: 2px;
+    color: #2c1e0e;
+    text-align: center;
+    margin-bottom: 4px;
+  }
+}
+
+.cocktail-new-subtitle {
+  text-align: center;
+  font-style: italic;
+  color: #8b7355;
+  font-size: 15px;
+  margin-bottom: 24px;
+}
+
+.cocktail-form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.form-group-cocktail {
+  label {
+    display: block;
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: 3px;
+    color: #8b7355;
+    margin-bottom: 8px;
+    font-weight: 600;
+  }
+}
+
+.cocktail-input,
+.cocktail-textarea {
+  width: 100%;
+  padding: 14px 16px;
+  font-family: "Georgia", serif;
+  font-size: 16px;
+  color: #3b2f1e;
+  background: rgba(255, 255, 255, 0.5);
+  border: 1px solid rgba(212, 170, 104, 0.4);
+  border-radius: 8px;
+  transition: all 0.2s ease;
+
+  &::placeholder {
+    color: #b8a68a;
+    font-style: italic;
+  }
+
+  &:focus {
+    outline: none;
+    border-color: #c6a46d;
+    background: rgba(255, 255, 255, 0.7);
+    box-shadow: 0 0 0 3px rgba(198, 164, 109, 0.15);
+  }
+}
+
+.cocktail-textarea {
+  resize: vertical;
+  min-height: 120px;
 }

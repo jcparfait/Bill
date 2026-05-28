@@ -1,13 +1,19 @@
-<%= simple_form_for(cocktail) do |f| %>
+<%= simple_form_for(cocktail, html: { class: "cocktail-form" }) do |f| %>
+  <div class="form-group-cocktail">
+    <%= f.input :name, label: "Nom", placeholder: "ex. Negroni", input_html: { class: "cocktail-input" } %>
+  </div>
 
-  <%= f.input :name %>
+  <div class="form-group-cocktail">
+    <%= f.input :mood, label: "Humeur", placeholder: "ex. Mélancolique, Festif, Relaxant...", input_html: { class: "cocktail-input" } %>
+  </div>
 
-  <%= f.input :mood %>
+  <div class="form-group-cocktail">
+    <%= f.input :ingredients, label: "Ingrédients", placeholder: "ex. Gin, Campari, Vermouth...", input_html: { class: "cocktail-input" } %>
+  </div>
 
-  <%= f.input :ingredients %>
+  <div class="form-group-cocktail">
+    <%= f.input :recipe, as: :text, label: "Recette", placeholder: "Décrivez les étapes de préparation...", input_html: { class: "cocktail-textarea", rows: 5 } %>
+  </div>
 
-  <%= f.input :recipe %>
-
-  <%= f.submit %>
-
+  <%= f.submit "Créer le cocktail", class: "btn-cocktail btn-edit" %>
 <% end %>
