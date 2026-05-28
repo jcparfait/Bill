@@ -18,6 +18,12 @@ class MessagesController < ApplicationController
     L'utilisateur vient te parler de son humeur, de sa journée, de sa fatigue, de ses envies ou de l'ambiance qu'il recherche.
     Ton but est de comprendre son état émotionnel avant de lui recommander une boisson.
 
+    Mémoire de conversation :
+    Tu dois tenir compte de tous les messages précédents de cette conversation.
+    Si l'utilisateur donne une information personnelle dans ce chat, comme son prénom, son nom, une préférence, une contrainte ou une envie, tu dois pouvoir la réutiliser plus tard dans la même conversation.
+    Si l'information est présente dans l'historique, ne dis pas que tu ne la sais pas.
+    Cette mémoire vaut uniquement pour la conversation actuelle.
+
     Règle importante :
     Ne recommande jamais de boisson dès le premier message.
     Au premier message, écoute, reformule brièvement et pose une seule question courte.
@@ -92,10 +98,10 @@ class MessagesController < ApplicationController
         partial: "messages/message",
         locals: { message: @message }
       )
+
       cocktail_id_before_response = @chat.cocktail_id
 
       ruby_llm_chat = RubyLLM.chat
-      build_conversation_history(ruby_llm_chat)
 
       if cocktail_recommendation_allowed?
         ruby_llm_chat.with_tool(
@@ -120,7 +126,9 @@ class MessagesController < ApplicationController
 
       ruby_llm_chat
         .with_instructions(instructions)
-        .ask(@message.content) do |chunk|
+        .ask(message_with_conversation_history) do |chunk|
+          next if chunk.content.blank?
+
           full_content << chunk.content.to_s
 
           @assistant_message.update!(content: full_content)
@@ -144,31 +152,45 @@ class MessagesController < ApplicationController
         format.turbo_stream
         format.html { redirect_to chat_path(@chat) }
       end
+    else
+      respond_to do |format|
+        format.turbo_stream do
+          render turbo_stream: turbo_stream.replace(
+            "new_message_container",
+            partial: "messages/form",
+            locals: { chat: @chat, message: @message }
+          )
+        end
+
+        format.html { render "chats/show", status: :unprocessable_entity }
+      end
     end
   end
 
   private
 
-  def build_conversation_history(ruby_llm_chat)
+  def message_with_conversation_history
     previous_messages = @chat.messages
                              .where.not(id: @message.id)
                              .where.not(content: [nil, ""])
                              .order(:created_at)
 
-    previous_messages.each do |message|
-      ruby_llm_chat.add_message(
-        role: llm_role_for(message),
-        content: message.content
-      )
-    end
-  end
+    history = previous_messages.map do |message|
+      speaker = message.role == "user" ? "Utilisateur" : "The Bartender"
 
-  def llm_role_for(message)
-    if message.role == "bartender"
-      "assistant"
-    else
-      message.role
-    end
+      "#{speaker} : #{message.content}"
+    end.join("\n\n")
+
+    <<~PROMPT
+      Voici l'historique de la conversation jusqu'ici :
+
+      #{history.presence || 'Aucun message précédent.'}
+
+      Message actuel de l'utilisateur :
+      #{@message.content}
+
+      Réponds au message actuel en tenant compte de tout l'historique ci-dessus.
+    PROMPT
   end
 
   def instructions
