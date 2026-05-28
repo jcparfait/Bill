@@ -206,3 +206,31 @@ main {
     width: 100%;
   }
 }
+
+.music-btn {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+
+  width: 42px;
+  height: 42px;
+
+  border: none;
+  border-radius: 50%;
+
+  background: rgba(20,20,20,0.8);
+  color: white;
+
+  cursor: pointer;
+
+  backdrop-filter: blur(4px);
+
+  z-index: 9999;
+
+  transition: 0.2s;
+}
+
+.music-btn:hover {
+  transform: scale(1.05);
+  background: rgba(40,40,40,0.9);
+}

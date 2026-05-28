@@ -64,5 +64,44 @@
     <% end %>
 
     <%= render "shared/flashes" %>
+    <audio id="bg-music" loop autoplay>
+      <source src="<%= asset_path('music.wav') %>" type="audio/wav">
+    </audio>
+
+    <button id="music-toggle" class="music-btn">
+      ♫
+    </button>
+
+    <script>
+      document.addEventListener("turbo:load", () => {
+        const audio = document.getElementById("bg-music")
+        const button = document.getElementById("music-toggle")
+
+        if (!audio || !button) return
+
+        audio.volume = 0.25
+
+        const isMuted = localStorage.getItem("music-muted") === "true"
+        audio.muted = isMuted
+        button.classList.toggle("muted", isMuted)
+
+        audio.play().catch(() => {})
+
+        button.onclick = () => {
+          audio.muted = !audio.muted
+
+          localStorage.setItem(
+            "music-muted",
+            audio.muted ? "true" : "false"
+          )
+
+          button.classList.toggle("muted", audio.muted)
+
+          button.innerText = audio.muted ? "♫̸" : "♫"
+
+          audio.play().catch(() => {})
+        }
+      })
+    </script>
   </body>
 </html>
