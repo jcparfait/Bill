@@ -1,0 +1,29 @@
+<% if chat.cocktail.present? %>
+  <div class="message-row assistant-row">
+    <div class="message-bubble assistant-bubble cocktail-message-bubble">
+      <div class="message-role">The Bartender</div>
+
+      <% if chat.cocktail.image_url.present? %>
+        <%= image_tag chat.cocktail.image_url,
+                      alt: chat.cocktail.name,
+                      class: "cocktail-recommendation-image" %>
+      <% end %>
+
+      <h2><%= chat.cocktail.name %></h2>
+
+      <div class="cocktail-section">
+        <strong>Ingrédients</strong>
+        <div class="cocktail-text">
+          <%= simple_format(chat.cocktail.ingredients) %>
+        </div>
+      </div>
+
+      <div class="cocktail-section">
+        <strong>Recette</strong>
+        <div class="cocktail-text">
+          <%= simple_format(chat.cocktail.recipe) %>
+        </div>
+      </div>
+    </div>
+  </div>
+<% end %>

@@ -38,8 +38,11 @@
           <div class="cocktail-card-content compact">
 
             <div class="cocktail-glass">
-             <%= image_tag "cocktails/#{cocktail.name.parameterize}.jpg",
-                  alt: cocktail.name %>
+             <% if cocktail.image_url.present? %>
+                  <%= image_tag cocktail.image_url, alt: cocktail.name %>
+                <% else %>
+                  <%= image_tag "cocktails/#{cocktail.name.parameterize}.jpg", alt: cocktail.name %>
+                <% end %>
             </div>
 
             <div class="cocktail-info">

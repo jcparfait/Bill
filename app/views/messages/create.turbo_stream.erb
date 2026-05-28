@@ -3,7 +3,13 @@
 <% end %>
 
 <%= turbo_stream.append "messages" do %>
-  <%= render "messages/message", message: @chat.messages.last %>
+  <%= render "messages/message", message: @assistant_message %>
+<% end %>
+
+<% if @cocktail_was_recommended %>
+  <%= turbo_stream.append "messages" do %>
+    <%= render "chats/cocktail_recommendation", chat: @chat %>
+  <% end %>
 <% end %>
 
 <%= turbo_stream.replace "new_message_container" do %>

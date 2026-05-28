@@ -9,31 +9,15 @@
     </div>
   </div>
 
-  <% if @chat.cocktail.present? %>
-    <div class="cocktail-recommendation">
-      <div class="cocktail-badge">
-        🍸 Bartender's Choice
-      </div>
-
-      <h2><%= @chat.cocktail.name %></h2>
-
-      <div class="cocktail-section">
-        <strong>Ingredients</strong>
-        <p><%= @chat.cocktail.ingredients %></p>
-      </div>
-
-      <div class="cocktail-section">
-        <strong>Recipe</strong>
-        <p><%= @chat.cocktail.recipe %></p>
-      </div>
-    </div>
-  <% end %>
-
   <div class="messages-container">
 
     <div id="messages" class="messages-container">
       <% if @chat.messages.any? %>
         <%= render "messages/messages", messages: @chat.messages %>
+
+        <% if @chat.cocktail.present? %>
+          <%= render "chats/cocktail_recommendation", chat: @chat %>
+        <% end %>
       <% else %>
         <div class="message-row assistant-row">
           <div class="message-bubble assistant-bubble">

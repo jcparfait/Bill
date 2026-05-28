@@ -32,6 +32,12 @@ class MessagesController < ApplicationController
     Pose au maximum une question de relance par réponse si l'humeur ou le besoin de l'utilisateur n'est pas clair.
     Quand tu as assez de contexte, recommande une seule boisson adaptée à son humeur, son énergie et l'atmosphère recherchée.
 
+    Utilisation de l'outil cocktail :
+    Quand tu recommandes une boisson, tu dois obligatoirement utiliser l'outil RecommendCocktailTool.
+    Tu n'as pas le droit d'inventer un cocktail, des ingrédients ou une recette.
+    Tu dois choisir un cocktail réel et connu, puis utiliser uniquement les informations retournées par l'outil.
+    L'outil te retournera le nom réel du cocktail, son image, ses ingrédients, sa recette et son identifiant externe.
+
     Recommandation :
     Quand tu proposes une boisson, commence toujours par une phrase naturelle comme :
     "Je te propose un [nom de la boisson]."
@@ -42,23 +48,18 @@ class MessagesController < ApplicationController
     Cette justification doit être écrite naturellement, sans titre comme "Pourquoi ce choix".
     Elle doit ressembler à une remarque de barman, pas à une rubrique de formulaire.
 
-    Puis donne les ingrédients et la recette avec ce format :
-
-    Ingrédients :
-    - [ingrédient 1]
-    - [ingrédient 2]
-    - [ingrédient 3]
-    - [ingrédient 4]
-    - [ingrédient 5 si nécessaire]
-
-    Recette :
-    [Une recette simple, claire, faisable chez soi.]
+    Important :
+    La fiche structurée du cocktail, ses ingrédients, sa recette et son image seront affichés par l'application.
+    Dans ta réponse conversationnelle, ne recopie pas toute la recette.
+    Ne recopie pas toute la liste d'ingrédients.
+    Contente-toi d'annoncer le cocktail et d'expliquer brièvement le choix.
 
     Règles strictes :
-    La section Ingrédients doit toujours être une liste verticale avec des tirets.
-    Ne mets jamais les ingrédients en ligne séparés par des virgules.
+    Ne crée jamais toi-même une recette.
+    Ne crée jamais toi-même une liste d'ingrédients.
+    Si tu recommandes un cocktail, utilise toujours l'outil prévu pour récupérer les données réelles.
     Ne mets pas de titre "Pourquoi ce choix".
-    Ne termine pas par une question.
+    Ne termine pas par une question quand tu recommandes une boisson.
 
     Sécurité :
     Si l'utilisateur semble triste, vulnérable, épuisé, anxieux, ivre ou fragile émotionnellement, ne présente jamais l'alcool comme une solution.
@@ -85,19 +86,32 @@ class MessagesController < ApplicationController
     @message.role = "user"
 
     if @message.save
+      cocktail_id_before_response = @chat.cocktail_id
+
       ruby_llm_chat = RubyLLM.chat
 
       build_conversation_history(ruby_llm_chat)
+
+      if cocktail_recommendation_allowed?
+        ruby_llm_chat.with_tool(
+          RecommendCocktailTool.new(user: current_user, chat: @chat)
+        )
+      end
 
       response = ruby_llm_chat
                  .with_instructions(instructions)
                  .ask(@message.content)
 
-      Message.create!(
+      @assistant_message = Message.create!(
         role: "bartender",
         content: response.content,
         chat: @chat
       )
+
+      @chat.reload
+
+      @cocktail_was_recommended = @chat.cocktail.present? &&
+                                  @chat.cocktail_id != cocktail_id_before_response
 
       @chat.generate_title_from_first_exchange
 
@@ -125,6 +139,7 @@ class MessagesController < ApplicationController
   def build_conversation_history(ruby_llm_chat)
     previous_messages = @chat.messages
                              .where.not(id: @message.id)
+                             .where.not(content: [nil, ""])
                              .order(:created_at)
 
     previous_messages.each do |message|
@@ -157,17 +172,30 @@ class MessagesController < ApplicationController
       <<~INSTRUCTION
         Important pour ce message :
         Ne recommande pas encore de boisson.
+        N'utilise aucun outil.
+        Ne cite aucun nom de cocktail.
+        Ne donne ni ingrédients ni recette.
         Réponds naturellement, reformule brièvement l'état d'esprit de l'utilisateur et pose une seule question courte pour comprendre ce qu'il cherche.
       INSTRUCTION
     elsif user_messages_count == 2
       <<~INSTRUCTION
         Important pour ce message :
         Si l'utilisateur a donné une indication claire sur son humeur, son énergie ou son envie, recommande une boisson maintenant.
+
+        Si tu recommandes une boisson, tu dois obligatoirement utiliser l'outil RecommendCocktailTool.
+        Choisis un cocktail réel, connu, et cohérent avec le mood.
+        N'invente jamais les ingrédients ou la recette.
+
         Ne pose une nouvelle question que si son besoin est vraiment impossible à comprendre.
+
         Si tu recommandes une boisson, commence obligatoirement par une phrase du type :
         "Je te propose un [nom de la boisson]."
         ou
         "Je partirais sur un [nom de la boisson]."
+
+        Après cette phrase, explique brièvement le choix.
+        Ne recopie pas toute la recette.
+        Ne recopie pas toute la liste d'ingrédients.
       INSTRUCTION
     else
       <<~INSTRUCTION
@@ -175,6 +203,10 @@ class MessagesController < ApplicationController
         Ne pose plus de question.
         L'utilisateur a assez échangé avec toi.
         Tu dois recommander une boisson précise maintenant.
+
+        Tu dois obligatoirement utiliser l'outil RecommendCocktailTool.
+        Choisis un cocktail réel, connu, et cohérent avec le mood.
+        N'invente jamais les ingrédients ou la recette.
 
         Commence obligatoirement par une phrase naturelle comme :
         "Je te propose un [nom de la boisson]."
@@ -185,26 +217,20 @@ class MessagesController < ApplicationController
         N'utilise jamais le titre "Pourquoi ce choix".
         La justification doit sonner comme une remarque de barman, pas comme une fiche produit.
 
-        Puis donne les ingrédients et la recette exactement dans ce format :
-
-        Ingrédients :
-        - [ingrédient 1]
-        - [ingrédient 2]
-        - [ingrédient 3]
-        - [ingrédient 4]
-        - [ingrédient 5 si nécessaire]
-
-        Recette :
-        [Recette simple à faire chez soi]
+        Ne recopie pas toute la recette.
+        Ne recopie pas toute la liste d'ingrédients.
+        L'application affichera elle-même la fiche cocktail avec l'image, les ingrédients et la recette.
 
         Règles strictes :
-        - La section Ingrédients doit être une vraie liste verticale avec des tirets.
-        - Ne mets pas les ingrédients en ligne avec des virgules.
         - Ne mets pas de titre "Pourquoi ce choix".
         - Ne pose aucune question à la fin.
         - Garde ton ton de barman : flegmatique, humain, un peu drôle à froid.
       INSTRUCTION
     end
+  end
+
+  def cocktail_recommendation_allowed?
+    @chat.messages.where(role: "user").count >= 2
   end
 
   def message_params

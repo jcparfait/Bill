@@ -76,6 +76,103 @@
   margin: 0;
 }
 
+/* COCKTAIL CARD */
+
+// .cocktail-recommendation {
+//   margin-bottom: 40px;
+
+//   padding: 28px;
+
+//   border-radius: 24px;
+
+//   background:
+//     linear-gradient(
+//       180deg,
+//       rgba(30, 22, 16, 0.95),
+//       rgba(16, 12, 9, 0.95)
+//     );
+
+//   border: 1px solid rgba(212, 170, 104, 0.16);
+// }
+
+// .cocktail-badge {
+//   display: inline-block;
+
+//   margin-bottom: 18px;
+
+//   padding: 8px 14px;
+
+//   border-radius: 999px;
+
+//   background: rgba(212, 170, 104, 0.12);
+
+//   color: #d6b07a;
+//   font-size: 13px;
+// }
+
+// .cocktail-recommendation h2 {
+//   margin-bottom: 24px;
+//   font-weight: 400;
+// }
+
+// .cocktail-section {
+//   margin-bottom: 18px;
+// }
+
+// .cocktail-section strong {
+//   display: block;
+//   margin-bottom: 8px;
+//   color: #d6b07a;
+// }
+
+// .cocktail-section p {
+//   color: #d7c5a6;
+//   line-height: 1.7;
+// }
+/* COCKTAIL MESSAGE */
+
+/* COCKTAIL MESSAGE */
+
+.cocktail-message-bubble {
+  max-width: 70%;
+}
+
+.cocktail-recommendation-image {
+  width: 100%;
+  max-height: 360px;
+  object-fit: cover;
+  border-radius: 18px;
+  margin: 12px 0 18px;
+}
+
+.cocktail-message-bubble h2 {
+  margin: 0 0 18px;
+  font-size: 26px;
+  font-weight: 400;
+  color: #f3e7d0;
+}
+
+.cocktail-section {
+  margin-top: 16px;
+}
+
+.cocktail-section strong {
+  display: block;
+  margin-bottom: 8px;
+  color: #d6b07a;
+}
+
+.cocktail-text,
+.cocktail-text p,
+.cocktail-message-bubble p {
+  color: #f3e7d0;
+  line-height: 1.7;
+}
+
+.cocktail-text p {
+  margin: 0 0 8px;
+}
+
 /* MESSAGES */
 
 .messages-container {
@@ -267,18 +364,16 @@
   border-left: 16px solid rgba(28, 47, 37, 0.96);
 }
 
-// .user-bubble::after {
-//   content: "";
-//   position: absolute;
+/* FORCE COCKTAIL TEXT COLOR */
 
-//   left: -14px;
-//   top: 50%;
-//   transform: translateY(-50%);
+.chat-page .cocktail-message-bubble,
+.chat-page .cocktail-message-bubble h2,
+.chat-page .cocktail-message-bubble p,
+.chat-page .cocktail-message-bubble .cocktail-text,
+.chat-page .cocktail-message-bubble .cocktail-text p {
+  color: #f3e7d0 !important;
+}
 
-//   width: 0;
-//   height: 0;
-
-//   border-top: 12px solid transparent;
-//   border-bottom: 12px solid transparent;
-//   border-right: 16px solid rgba(120, 84, 38, 0.95);
-// }
+.chat-page .cocktail-message-bubble .cocktail-section strong {
+  color: #d6b07a !important;
+}
