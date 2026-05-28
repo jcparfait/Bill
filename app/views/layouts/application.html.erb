@@ -25,7 +25,10 @@
 
   <body class="<%= user_signed_in? ? 'logged-in' : 'logged-out' %>">
     <% if user_signed_in? %>
-      <nav class="bartender-navbar">
+        <button class="burger-button" id="burgerButton">
+          ☰
+        </button>
+      <nav class="bartender-navbar" id="mobileSidebar">
         <%= link_to new_chat_path, class: "navbar-brand" do %>
           <div class="navbar-icon">♔</div>
 
@@ -48,7 +51,7 @@
                       class: "navbar-logout" %>
         </div>
       </nav>
-
+      <div class="sidebar-overlay" id="sidebarOverlay"></div>
       <div class="app-layout">
         <main id="main-content" class="app-content">
           <%= yield %>
