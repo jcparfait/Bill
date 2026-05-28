@@ -1,7 +1,7 @@
 class Chat < ApplicationRecord
   belongs_to :user
   belongs_to :cocktail, optional: true
-  has_many :messages, dependent: :destroy
+  has_many :messages, -> { order(:created_at, :id) }, dependent: :destroy
 
   DEFAULT_TITLE = "Untitled"
 
