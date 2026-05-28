@@ -1,10 +1,44 @@
 .chat-page {
-  max-width: 1100px;
-  margin: 0 auto;
+  min-height: 100vh;
+  max-width: none;
+  margin: 0;
   padding: 40px;
+
   color: #f3e7d0;
+
+  position: relative;
+  overflow: hidden;
+
+  background:
+    linear-gradient(
+      rgba(0, 0, 0, 0.0),
+      rgba(0, 0, 0, 0.20)
+    ),
+    asset-url("bill.jpg");
+
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+.chat-header,
+.cocktail-recommendation,
+.messages-container {
+  position: relative;
+  z-index: 2;
+  max-width: 1800px;
+  margin-left: auto;
+  margin-right: auto;
 }
 
+.chat-input-container {
+  position: sticky;
+  bottom: 20px;
+
+  width: 100%;
+  max-width: none;
+
+  z-index: 10;
+}
 /* HEADER */
 
 .chat-header {
@@ -162,15 +196,12 @@
 }
 
 .message-bubble {
-  max-width: 70%;
-
+  max-width: 420px;
   padding: 18px 22px;
-
   border-radius: 22px;
-
   position: relative;
-
-  backdrop-filter: blur(8px);
+  backdrop-filter: blur(10px);
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.35);
 }
 
 .assistant-bubble {
@@ -185,7 +216,25 @@
 
   border-bottom-left-radius: 8px;
 }
+.messages-container {
+  max-width: 1800px;
+  width: 100%;
+}
 
+.message-row {
+  display: flex;
+  width: 100%;
+}
+
+.assistant-row {
+  justify-content: flex-start;
+  padding-right: 52%;
+}
+
+.user-row {
+  justify-content: flex-end;
+  padding-left: 52%;
+}
 .user-bubble {
   background:
     linear-gradient(
@@ -222,15 +271,16 @@
 }
 
 .chat-form {
+  width: 100%;
+
   display: flex;
   gap: 14px;
   align-items: flex-end;
-
   padding: 18px;
 
   border-radius: 24px;
 
-  background: rgba(10, 8, 7, 0.88);
+  background: rgba(46, 37, 32, 0.88);
 
   border: 1px solid rgba(212, 170, 104, 0.14);
 
@@ -239,8 +289,9 @@
 
 .chat-form .mb-3 {
   flex: 1;
-  margin-bottom: 0 !important;
+  width: 100%;
 }
+
 
 .chat-input {
   background: rgba(255,255,255,0.04) !important;
@@ -286,25 +337,31 @@
 /* MOBILE */
 
 @media (max-width: 768px) {
-  .chat-page {
-    padding: 24px;
+  .assistant-row,
+  .user-row {
+    padding-left: 0;
+    padding-right: 0;
   }
 
   .message-bubble {
     max-width: 90%;
   }
+}
 
-  .chat-title-block h1 {
-    font-size: 30px;
-  }
+.assistant-bubble::after {
+  content: "";
+  position: absolute;
 
-  .chat-form {
-    flex-direction: column;
-  }
+  right: -14px;
+  top: 50%;
+  transform: translateY(-50%);
 
-  .chat-submit-btn {
-    width: 100%;
-  }
+  width: 0;
+  height: 0;
+
+  border-top: 12px solid transparent;
+  border-bottom: 12px solid transparent;
+  border-left: 16px solid rgba(28, 47, 37, 0.96);
 }
 
 /* FORCE COCKTAIL TEXT COLOR */
