@@ -6,56 +6,59 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="application-name" content="The Bartender">
     <meta name="mobile-web-app-capable" content="yes">
+
     <%= csrf_meta_tags %>
     <%= csp_meta_tag %>
 
     <%= yield :head %>
 
-    <%# Enable PWA manifest for installable apps (make sure to enable in config/routes.rb too!) %>
+    <%# Enable PWA manifest for installable apps %>
     <%#= tag.link rel: "manifest", href: pwa_manifest_path(format: :json) %>
 
     <link rel="icon" href="/icon.png" type="image/png">
     <link rel="icon" href="/icon.svg" type="image/svg+xml">
     <link rel="apple-touch-icon" href="/icon.png">
 
-    <%# Includes all stylesheet files in app/assets/stylesheets %>
     <%= stylesheet_link_tag "application", "data-turbo-track": "reload" %>
     <%= javascript_importmap_tags %>
   </head>
-    <body>
+
+  <body class="<%= user_signed_in? ? 'logged-in' : 'logged-out' %>">
+    <% if user_signed_in? %>
       <nav class="bartender-navbar">
         <%= link_to new_chat_path, class: "navbar-brand" do %>
           <div class="navbar-icon">♔</div>
+
           <div class="navbar-title">
             <span>The</span>
             <strong>Bartender</strong>
           </div>
         <% end %>
+
+        <div class="navbar-links">
+          <%= link_to "Nouveau Chat", new_chat_path, class: "navbar-link" %>
+          <%= link_to "Mes Chats", chats_path, class: "navbar-link" %>
+          <%= link_to "Mes Cocktails", cocktails_path, class: "navbar-link" %>
+        </div>
+
+        <div class="navbar-actions">
+          <%= link_to "Se déconnecter",
+                      destroy_user_session_path,
+                      data: { turbo_method: :delete },
+                      class: "navbar-logout" %>
+        </div>
+      </nav>
+
+      <div class="app-layout">
+        <main id="main-content" class="app-content">
+          <%= yield %>
+        </main>
       </div>
-
-      <div class="navbar-links">
-        <%= link_to "Nouveau Chat", new_chat_path, class: "navbar-link" %>
-        <%= link_to "Mes Chats", chats_path, class: "navbar-link" %>
-        <%= link_to "Mes Cocktails", cocktails_path, class: "navbar-link" %>
-      </div>
-
-      <div class="navbar-actions">
-        <% if user_signed_in? %>
-          <%= link_to "Se déconnecter", destroy_user_session_path,
-              data: { turbo_method: :delete },
-              class: "navbar-logout" %>
-        <% else %>
-          <%= link_to "Se connecter", new_user_session_path, class: "navbar-logout" %>
-        <% end %>
-      </div>
-    </nav>
-
-    <div class="app-layout">
-
-      <main id="main-content" class="app-content">
+    <% else %>
+      <main id="main-content" class="auth-layout">
         <%= yield %>
       </main>
-    </div>
+    <% end %>
 
     <%= render "shared/flashes" %>
   </body>
