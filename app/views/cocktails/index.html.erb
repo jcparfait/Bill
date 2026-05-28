@@ -50,10 +50,29 @@
                   <p class="cocktail-mood">
                     <%= cocktail.mood %>
                   </p>
-
                   <p class="cocktail-description">
-                    A signature cocktail crafted for quiet evenings.
-                  </p>
+
+                    <% if cocktail.name == "Mojito" %>
+                      Frais, léger et parfait pour les soirées d’été.
+
+                    <% elsif cocktail.name == "Espresso Martini" %>
+                      L’alliance élégante du café et de la vodka.
+
+                    <% elsif cocktail.name == "Virgin Mule" %>
+                      Une création douce et épicée à savourer lentement.
+
+                    <% elsif cocktail.name == "Old Fashioned" %>
+                      Un grand classique au caractère affirmé.
+
+                    <% elsif cocktail.name == "Negroni" %>
+                      Amer, intense et délicieusement intemporel.
+
+                    <% else %>
+                      Un cocktail signature imaginé par le bartender.
+
+                    <% end %>
+
+                    </p>
             </div>
           </div>
 
