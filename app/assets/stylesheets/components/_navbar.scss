@@ -2,6 +2,17 @@
 //   background: #050403;
 //   color: #f3e7d0;
 // }
+html, body {
+  background: #f5e7d8;
+  margin: 0;
+  padding: 0;
+}
+
+.app-layout {
+  min-height: 100vh;
+  background: #f5e7d8;
+}
+
 .bartender-navbar {
   height: 100vh;
   width: 260px;
@@ -102,7 +113,7 @@ main {
 
 .app-content {
   min-height: 100vh;
-  margin-left: 240px;
+  margin-left: 260px;
   padding: 0;
 }
 
@@ -133,6 +144,6 @@ main {
   }
 
   .app-content {
-    margin-left: 260px;
+    margin-left: 0px;
   }
 }
