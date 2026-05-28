@@ -15,5 +15,5 @@
     <%= f.input :recipe, as: :text, label: "Recette", placeholder: "Décrivez les étapes de préparation...", input_html: { class: "cocktail-textarea", rows: 5 } %>
   </div>
 
-  <%= f.submit "Créer le cocktail", class: "btn-cocktail btn-edit" %>
+  <%= f.submit cocktail.persisted? ? "Modifier le cocktail" : "Créer le cocktail", class: "btn-cocktail btn-edit" %>
 <% end %>
