@@ -95,6 +95,49 @@
 //   color: #d7c5a6;
 //   line-height: 1.7;
 // }
+/* COCKTAIL MESSAGE */
+
+/* COCKTAIL MESSAGE */
+
+.cocktail-message-bubble {
+  max-width: 70%;
+}
+
+.cocktail-recommendation-image {
+  width: 100%;
+  max-height: 360px;
+  object-fit: cover;
+  border-radius: 18px;
+  margin: 12px 0 18px;
+}
+
+.cocktail-message-bubble h2 {
+  margin: 0 0 18px;
+  font-size: 26px;
+  font-weight: 400;
+  color: #f3e7d0;
+}
+
+.cocktail-section {
+  margin-top: 16px;
+}
+
+.cocktail-section strong {
+  display: block;
+  margin-bottom: 8px;
+  color: #d6b07a;
+}
+
+.cocktail-text,
+.cocktail-text p,
+.cocktail-message-bubble p {
+  color: #f3e7d0;
+  line-height: 1.7;
+}
+
+.cocktail-text p {
+  margin: 0 0 8px;
+}
 
 /* MESSAGES */
 
@@ -262,4 +305,18 @@
   .chat-submit-btn {
     width: 100%;
   }
+}
+
+/* FORCE COCKTAIL TEXT COLOR */
+
+.chat-page .cocktail-message-bubble,
+.chat-page .cocktail-message-bubble h2,
+.chat-page .cocktail-message-bubble p,
+.chat-page .cocktail-message-bubble .cocktail-text,
+.chat-page .cocktail-message-bubble .cocktail-text p {
+  color: #f3e7d0 !important;
+}
+
+.chat-page .cocktail-message-bubble .cocktail-section strong {
+  color: #d6b07a !important;
 }
