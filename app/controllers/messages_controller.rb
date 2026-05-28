@@ -86,10 +86,15 @@ class MessagesController < ApplicationController
     @message.role = "user"
 
     if @message.save
+      Turbo::StreamsChannel.broadcast_append_to(
+        @chat,
+        target: "messages",
+        partial: "messages/message",
+        locals: { message: @message }
+      )
       cocktail_id_before_response = @chat.cocktail_id
 
       ruby_llm_chat = RubyLLM.chat
-
       build_conversation_history(ruby_llm_chat)
 
       if cocktail_recommendation_allowed?
@@ -98,15 +103,35 @@ class MessagesController < ApplicationController
         )
       end
 
-      response = ruby_llm_chat
-                 .with_instructions(instructions)
-                 .ask(@message.content)
-
       @assistant_message = Message.create!(
         role: "bartender",
-        content: response.content,
+        content: "",
         chat: @chat
       )
+
+      Turbo::StreamsChannel.broadcast_append_to(
+        @chat,
+        target: "messages",
+        partial: "messages/message",
+        locals: { message: @assistant_message }
+      )
+
+      full_content = ""
+
+      ruby_llm_chat
+        .with_instructions(instructions)
+        .ask(@message.content) do |chunk|
+          full_content << chunk.content.to_s
+
+          @assistant_message.update!(content: full_content)
+
+          Turbo::StreamsChannel.broadcast_replace_to(
+            @chat,
+            target: helpers.dom_id(@assistant_message),
+            partial: "messages/message",
+            locals: { message: @assistant_message }
+          )
+        end
 
       @chat.reload
 
@@ -118,18 +143,6 @@ class MessagesController < ApplicationController
       respond_to do |format|
         format.turbo_stream
         format.html { redirect_to chat_path(@chat) }
-      end
-    else
-      respond_to do |format|
-        format.turbo_stream do
-          render turbo_stream: turbo_stream.update(
-            "new_message_container",
-            partial: "messages/form",
-            locals: { chat: @chat, message: @message }
-          )
-        end
-
-        format.html { render "chats/show", status: :unprocessable_entity }
       end
     end
   end

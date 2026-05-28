@@ -2,6 +2,7 @@
   <%= simple_form_for [chat, message],
                       html: {
                         class: "chat-form",
+                        onsubmit: "setTimeout(() => this.reset(), 0)",
                         data: { controller: "submit-on-enter" }
                       } do |f| %>
     <%= f.input :content,

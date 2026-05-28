@@ -1,4 +1,5 @@
 <div class="chat-page">
+  <%= turbo_stream_from @chat %>
 
   <div class="chat-header">
     <%= link_to "← Mes conversations", chats_path, class: "back-link" %>
@@ -9,27 +10,30 @@
     </div>
   </div>
 
-  <div class="messages-container">
-
+  <div class="chat-body">
     <div id="messages" class="messages-container">
       <% if @chat.messages.any? %>
+
         <%= render "messages/messages", messages: @chat.messages %>
 
         <% if @chat.cocktail.present? %>
           <%= render "chats/cocktail_recommendation", chat: @chat %>
         <% end %>
+
       <% else %>
+
         <div class="message-row assistant-row">
           <div class="message-bubble assistant-bubble">
             <div class="message-role">The Bartender</div>
             <p>Bonjour, qu'est-ce que je peux faire pour vous ?</p>
           </div>
         </div>
+
       <% end %>
     </div>
 
     <div class="chat-input-container">
       <%= render "messages/form", chat: @chat, message: @message %>
     </div>
-      </div>
   </div>
+</div>
