@@ -47,37 +47,37 @@ owner = users.first
 Cocktail.create!([
   {
     name: "Mojito",
-    mood: "fresh",
-    ingredients: "Rum, mint, lime, sugar, sparkling water",
-    recipe: "Muddle mint, lime and sugar. Add rum, ice and sparkling water.",
+    mood: "rafraîchissant",
+    ingredients: "Rhum blanc, menthe fraîche, citron vert, sucre de canne, eau pétillante",
+    recipe: "Écraser délicatement la menthe, le citron vert et le sucre. Ajouter le rhum, des glaçons puis compléter avec de l’eau pétillante.",
     user: owner
   },
   {
     name: "Espresso Martini",
-    mood: "tired but social",
-    ingredients: "Vodka, coffee liqueur, espresso, sugar syrup",
-    recipe: "Shake all ingredients with ice and strain into a chilled glass.",
+    mood: "fatigué mais sociable",
+    ingredients: "Vodka, liqueur de café, expresso, sirop de sucre",
+    recipe: "Verser tous les ingrédients dans un shaker avec des glaçons. Secouer énergiquement puis filtrer dans un verre bien frais.",
     user: owner
   },
   {
     name: "Virgin Mule",
-    mood: "calm",
-    ingredients: "Ginger beer, lime, mint, cucumber",
-    recipe: "Build all ingredients over ice and stir gently.",
+    mood: "apaisé",
+    ingredients: "Ginger beer, citron vert, menthe fraîche, concombre",
+    recipe: "Remplir un verre de glaçons, ajouter les ingrédients puis mélanger délicatement avant de servir bien frais.",
     user: owner
   },
   {
     name: "Old Fashioned",
-    mood: "nostalgic",
-    ingredients: "Whiskey, sugar, bitters, orange peel",
-    recipe: "Stir sugar and bitters, add whiskey gently over sugar and bitters, then garnish with orange peel.",
+    mood: "nostalgique",
+    ingredients: "Whisky, sucre, bitters, zeste d’orange",
+    recipe: "Mélanger le sucre et les bitters, ajouter le whisky et des glaçons puis remuer doucement. Terminer avec un zeste d’orange.",
     user: owner
   },
   {
     name: "Negroni",
-    mood: "melancholic",
-    ingredients: "Gin, Campari, sweet vermouth, orange peel",
-    recipe: "Stir gin, Campari and vermouth with ice. Serve with orange peel.",
+    mood: "mélancolique",
+    ingredients: "Gin, Campari, vermouth rouge, zeste d’orange",
+    recipe: "Mélanger le gin, le Campari et le vermouth avec des glaçons puis servir avec un zeste d’orange.",
     user: owner
   }
 ])
