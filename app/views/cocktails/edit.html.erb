@@ -1,5 +1,10 @@
-<h1>Edit cocktail</h1>
+<div class="cocktail-new">
+  <%= link_to cocktails_path, class: "cocktail-back" do %>
+    <span class="back-arrow">‹</span>
+  <% end %>
 
-<%= render "form", cocktail: @cocktail %>
+  <h1>Modifier le Cocktail</h1>
+  <p class="cocktail-new-subtitle">Modifiez votre création</p>
 
-<%= link_to "Back", cocktails_path %>
+  <%= render "form", cocktail: @cocktail %>
+</div>
