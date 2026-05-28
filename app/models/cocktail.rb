@@ -6,6 +6,5 @@ class Cocktail < ApplicationRecord
   validates :ingredients, presence: true
   validates :recipe, presence: true
   validates :mood, presence: true
-  validates :external_id, presence: true
-  validates :image_url, presence: true
+  validates :external_id, uniqueness: { scope: :user_id }, allow_blank: true
 end

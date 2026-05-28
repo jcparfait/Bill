@@ -7,7 +7,9 @@ class RecommendCocktailTool < RubyLLM::Tool
 
   param :cocktail_name,
         desc: "The name of the cocktail to search for, for example Mojito, Margarita, Negroni, Daiquiri, Old Fashioned."
-  param :mood, desc: "A short French description of the user's mood or need."
+
+  param :mood,
+        desc: "A short French description of the user's mood or need."
 
   def initialize(user:, chat:)
     @user = user
@@ -19,30 +21,41 @@ class RecommendCocktailTool < RubyLLM::Tool
 
     return { error: "No cocktail found for #{cocktail_name}" } if api_cocktail.nil?
 
-    ingredients = translate_to_french(
-      format_ingredients(api_cocktail),
-      "liste d'ingrédients"
-    )
-
-    recipe = translate_to_french(
-      api_cocktail["strInstructions"],
-      "recette de cocktail"
-    )
-
-    cocktail = Cocktail.create!(
+    cocktail = Cocktail.find_by(
       user: @user,
-      external_id: api_cocktail["idDrink"],
-      name: api_cocktail["strDrink"],
-      image_url: api_cocktail["strDrinkThumb"],
-      ingredients: ingredients,
-      recipe: recipe,
-      mood: mood
+      external_id: api_cocktail["idDrink"]
     )
+
+    status = "reused"
+
+    if cocktail.nil?
+      ingredients = translate_to_french(
+        format_ingredients(api_cocktail),
+        "liste d'ingrédients"
+      )
+
+      recipe = translate_to_french(
+        api_cocktail["strInstructions"],
+        "recette de cocktail"
+      )
+
+      cocktail = Cocktail.create!(
+        user: @user,
+        external_id: api_cocktail["idDrink"],
+        name: api_cocktail["strDrink"],
+        image_url: api_cocktail["strDrinkThumb"],
+        ingredients: ingredients,
+        recipe: recipe,
+        mood: mood
+      )
+
+      status = "created"
+    end
 
     @chat.update!(cocktail: cocktail)
 
     {
-      status: "saved",
+      status: status,
       cocktail_id: cocktail.id,
       external_id: cocktail.external_id,
       name: cocktail.name,
@@ -89,6 +102,8 @@ class RecommendCocktailTool < RubyLLM::Tool
   end
 
   def translate_to_french(text, content_type)
+    return "" if text.blank?
+
     prompt = <<~PROMPT
       Traduis fidèlement en français cette #{content_type}.
 
