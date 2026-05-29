@@ -17,9 +17,21 @@ class RecommendCocktailTool < RubyLLM::Tool
   end
 
   def execute(cocktail_name:, mood:)
+    Rails.logger.info "🍸 RECOMMEND_COCKTAIL_TOOL CALLED"
+    Rails.logger.info "🍸 Requested cocktail_name: #{cocktail_name}"
+    Rails.logger.info "🍸 Mood: #{mood}"
+    Rails.logger.info "🍸 Chat id: #{@chat.id}"
+    Rails.logger.info "🍸 User id: #{@user.id}"
+
     api_cocktail = fetch_cocktail(cocktail_name)
 
-    return { error: "No cocktail found for #{cocktail_name}" } if api_cocktail.nil?
+    if api_cocktail.nil?
+      Rails.logger.warn "🍸 No cocktail found for #{cocktail_name}"
+      return { error: "No cocktail found for #{cocktail_name}" }
+    end
+
+    Rails.logger.info "🍸 API cocktail result: #{api_cocktail['strDrink']}"
+    Rails.logger.info "🍸 API external id: #{api_cocktail['idDrink']}"
 
     cocktail = Cocktail.find_by(
       user: @user,
@@ -50,9 +62,14 @@ class RecommendCocktailTool < RubyLLM::Tool
       )
 
       status = "created"
+      Rails.logger.info "🍸 Cocktail created in DB: #{cocktail.id}"
+    else
+      Rails.logger.info "🍸 Cocktail reused from DB: #{cocktail.id}"
     end
 
     @chat.update!(cocktail: cocktail)
+
+    Rails.logger.info "🍸 Chat #{@chat.id} associated with cocktail #{cocktail.id}"
 
     {
       status: status,
@@ -65,6 +82,9 @@ class RecommendCocktailTool < RubyLLM::Tool
       mood: cocktail.mood
     }
   rescue StandardError => e
+    Rails.logger.error "🍸 RECOMMEND_COCKTAIL_TOOL ERROR: #{e.class} - #{e.message}"
+    Rails.logger.error e.backtrace.first(10).join("\n")
+
     { error: e.message }
   end
 
@@ -73,6 +93,8 @@ class RecommendCocktailTool < RubyLLM::Tool
   def fetch_cocktail(cocktail_name)
     encoded_name = CGI.escape(cocktail_name)
     url = "https://www.thecocktaildb.com/api/json/v1/1/search.php?s=#{encoded_name}"
+
+    Rails.logger.info "🍸 Fetching cocktail API: #{url}"
 
     response = URI.open(url).read
     data = JSON.parse(response)

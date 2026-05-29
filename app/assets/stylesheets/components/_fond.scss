@@ -96,28 +96,213 @@
 @media (max-width: 768px) {
   .chat-hero {
     margin-left: 0;
+    align-items: flex-end;
   }
 
   .hero-overlay {
-    padding: 0 24px 48px;
+    padding: 0 24px 132px;
   }
 
   .hero-content h1 {
     font-size: 34px;
     text-shadow:
-    0 0 8px rgba(230, 204, 143, 0.35),
-    0 4px 12px rgba(0,0,0,0.7);
+      0 0 8px rgba(230, 204, 143, 0.35),
+      0 4px 12px rgba(0, 0, 0, 0.7);
   }
 
   .hero-content p {
     font-size: 15px;
     text-shadow:
-    0 0 8px rgba(230, 204, 143, 0.35),
-    0 4px 12px rgba(0,0,0,0.7);
+      0 0 8px rgba(230, 204, 143, 0.35),
+      0 4px 12px rgba(0, 0, 0, 0.7);
   }
 }
 
 .turbo-progress-bar {
   height: 2px;
   background-color: #c59d5f;
+}
+/* MOBILE HERO FULL WIDTH FIX */
+
+@media (max-width: 992px) {
+  html,
+  body {
+    width: 100%;
+    overflow-x: hidden;
+  }
+
+  .app-content {
+    margin-left: 0 !important;
+    width: 100% !important;
+  }
+
+  .chat-hero {
+    width: 100vw !important;
+    min-height: 100dvh;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+
+    background-size: cover;
+    background-position: center center;
+    background-repeat: no-repeat;
+  }
+
+  .hero-overlay {
+    width: 100%;
+    min-height: 100dvh;
+    padding: 0 24px 132px;
+  }
+}
+
+/* =========================
+   MOBILE HERO CONTENT FORCED POSITION
+   ========================= */
+
+@media (max-width: 992px) {
+  .chat-hero {
+    position: fixed !important;
+    inset: 0 !important;
+    width: 100vw !important;
+    height: 100dvh !important;
+    min-height: 100dvh !important;
+    margin-left: 0 !important;
+  }
+
+  .hero-overlay {
+    position: static !important;
+    width: 100% !important;
+    height: 100dvh !important;
+    min-height: 100dvh !important;
+    padding: 0 !important;
+  }
+
+  .hero-content {
+    position: fixed !important;
+    left: 24px !important;
+    right: 24px !important;
+    bottom: calc(104px + env(safe-area-inset-bottom)) !important;
+    z-index: 20 !important;
+
+    width: auto !important;
+    max-width: none !important;
+    margin: 0 !important;
+
+    text-align: center !important;
+  }
+
+  .hero-subtitle {
+    display: none !important;
+  }
+
+  .hero-content h1 {
+    margin: 0 0 12px !important;
+
+    font-size: 30px !important;
+    line-height: 1.08 !important;
+  }
+
+  .hero-content p {
+    margin: 0 0 20px !important;
+
+    font-size: 15px !important;
+    line-height: 1.5 !important;
+  }
+
+  .hero-btn {
+    width: 100% !important;
+    max-width: 400px !important;
+    min-height: 64px !important;
+
+    padding: 0 24px !important;
+    border-radius: 16px !important;
+
+    font-size: 17px !important;
+  }
+}
+/* =========================
+   MOBILE HERO COMPACT LAYOUT
+   text + CTA grouped near thumb zone
+   ========================= */
+
+@media (max-width: 992px) {
+  .chat-hero {
+    position: fixed !important;
+    inset: 0 !important;
+    width: 100vw !important;
+    height: 100dvh !important;
+    min-height: 100dvh !important;
+    margin-left: 0 !important;
+  }
+
+  .hero-overlay {
+    width: 100% !important;
+    height: 100dvh !important;
+    min-height: 100dvh !important;
+    padding: 0 !important;
+  }
+
+  .hero-content {
+    position: fixed !important;
+    left: 24px !important;
+    right: 24px !important;
+    bottom: calc(184px + env(safe-area-inset-bottom)) !important;
+    z-index: 20 !important;
+
+    width: auto !important;
+    max-width: none !important;
+    margin: 0 !important;
+
+    text-align: center !important;
+  }
+
+  .hero-subtitle {
+    display: none !important;
+  }
+
+  .hero-content h1 {
+    margin: 0 0 10px !important;
+
+    font-size: 30px !important;
+    line-height: 1.08 !important;
+    font-weight: 400 !important;
+    letter-spacing: 0.04em !important;
+
+    text-align: center !important;
+
+    text-shadow:
+      0 0 8px rgba(230, 204, 143, 0.3),
+      0 4px 12px rgba(0, 0, 0, 0.85);
+  }
+
+  .hero-content p {
+    max-width: 440px !important;
+    margin: 0 auto 22px !important;
+
+    font-size: 15px !important;
+    line-height: 1.45 !important;
+    font-weight: 700 !important;
+
+    text-align: center !important;
+
+    text-shadow:
+      0 0 8px rgba(230, 204, 143, 0.3),
+      0 4px 12px rgba(0, 0, 0, 0.85);
+  }
+
+  .hero-btn {
+    width: 100% !important;
+    max-width: 400px !important;
+    min-height: 64px !important;
+
+    margin: 0 auto !important;
+    padding: 0 24px !important;
+
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+
+    border-radius: 16px !important;
+
+    font-size: 17px !important;
+  }
 }
