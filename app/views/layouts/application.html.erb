@@ -25,10 +25,7 @@
 
   <body class="<%= user_signed_in? ? 'logged-in' : 'logged-out' %>">
     <% if user_signed_in? %>
-        <button class="burger-button" id="burgerButton">
-          ☰
-        </button>
-      <nav class="bartender-navbar" id="mobileSidebar">
+      <nav class="bartender-navbar">
         <%= link_to new_chat_path, class: "navbar-brand" do %>
           <div class="navbar-icon">♔</div>
 
@@ -51,57 +48,127 @@
                       class: "navbar-logout" %>
         </div>
       </nav>
-      <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
       <div class="app-layout">
         <main id="main-content" class="app-content">
+          <%= render "shared/flashes" %>
           <%= yield %>
         </main>
       </div>
+
+      <nav class="mobile-bottom-nav">
+        <%= link_to new_chat_path,
+                    class: "mobile-nav-link #{'active' if controller_name == 'chats' && ['new', 'show'].include?(action_name)}" do %>
+          <i class="fa-solid fa-martini-glass mobile-nav-icon"></i>
+          <span class="mobile-nav-label">Bar</span>
+        <% end %>
+
+        <details class="mobile-nav-menu">
+          <summary class="mobile-nav-link mobile-nav-menu-button">
+            <i class="fa-solid fa-bars mobile-nav-icon"></i>
+            <span class="mobile-nav-label">Menu</span>
+          </summary>
+
+          <div class="mobile-nav-panel">
+            <%= link_to chats_path, class: "mobile-nav-panel-link" do %>
+              <i class="fa-regular fa-clock"></i>
+              <span>Mes Conversations</span>
+            <% end %>
+
+            <button type="button" class="mobile-nav-panel-link mobile-sound-toggle">
+              <i class="fa-solid fa-volume-high"></i>
+              <span>Son</span>
+            </button>
+
+            <%= link_to destroy_user_session_path,
+                        data: { turbo_method: :delete },
+                        class: "mobile-nav-panel-link mobile-nav-danger" do %>
+              <i class="fa-solid fa-arrow-right-from-bracket"></i>
+              <span>Déconnexion</span>
+            <% end %>
+          </div>
+        </details>
+
+        <%= link_to cocktails_path,
+                    class: "mobile-nav-link #{'active' if controller_name == 'cocktails'}" do %>
+          <i class="fa-solid fa-book-open mobile-nav-icon"></i>
+          <span class="mobile-nav-label">Cocktails</span>
+        <% end %>
+      </nav>
+
+      <audio id="bg-music" loop autoplay>
+        <source src="<%= asset_path('music.wav') %>" type="audio/wav">
+      </audio>
+
+      <button id="music-toggle" class="music-btn">
+        ♫
+      </button>
+
+      <script>
+        document.addEventListener("turbo:load", () => {
+          const audio = document.getElementById("bg-music")
+          const button = document.getElementById("music-toggle")
+          const mobileSoundButton = document.querySelector(".mobile-sound-toggle")
+
+          if (!audio) return
+
+          audio.volume = 0.25
+
+          const applySoundState = () => {
+            const isMuted = localStorage.getItem("music-muted") === "true"
+
+            audio.muted = isMuted
+
+            if (button) {
+              button.classList.toggle("muted", isMuted)
+              button.innerText = isMuted ? "♫̸" : "♫"
+            }
+
+            if (mobileSoundButton) {
+              const icon = mobileSoundButton.querySelector("i")
+              const label = mobileSoundButton.querySelector("span")
+
+              if (icon) {
+                icon.className = isMuted
+                  ? "fa-solid fa-volume-xmark"
+                  : "fa-solid fa-volume-high"
+              }
+
+              if (label) {
+                label.innerText = isMuted ? "Son coupé" : "Son activé"
+              }
+            }
+          }
+
+          const toggleSound = () => {
+            audio.muted = !audio.muted
+
+            localStorage.setItem(
+              "music-muted",
+              audio.muted ? "true" : "false"
+            )
+
+            applySoundState()
+            audio.play().catch(() => {})
+          }
+
+          applySoundState()
+          audio.play().catch(() => {})
+
+          if (button) {
+            button.onclick = toggleSound
+          }
+
+          if (mobileSoundButton) {
+            mobileSoundButton.onclick = toggleSound
+          }
+        })
+      </script>
     <% else %>
       <main id="main-content" class="auth-layout">
+        <%= render "shared/flashes" %>
         <%= yield %>
       </main>
     <% end %>
-
-    <%= render "shared/flashes" %>
-    <audio id="bg-music" loop autoplay>
-      <source src="<%= asset_path('music.wav') %>" type="audio/wav">
-    </audio>
-
-    <button id="music-toggle" class="music-btn">
-      ♫
-    </button>
-
-    <script>
-      document.addEventListener("turbo:load", () => {
-        const audio = document.getElementById("bg-music")
-        const button = document.getElementById("music-toggle")
-
-        if (!audio || !button) return
-
-        audio.volume = 0.25
-
-        const isMuted = localStorage.getItem("music-muted") === "true"
-        audio.muted = isMuted
-        button.classList.toggle("muted", isMuted)
-
-        audio.play().catch(() => {})
-
-        button.onclick = () => {
-          audio.muted = !audio.muted
-
-          localStorage.setItem(
-            "music-muted",
-            audio.muted ? "true" : "false"
-          )
-
-          button.classList.toggle("muted", audio.muted)
-
-          button.innerText = audio.muted ? "♫̸" : "♫"
-
-          audio.play().catch(() => {})
-        }
-      })
-    </script>
   </body>
 </html>
