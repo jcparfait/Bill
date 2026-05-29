@@ -86,7 +86,7 @@
 
 .messages-container {
   width: 100%;
-
+  overflow-y: auto;
   display: flex;
   flex-direction: column;
   gap: 18px;
@@ -108,7 +108,10 @@
   justify-content: flex-end;
   padding-left: 52%;
 }
-
+#messages-bottom {
+  height: 140px;
+  flex-shrink: 0;
+}
 .message-bubble {
   max-width: 420px;
   padding: 18px 22px;
@@ -117,7 +120,7 @@
   position: relative;
 
   backdrop-filter: blur(10px);
-  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.35);
+  box-shadow: 0 5px 5px rgba(0, 0, 0, 0.35);
 }
 
 .assistant-bubble {
