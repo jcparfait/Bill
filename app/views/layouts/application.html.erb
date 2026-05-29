@@ -104,71 +104,88 @@
         ♫
       </button>
 
-      <script>
-        document.addEventListener("turbo:load", () => {
-          const audio = document.getElementById("bg-music")
-          const button = document.getElementById("music-toggle")
-          const mobileSoundButton = document.querySelector(".mobile-sound-toggle")
+        const syncMusicState = () => {
+          if (!audio || !button) return
 
-          if (!audio) return
+          const isMuted = localStorage.getItem("music-muted") === "true"
 
           audio.volume = 0.25
+          audio.muted = isMuted
+          button.classList.toggle("muted", isMuted)
+          button.innerText = isMuted ? "♫̸" : "♫"
+        }
 
-          const applySoundState = () => {
-            const isMuted = localStorage.getItem("music-muted") === "true"
+        if (audio && button) {
+          syncMusicState()
 
-            audio.muted = isMuted
+          audio.addEventListener("play", syncMusicState)
 
-            if (button) {
-              button.classList.toggle("muted", isMuted)
-              button.innerText = isMuted ? "♫̸" : "♫"
-            }
+          audio.play().catch(() => {})
 
-            if (mobileSoundButton) {
-              const icon = mobileSoundButton.querySelector("i")
-              const label = mobileSoundButton.querySelector("span")
-
-              if (icon) {
-                icon.className = isMuted
-                  ? "fa-solid fa-volume-xmark"
-                  : "fa-solid fa-volume-high"
-              }
-
-              if (label) {
-                label.innerText = isMuted ? "Son coupé" : "Son activé"
-              }
-            }
-          }
-
-          const toggleSound = () => {
-            audio.muted = !audio.muted
+          button.onclick = () => {
+            const newMutedState = !audio.muted
 
             localStorage.setItem(
               "music-muted",
-              audio.muted ? "true" : "false"
+              newMutedState ? "true" : "false"
             )
 
-            applySoundState()
+            audio.muted = newMutedState
+            syncMusicState()
+
             audio.play().catch(() => {})
           }
+        }
 
-          applySoundState()
-          audio.play().catch(() => {})
+        const forceScrollMessagesToBottom = () => {
+          setTimeout(() => {
+            const bottom = document.getElementById("messages-bottom")
+            const messages = document.getElementById("messages")
+            const main = document.getElementById("main-content")
 
-          if (button) {
-            button.onclick = toggleSound
-          }
+            if (bottom) {
+              bottom.scrollIntoView({ behavior: "auto", block: "end" })
+            }
 
-          if (mobileSoundButton) {
-            mobileSoundButton.onclick = toggleSound
-          }
+            if (messages) {
+              messages.scrollTop = messages.scrollHeight
+            }
+
+            if (main) {
+              main.scrollTop = main.scrollHeight
+            }
+
+            window.scrollTo({
+              top: document.documentElement.scrollHeight,
+              behavior: "auto"
+            })
+          }, 0)
+        }
+
+        forceScrollMessagesToBottom()
+
+        document.addEventListener("turbo:stream-render", () => {
+          forceScrollMessagesToBottom()
         })
-      </script>
-    <% else %>
-      <main id="main-content" class="auth-layout">
-        <%= render "shared/flashes" %>
-        <%= yield %>
-      </main>
-    <% end %>
+
+        document.addEventListener("turbo:render", () => {
+          forceScrollMessagesToBottom()
+        })
+
+        const messagesContainer = document.getElementById("messages")
+
+        if (messagesContainer) {
+          const observer = new MutationObserver(() => {
+            forceScrollMessagesToBottom()
+          })
+
+          observer.observe(messagesContainer, {
+            childList: true,
+            subtree: true,
+            characterData: true
+          })
+        }
+      })
+    </script>
   </body>
 </html>

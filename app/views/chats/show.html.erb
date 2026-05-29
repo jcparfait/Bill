@@ -14,7 +14,7 @@
     <div id="messages" class="messages-container">
       <% if @chat.messages.any? %>
 
-        <%= render "messages/messages", messages: @chat.messages %>
+        <%= render "messages/messages", messages: @chat.messages.order(:created_at, :id) %>
 
         <% if @chat.cocktail.present? %>
           <%= render "chats/cocktail_recommendation", chat: @chat %>
@@ -30,6 +30,8 @@
         </div>
 
       <% end %>
+
+      <div id="messages-bottom"></div>
     </div>
 
     <div class="chat-input-container">

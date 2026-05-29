@@ -368,4 +368,8 @@ body {
   .mobile-bottom-nav {
     display: none !important;
   }
+.music-btn:hover {
+  transform: scale(1.05);
+  background: rgba(40,40,40,0.9);
+  color:rgb(255, 239, 207)
 }
