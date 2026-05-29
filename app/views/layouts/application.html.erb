@@ -64,12 +64,17 @@
     <% end %>
 
     <%= render "shared/flashes" %>
-    <audio id="bg-music" loop autoplay preload="metadata">
+    <audio id="bg-music"
+       loop
+       preload="metadata"
+       data-turbo-permanent>
       <source src="<%= asset_path('music.mp3') %>" type="audio/wav">
     </audio>
 
-    <button id="music-toggle" class="music-btn">
-      ♫
+    <button id="music-toggle"
+          class="music-btn"
+          data-turbo-permanent>
+           ♫
     </button>
 
     <script>
