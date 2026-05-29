@@ -196,6 +196,7 @@ class MessagesController < ApplicationController
       )
 
       replace_assistant_message
+      broadcast_glass_animation
     else
       @assistant_message.update!(
         content: "Je voulais te sortir quelque chose de précis, mais le bar vient de perdre sa cave. Même les endroits feutrés ont parfois des problèmes de plomberie."
@@ -476,5 +477,13 @@ class MessagesController < ApplicationController
 
   def message_params
     params.require(:message).permit(:content)
+  end
+
+  def broadcast_glass_animation
+    Turbo::StreamsChannel.broadcast_update_to(
+      @chat,
+      target: "glass-animation-container",
+      html: '<div class="sliding-glass"></div>'
+    )
   end
 end
