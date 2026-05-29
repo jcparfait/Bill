@@ -219,7 +219,7 @@ main {
   border-radius: 50%;
 
   background: rgba(20,20,20,0.8);
-  color: white;
+  color: rgb(255, 211, 135);
 
   cursor: pointer;
 
@@ -233,4 +233,5 @@ main {
 .music-btn:hover {
   transform: scale(1.05);
   background: rgba(40,40,40,0.9);
+  color:rgb(255, 239, 207)
 }
