@@ -1,112 +1,80 @@
 <div class="chats-page">
-
-  <div class="chats-hero">
-
+  <section class="chats-hero">
     <div class="chats-hero-overlay">
-
       <span class="menu-subtitle">
         THE BARTENDER
       </span>
 
-      <h1>Conversations</h1>
+      <h1>Historique</h1>
 
       <p>
-      Fragments de soirées,
-      d’émotions et de pensées intimes.
+        Retrouve tes anciennes conversations avec le bartender.
       </p>
-
     </div>
+  </section>
 
-  </div>
-
-  <div class="chats-content">
-
+  <section class="chats-content">
     <div class="chats-header">
-
-      <%= link_to "＋ Nouvelle Conversation",
-      chats_path,
-      data: { turbo_method: :post },
-      class: "new-chat-btn" %>
-
+      <%= link_to "＋ Nouvelle conversation",
+                  chats_path,
+                  data: { turbo_method: :post },
+                  class: "new-chat-btn" %>
     </div>
 
     <% if @chats.any? %>
-
       <div class="chats-list">
-
         <% @chats.each do |chat| %>
-
-          <div class="chat-card">
-
+          <article class="chat-card">
             <div class="chat-card-content">
-
               <div class="chat-icon">
                 ✦
               </div>
 
               <div class="chat-info">
-
                 <h2>
                   <%= chat.title.presence || "Conversation" %>
                 </h2>
 
                 <p class="chat-mood">
                   <% if chat.cocktail.present? %>
-
-
-                    Cocktail recommandé:
+                    Cocktail proposé :
                     <%= chat.cocktail.name %>
-
-
                   <% else %>
-
-
                     Pas encore de recommandation.
-
-
                   <% end %>
                 </p>
-
               </div>
 
               <div class="chat-actions">
-
                 <%= link_to "Ouvrir",
-                chat_path(chat),
-                class: "chat-open-btn" %>
+                            chat_path(chat),
+                            class: "chat-open-btn" %>
 
                 <%= link_to "Supprimer",
-                chat_path(chat),
-                data: {
-                  turbo_method: :delete,
-                  turbo_confirm: "Supprimer cette conversation?"
-                },
-                class: "chat-delete-btn" %>
-
+                            chat_path(chat),
+                            data: {
+                              turbo_method: :delete,
+                              turbo_confirm: "Supprimer cette conversation ?"
+                            },
+                            class: "chat-delete-btn" %>
               </div>
-
             </div>
-
-          </div>
-
+          </article>
         <% end %>
-
       </div>
-
     <% else %>
-
       <div class="empty-chats">
-
         <h2>Pas encore de conversations.</h2>
 
         <p>
-          Commence à dsicuter avec le bartender.
+          Commence à discuter avec le bartender.
         </p>
 
+        <%= link_to "Commencer",
+                    chats_path,
+                    data: { turbo_method: :post },
+                    class: "new-chat-btn" %>
       </div>
-
     <% end %>
-
-  </div>
-
+  </section>
 </div>

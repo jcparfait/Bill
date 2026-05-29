@@ -25,10 +25,7 @@
 
   <body class="<%= user_signed_in? ? 'logged-in' : 'logged-out' %>">
     <% if user_signed_in? %>
-        <button class="burger-button" id="burgerButton">
-          ☰
-        </button>
-      <nav class="bartender-navbar" id="mobileSidebar">
+      <nav class="bartender-navbar">
         <%= link_to new_chat_path, class: "navbar-brand" do %>
           <div class="navbar-icon">♔</div>
 
@@ -51,52 +48,90 @@
                       class: "navbar-logout" %>
         </div>
       </nav>
-      <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
       <div class="app-layout">
         <main id="main-content" class="app-content">
+          <%= render "shared/flashes" %>
           <%= yield %>
         </main>
       </div>
-    <% else %>
-      <main id="main-content" class="auth-layout">
-        <%= yield %>
-      </main>
-    <% end %>
 
-    <%= render "shared/flashes" %>
-    <audio id="bg-music" loop autoplay>
-      <source src="<%= asset_path('music.mp3') %>" type="audio/wav">
-    </audio>
+      <nav class="mobile-bottom-nav">
+        <%= link_to new_chat_path,
+                    class: "mobile-nav-link #{'active' if controller_name == 'chats' && ['new', 'show'].include?(action_name)}" do %>
+          <i class="fa-solid fa-martini-glass mobile-nav-icon"></i>
+          <span class="mobile-nav-label">Bar</span>
+        <% end %>
 
-    <button id="music-toggle" class="music-btn">
-      ♫
-    </button>
+        <details class="mobile-nav-menu">
+          <summary class="mobile-nav-link mobile-nav-menu-button">
+            <i class="fa-solid fa-bars mobile-nav-icon"></i>
+            <span class="mobile-nav-label">Menu</span>
+          </summary>
 
-    <script>
-      document.addEventListener("turbo:load", () => {
-        const audio = document.getElementById("bg-music")
-        const button = document.getElementById("music-toggle")
+          <div class="mobile-nav-panel">
+            <%= link_to chats_path, class: "mobile-nav-panel-link" do %>
+              <i class="fa-regular fa-clock"></i>
+              <span>Mes Conversations</span>
+            <% end %>
 
-        if (audio && button) {
-          audio.volume = 0.25
+            <button type="button" class="mobile-nav-panel-link mobile-sound-toggle">
+              <i class="fa-solid fa-volume-high"></i>
+              <span>Son</span>
+            </button>
+
+            <%= link_to destroy_user_session_path,
+                        data: { turbo_method: :delete },
+                        class: "mobile-nav-panel-link mobile-nav-danger" do %>
+              <i class="fa-solid fa-arrow-right-from-bracket"></i>
+              <span>Déconnexion</span>
+            <% end %>
+          </div>
+        </details>
+
+        <%= link_to cocktails_path,
+                    class: "mobile-nav-link #{'active' if controller_name == 'cocktails'}" do %>
+          <i class="fa-solid fa-book-open mobile-nav-icon"></i>
+          <span class="mobile-nav-label">Cocktails</span>
+        <% end %>
+      </nav>
+
+      <audio id="bg-music" loop autoplay>
+        <source src="<%= asset_path('music.wav') %>" type="audio/wav">
+      </audio>
+
+      <button id="music-toggle" class="music-btn">
+        ♫
+      </button>
+
+        const syncMusicState = () => {
+          if (!audio || !button) return
 
           const isMuted = localStorage.getItem("music-muted") === "true"
+
+          audio.volume = 0.25
           audio.muted = isMuted
           button.classList.toggle("muted", isMuted)
-          button.innerText = audio.muted ? "♫̸" : "♫"
+          button.innerText = isMuted ? "♫̸" : "♫"
+        }
+
+        if (audio && button) {
+          syncMusicState()
+
+          audio.addEventListener("play", syncMusicState)
 
           audio.play().catch(() => {})
 
           button.onclick = () => {
-            audio.muted = !audio.muted
+            const newMutedState = !audio.muted
 
             localStorage.setItem(
               "music-muted",
-              audio.muted ? "true" : "false"
+              newMutedState ? "true" : "false"
             )
 
-            button.classList.toggle("muted", audio.muted)
-            button.innerText = audio.muted ? "♫̸" : "♫"
+            audio.muted = newMutedState
+            syncMusicState()
 
             audio.play().catch(() => {})
           }
