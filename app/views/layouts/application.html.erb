@@ -96,13 +96,25 @@
         <% end %>
       </nav>
 
-      <audio id="bg-music" loop autoplay>
-        <source src="<%= asset_path('music.wav') %>" type="audio/wav">
+      <audio id="bg-music" loop preload="metadata" data-turbo-permanent>
+        <source src="<%= asset_path('music.mp3') %>" type="audio/wav">
       </audio>
 
-      <button id="music-toggle" class="music-btn">
+      <button id="music-toggle" class="music-btn" data-turbo-permanent>
         ♫
       </button>
+    <% else %>
+      <main id="main-content" class="app-content">
+        <%= render "shared/flashes" %>
+        <%= yield %>
+      </main>
+    <% end %>
+
+    <script>
+      document.addEventListener("turbo:load", () => {
+        const audio = document.getElementById("bg-music")
+        const button = document.getElementById("music-toggle")
+        const mobileSoundButton = document.querySelector(".mobile-sound-toggle")
 
         const syncMusicState = () => {
           if (!audio || !button) return
@@ -113,6 +125,10 @@
           audio.muted = isMuted
           button.classList.toggle("muted", isMuted)
           button.innerText = isMuted ? "♫̸" : "♫"
+
+          if (mobileSoundButton) {
+            mobileSoundButton.classList.toggle("muted", isMuted)
+          }
         }
 
         if (audio && button) {
@@ -122,7 +138,7 @@
 
           audio.play().catch(() => {})
 
-          button.onclick = () => {
+          const toggleMusic = () => {
             const newMutedState = !audio.muted
 
             localStorage.setItem(
@@ -134,6 +150,12 @@
             syncMusicState()
 
             audio.play().catch(() => {})
+          }
+
+          button.onclick = toggleMusic
+
+          if (mobileSoundButton) {
+            mobileSoundButton.onclick = toggleMusic
           }
         }
 
