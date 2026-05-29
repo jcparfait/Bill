@@ -140,7 +140,7 @@ body {
   border-radius: 50%;
 
   background: rgba(20, 20, 20, 0.8);
-  color: white;
+  color: rgb(255, 206, 154);
 
   cursor: pointer;
   backdrop-filter: blur(4px);
@@ -360,6 +360,7 @@ body {
   }
 
   .music-btn {
+    color:#d8b477;
     display: none !important;
   }
 }

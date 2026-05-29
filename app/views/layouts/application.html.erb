@@ -36,7 +36,6 @@
         <% end %>
 
         <div class="navbar-links">
-          <%= link_to "Nouveau Chat", new_chat_path, class: "navbar-link" %>
           <%= link_to "Mes Chats", chats_path, class: "navbar-link" %>
           <%= link_to "Mes Cocktails", cocktails_path, class: "navbar-link" %>
         </div>
@@ -160,27 +159,19 @@
         }
 
         const forceScrollMessagesToBottom = () => {
+          const messages = document.getElementById("messages")
+          const bottom = document.getElementById("messages-bottom")
+
+          // PAS une page de chat → on ne fait rien
+          if (!messages || !bottom) return
+
           setTimeout(() => {
-            const bottom = document.getElementById("messages-bottom")
-            const messages = document.getElementById("messages")
-            const main = document.getElementById("main-content")
-
-            if (bottom) {
-              bottom.scrollIntoView({ behavior: "auto", block: "end" })
-            }
-
-            if (messages) {
-              messages.scrollTop = messages.scrollHeight
-            }
-
-            if (main) {
-              main.scrollTop = main.scrollHeight
-            }
-
-            window.scrollTo({
-              top: document.documentElement.scrollHeight,
-              behavior: "auto"
+            bottom.scrollIntoView({
+              behavior: "auto",
+              block: "end"
             })
+
+            messages.scrollTop = messages.scrollHeight
           }, 0)
         }
 
