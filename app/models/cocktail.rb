@@ -1,6 +1,8 @@
 class Cocktail < ApplicationRecord
   belongs_to :user
+
   has_many :chats, dependent: :nullify
+  has_many :messages, dependent: :nullify
 
   validates :name, presence: true
   validates :ingredients, presence: true
