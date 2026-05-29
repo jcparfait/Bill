@@ -1,3 +1,8 @@
 <%= turbo_stream.replace "new_message_container" do %>
   <%= render "messages/form", chat: @chat, message: Message.new %>
 <% end %>
+<% if @cocktail_was_recommended %>
+  <%= turbo_stream.update "glass-animation-container" do %>
+    <div class="sliding-glass"></div>
+  <% end %>
+<% end %>
