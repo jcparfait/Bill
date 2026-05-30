@@ -1,15 +1,12 @@
 <div class="chat-page">
   <%= turbo_stream_from @chat %>
-
   <div class="chat-header">
     <%= link_to "← Mes conversations", chats_path, class: "back-link" %>
-
     <div class="chat-title-block">
       <span class="chat-subtitle">Conversation</span>
       <h1><%= @chat.title %></h1>
     </div>
   </div>
-
   <div class="chat-body">
     <div id="messages" class="messages-container">
       <% if @chat.messages.any? %>
@@ -22,12 +19,17 @@
           </div>
         </div>
       <% end %>
-
       <div id="messages-bottom"></div>
     </div>
-
     <div class="chat-input-container">
       <%= render "messages/form", chat: @chat, message: @message %>
     </div>
+  </div>
+
+  <div id="cocktail-card-container" class="cocktail-card-container">
+    <% cocktail_message = @chat.messages.where(role: "bartender").where.not(cocktail_id: nil).last %>
+    <% if cocktail_message&.cocktail.present? %>
+      <%= render "chats/cocktail_recommendation", cocktail: cocktail_message.cocktail, chat: @chat %>
+    <% end %>
   </div>
 </div>

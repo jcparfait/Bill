@@ -147,7 +147,7 @@ class MessagesController < ApplicationController
 
   def should_recommend_cocktail?
     user_messages_count = @chat.messages.where(role: "user").count
-
+    return false if user_messages_count < 2
     return true if user_explicitly_asks_for_cocktail?
     return true if user_messages_count >= 3
 
@@ -182,30 +182,27 @@ class MessagesController < ApplicationController
     end
   end
 
-  def recommend_cocktail
+  def recommend_cocktail # rubocop:disable Metrics/MethodLength
     cocktail = fetch_cocktail_from_api
-
     if cocktail.present?
       response = RubyLLM.chat
                         .with_instructions(recommendation_instructions(cocktail))
                         .ask(message_with_conversation_history)
-
       @assistant_message.update!(
         content: response.content.to_s.strip,
         cocktail: cocktail
       )
-
       replace_assistant_message
+      broadcast_cocktail_card(cocktail)
     else
       @assistant_message.update!(
         content: "Je voulais te sortir quelque chose de précis, mais le bar vient de perdre sa cave. Même les endroits feutrés ont parfois des problèmes de plomberie."
       )
-
       replace_assistant_message
     end
   end
 
-  def fetch_cocktail_from_api
+  def fetch_cocktail_from_api # rubocop:disable Metrics/MethodLength
     previous_cocktail_id = @chat.cocktail_id
 
     cocktail_candidates.each do |cocktail_name|
@@ -458,6 +455,15 @@ class MessagesController < ApplicationController
       target: helpers.dom_id(@assistant_message),
       partial: "messages/message",
       locals: { message: @assistant_message }
+    )
+  end
+
+  def broadcast_cocktail_card(cocktail)
+    Turbo::StreamsChannel.broadcast_update_to(
+      @chat,
+      target: "cocktail-card-container",
+      partial: "chats/cocktail_recommendation",
+      locals: { cocktail: cocktail, chat: @chat }
     )
   end
 

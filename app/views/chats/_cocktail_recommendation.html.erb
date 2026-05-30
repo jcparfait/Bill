@@ -1,23 +1,52 @@
-<div class="cocktail-card-inline">
+<div class="cocktail-card cocktail-card-slide-in"
+     data-controller="cocktail-card"
+     data-cocktail-card-chat-id-value="<%= chat.id %>">
+
+  <button class="cocktail-card-collapse"
+          data-action="click->cocktail-card#collapse">
+    ›
+  </button>
+
+  <div class="cocktail-card-header">
+    <span class="cocktail-card-label">Recommandation</span>
+    <h2><%= cocktail.name %></h2>
+    <% if cocktail.mood.present? %>
+      <p class="cocktail-card-mood"><%= cocktail.mood.capitalize %></p>
+    <% end %>
+  </div>
+
   <% if cocktail.image_url.present? %>
-    <%= image_tag cocktail.image_url,
-                  class: "cocktail-recommendation-image",
-                  alt: cocktail.name %>
+    <div class="cocktail-card-image">
+      <%= image_tag cocktail.image_url,
+                    alt: cocktail.name,
+                    class: "cocktail-card-img" %>
+    </div>
   <% end %>
 
-  <h2><%= cocktail.name %></h2>
+  <div class="cocktail-card-details">
+    <div class="cocktail-card-section">
+      <h4>Ingrédients</h4>
+      <div class="cocktail-card-text">
+        <%= simple_format(cocktail.ingredients) %>
+      </div>
+    </div>
 
-  <div class="cocktail-section">
-    <strong>Ingrédients</strong>
-    <div class="cocktail-text">
-      <%= simple_format(cocktail.ingredients) %>
+    <div class="cocktail-card-section">
+      <h4>Recette</h4>
+      <div class="cocktail-card-text">
+        <%= simple_format(cocktail.recipe) %>
+      </div>
     </div>
   </div>
 
-  <div class="cocktail-section">
-    <strong>Recette</strong>
-    <div class="cocktail-text">
-      <%= simple_format(cocktail.recipe) %>
-    </div>
+  <div class="cocktail-card-actions">
+    <button class="cocktail-card-accept"
+            data-action="click->cocktail-card#accept">
+      Ajouter à mes cocktails
+    </button>
+    <button class="cocktail-card-btn-decline"
+            data-action="click->cocktail-card#collapse">
+      Non merci
+    </button>
   </div>
 </div>
