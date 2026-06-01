@@ -1,4 +1,9 @@
 <div class="chat-page">
+  <div id="glass-animation-container">
+  <% if @chat.cocktail.present? %>
+    <div class="sliding-glass"></div>
+  <% end %>
+</div>
   <%= turbo_stream_from @chat %>
   <div class="chat-header">
     <%= link_to "← Mes conversations", chats_path, class: "back-link" %>
