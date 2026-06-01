@@ -3,13 +3,8 @@
     <div class="message-role">
       <%= message.role == "user" ? "Vous" : "The Bartender" %>
     </div>
-
     <% if message.content.present? %>
       <p><%= message.content %></p>
-    <% end %>
-
-    <% if message.role == "bartender" && message.cocktail.present? %>
-      <%= render "chats/cocktail_recommendation", cocktail: message.cocktail %>
     <% end %>
   </div>
 </div>

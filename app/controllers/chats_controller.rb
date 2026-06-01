@@ -27,6 +27,13 @@ class ChatsController < ApplicationController
     redirect_to chats_path, notice: "Conversation deleted."
   end
 
+  def remove_cocktail
+    @chat = current_user.chats.find(params[:id])
+    @chat.messages.where(role: "bartender").where.not(cocktail_id: nil).update_all(cocktail_id: nil)
+    @chat.update(cocktail_id: nil)
+    head :ok
+  end
+
   private
 
   def set_chat

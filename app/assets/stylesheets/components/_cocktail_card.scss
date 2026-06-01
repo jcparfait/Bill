@@ -1,0 +1,244 @@
+// Cocktail recommendation card - slide in from right
+
+.cocktail-card-container {
+  position: fixed;
+  top: 0;
+  right: 0;
+  height: 100vh;
+  width: 360px;
+  z-index: 900;
+  pointer-events: none;
+  display: flex;
+  align-items: center;
+  padding: 24px 20px;
+}
+
+.cocktail-card {
+  position: relative;
+  pointer-events: all;
+  width: 100%;
+  max-height: 85vh;
+  overflow-y: auto;
+  background: linear-gradient(165deg, #1d2c1e 0%, #0a0f0a 100%);
+  border-radius: 16px;
+  padding: 32px 24px;
+  color: #e8d6b4;
+  font-family: "Georgia", serif;
+  box-shadow: -8px 0 40px rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(212, 170, 104, 0.2);
+}
+
+.cocktail-card-collapse {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  border: 1px solid rgba(198, 164, 109, 0.4);
+  background: transparent;
+  color: #c6a46d;
+  font-size: 16px;
+  font-family: "Georgia", serif;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+  z-index: 10;
+  line-height: 1;
+  padding-left: 4px;
+  padding-bottom: 2px;
+
+  &:hover {
+    background: rgba(198, 164, 109, 0.15);
+    color: #f4d49b;
+    border-color: rgba(198, 164, 109, 0.6);
+  }
+}
+
+// Slide-in animation
+.cocktail-card-slide-in {
+  animation: slideInFromRight 0.6s ease-out forwards;
+}
+
+@keyframes slideInFromRight {
+  0% {
+    opacity: 0;
+    transform: translateX(100%);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+// Slide out to left (accept)
+.cocktail-card-slide-out-left {
+  animation: slideOutToLeft 0.5s ease-in forwards;
+}
+
+@keyframes slideOutToLeft {
+  0% {
+    opacity: 1;
+    transform: translateX(0);
+  }
+  100% {
+    opacity: 0;
+    transform: translateX(-120%);
+  }
+}
+
+// Slide out to right (decline)
+.cocktail-card-slide-out-right {
+  animation: slideOutToRight 0.5s ease-in forwards;
+}
+
+@keyframes slideOutToRight {
+  0% {
+    opacity: 1;
+    transform: translateX(0);
+  }
+  100% {
+    opacity: 0;
+    transform: translateX(120%);
+  }
+}
+
+// Header
+.cocktail-card-header {
+  text-align: center;
+  margin-bottom: 24px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid rgba(212, 170, 104, 0.25);
+}
+
+.cocktail-card-label {
+  display: block;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 4px;
+  color: #c6a46d;
+  margin-bottom: 12px;
+}
+
+.cocktail-card-header h2 {
+  font-size: 28px;
+  font-weight: 400;
+  letter-spacing: 1px;
+  color: #f3e7d0;
+  margin: 0 0 8px 0;
+}
+
+.cocktail-card-mood {
+  font-size: 14px;
+  font-style: italic;
+  color: #c6a46d;
+  margin: 0;
+}
+
+// Image
+.cocktail-card-image {
+  margin: 0 -24px 24px;
+  overflow: hidden;
+
+  .cocktail-card-img {
+    width: 100%;
+    height: 220px;
+    object-fit: cover;
+    mask-image: linear-gradient(to bottom, black 60%, transparent 100%);
+    -webkit-mask-image: linear-gradient(to bottom, black 60%, transparent 100%);
+  }
+}
+
+// Details
+.cocktail-card-details {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.cocktail-card-section {
+  h4 {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 3px;
+    color: #8b7355;
+    margin-bottom: 8px;
+    font-weight: 600;
+  }
+}
+
+.cocktail-card-text {
+  font-size: 14px;
+  line-height: 1.6;
+  color: #d7c5a6;
+
+  p {
+    margin: 4px 0;
+  }
+}
+
+// Boutons accept/decline
+.cocktail-card-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 24px;
+}
+
+.cocktail-card-accept {
+  display: block;
+  width: 100%;
+  padding: 12px 24px;
+  background: #c6a46d;
+  color: #120d09;
+  border: none;
+  border-radius: 10px;
+  font-family: "Georgia", serif;
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+
+  &:hover {
+    background: #ddb87c;
+    transform: translateY(-1px);
+  }
+}
+
+.cocktail-card-btn-decline {
+  display: block;
+  width: 100%;
+  padding: 10px 24px;
+  background: transparent;
+  color: #8b7355;
+  border: 1px solid rgba(139, 115, 85, 0.4);
+  border-radius: 10px;
+  font-family: "Georgia", serif;
+  font-size: 13px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+
+  &:hover {
+    background: rgba(139, 115, 85, 0.1);
+    color: #c6a46d;
+  }
+}
+
+// Responsive
+@media (max-width: 900px) {
+  .cocktail-card-container {
+    width: 300px;
+    padding: 16px 12px;
+  }
+
+  .cocktail-card {
+    padding: 24px 18px;
+  }
+
+  .cocktail-card-header h2 {
+    font-size: 22px;
+  }
+}
