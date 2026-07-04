@@ -25,42 +25,14 @@
 
   <body class="<%= user_signed_in? ? 'logged-in' : 'logged-out' %>">
     <% if user_signed_in? %>
-      <nav class="bartender-navbar">
-        <%= link_to new_chat_path, class: "navbar-brand" do %>
-          <div class="navbar-mark" aria-hidden="true">B</div>
-
-          <div class="navbar-title">
-            <strong>Bill</strong>
-          </div>
+      <nav class="app-quick-actions" aria-label="Navigation principale">
+        <%= link_to cocktails_path, class: "quick-action-link", title: "Mes cocktails", aria: { label: "Mes cocktails" } do %>
+          <i class="fa-solid fa-martini-glass-citrus"></i>
         <% end %>
 
-        <%= link_to chats_path,
-                    data: { turbo_method: :post },
-                    class: "navbar-new-chat" do %>
-          <i class="fa-solid fa-plus"></i>
-          <span>Nouveau chat</span>
+        <%= link_to profile_path, class: "quick-action-link", title: "Profil", aria: { label: "Profil" } do %>
+          <i class="fa-regular fa-user"></i>
         <% end %>
-
-        <div class="navbar-links">
-          <%= link_to chats_path, class: "navbar-link" do %>
-            <i class="fa-regular fa-comments"></i>
-            <span>Mes conversations</span>
-          <% end %>
-
-          <%= link_to cocktails_path, class: "navbar-link" do %>
-            <i class="fa-solid fa-martini-glass-citrus"></i>
-            <span>Mes cocktails</span>
-          <% end %>
-        </div>
-
-        <div class="navbar-actions">
-          <%= link_to destroy_user_session_path,
-                      data: { turbo_method: :delete },
-                      class: "navbar-logout" do %>
-            <i class="fa-solid fa-arrow-right-from-bracket"></i>
-            <span>Se déconnecter</span>
-          <% end %>
-        </div>
       </nav>
 
       <div class="app-layout">
@@ -69,46 +41,6 @@
           <%= yield %>
         </main>
       </div>
-
-      <nav class="mobile-bottom-nav">
-        <%= link_to new_chat_path,
-                    class: "mobile-nav-link #{'active' if controller_name == 'chats' && ['new', 'show'].include?(action_name)}" do %>
-          <i class="fa-solid fa-plus mobile-nav-icon"></i>
-          <span class="mobile-nav-label">Nouveau</span>
-        <% end %>
-
-        <details class="mobile-nav-menu">
-          <summary class="mobile-nav-link mobile-nav-menu-button">
-            <i class="fa-regular fa-circle-dot mobile-nav-icon"></i>
-            <span class="mobile-nav-label">Menu</span>
-          </summary>
-
-          <div class="mobile-nav-panel">
-            <%= link_to chats_path, class: "mobile-nav-panel-link" do %>
-              <i class="fa-regular fa-comments"></i>
-              <span>Mes conversations</span>
-            <% end %>
-
-            <button type="button" class="mobile-nav-panel-link mobile-sound-toggle">
-              <i class="fa-solid fa-volume-low"></i>
-              <span>Son</span>
-            </button>
-
-            <%= link_to destroy_user_session_path,
-                        data: { turbo_method: :delete },
-                        class: "mobile-nav-panel-link mobile-nav-danger" do %>
-              <i class="fa-solid fa-arrow-right-from-bracket"></i>
-              <span>Déconnexion</span>
-            <% end %>
-          </div>
-        </details>
-
-        <%= link_to cocktails_path,
-                    class: "mobile-nav-link #{'active' if controller_name == 'cocktails'}" do %>
-          <i class="fa-solid fa-martini-glass-citrus mobile-nav-icon"></i>
-          <span class="mobile-nav-label">Cocktails</span>
-        <% end %>
-      </nav>
 
       <audio id="bg-music" loop preload="metadata" data-turbo-permanent>
         <source src="<%= asset_path('music.mp3') %>" type="audio/wav">
@@ -128,7 +60,6 @@
       document.addEventListener("turbo:load", () => {
         const audio = document.getElementById("bg-music")
         const button = document.getElementById("music-toggle")
-        const mobileSoundButton = document.querySelector(".mobile-sound-toggle")
 
         const syncMusicState = () => {
           if (!audio || !button) return
@@ -139,10 +70,6 @@
           audio.muted = isMuted
           button.classList.toggle("muted", isMuted)
           button.innerText = isMuted ? "♫̸" : "♫"
-
-          if (mobileSoundButton) {
-            mobileSoundButton.classList.toggle("muted", isMuted)
-          }
         }
 
         if (audio && button) {
@@ -152,7 +79,7 @@
 
           audio.play().catch(() => {})
 
-          const toggleMusic = () => {
+          button.onclick = () => {
             const newMutedState = !audio.muted
 
             localStorage.setItem(
@@ -164,12 +91,6 @@
             syncMusicState()
 
             audio.play().catch(() => {})
-          }
-
-          button.onclick = toggleMusic
-
-          if (mobileSoundButton) {
-            mobileSoundButton.onclick = toggleMusic
           }
         }
 
