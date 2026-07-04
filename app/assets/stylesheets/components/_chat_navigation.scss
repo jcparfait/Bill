@@ -1,0 +1,92 @@
+.minimal-chat-hero .hero-overlay {
+  align-items: flex-end;
+  justify-content: center;
+  padding: 0 24px 9vh;
+}
+
+.minimal-hero-content {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+}
+
+.hero-main-action {
+  min-width: 240px;
+  min-height: 64px;
+  padding: 0 32px;
+
+  border-radius: 999px;
+  box-shadow: 0 14px 40px rgba(0, 0, 0, 0.34);
+
+  font-size: 20px;
+  letter-spacing: 0.2px;
+}
+
+.chat-header-actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 22px;
+}
+
+.chat-new-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+
+  min-height: 44px;
+  padding: 0 18px;
+
+  border: 1px solid rgba(212, 170, 104, 0.24);
+  border-radius: 999px;
+
+  background: rgba(12, 17, 12, 0.68);
+  color: #f3e7d0;
+
+  text-decoration: none;
+  font-weight: 800;
+
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+
+  transition:
+    background 0.2s ease,
+    border-color 0.2s ease,
+    color 0.2s ease,
+    transform 0.2s ease;
+}
+
+.chat-new-link:hover {
+  transform: translateY(-1px);
+  border-color: rgba(212, 170, 104, 0.52);
+  background: #c6a46d;
+  color: #120d09;
+}
+
+.chat-new-link i {
+  font-size: 13px;
+}
+
+@media (max-width: 992px) {
+  .minimal-chat-hero .hero-overlay {
+    padding: 0 18px 11vh;
+  }
+
+  .hero-main-action {
+    width: 100%;
+    max-width: 320px;
+    min-height: 58px;
+    font-size: 18px;
+  }
+
+  .chat-header-actions {
+    justify-content: flex-start;
+    padding-right: 104px;
+  }
+
+  .chat-new-link {
+    min-height: 40px;
+    padding: 0 14px;
+    font-size: 14px;
+  }
+}
