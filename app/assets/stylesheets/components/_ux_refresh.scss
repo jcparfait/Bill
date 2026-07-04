@@ -1,0 +1,256 @@
+/* First UX pass: clearer onboarding and guided chat */
+
+.hero-content-panel {
+  width: min(680px, calc(100vw - 64px));
+  padding: 42px;
+  border: 1px solid rgba(212, 170, 104, 0.28);
+  border-radius: 28px;
+  background:
+    linear-gradient(180deg, rgba(18, 31, 22, 0.86), rgba(7, 7, 6, 0.78));
+  box-shadow: 0 28px 90px rgba(0, 0, 0, 0.42);
+  backdrop-filter: blur(14px);
+}
+
+.hero-content-panel h1 {
+  margin-bottom: 18px;
+}
+
+.hero-content-panel p {
+  max-width: 620px;
+}
+
+.hero-steps {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  margin: 28px 0 30px;
+}
+
+.hero-step {
+  min-height: 132px;
+  padding: 16px;
+  border: 1px solid rgba(212, 170, 104, 0.18);
+  border-radius: 18px;
+  background: rgba(255, 244, 220, 0.06);
+}
+
+.hero-step span {
+  width: 28px;
+  height: 28px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 12px;
+  border-radius: 50%;
+  background: #c6a46d;
+  color: #120d09;
+  font-weight: 800;
+}
+
+.hero-step strong,
+.hero-step small {
+  display: block;
+}
+
+.hero-step strong {
+  color: #f8ead1;
+  font-size: 15px;
+  margin-bottom: 5px;
+}
+
+.hero-step small {
+  color: rgba(243, 231, 208, 0.72);
+  line-height: 1.35;
+}
+
+.hero-actions {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  flex-wrap: wrap;
+}
+
+.hero-secondary-link {
+  color: #e1c18a;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.hero-secondary-link:hover {
+  color: #ffe1a8;
+}
+
+.chat-title-block {
+  max-width: 760px;
+}
+
+.chat-intro {
+  max-width: 680px;
+  margin: 14px 0 0;
+  color: rgba(243, 231, 208, 0.78);
+  font-size: 17px;
+  line-height: 1.55;
+}
+
+.chat-guide-panel {
+  max-width: 720px;
+  margin-top: 22px;
+  padding: 16px 18px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+  border: 1px solid rgba(212, 170, 104, 0.22);
+  border-radius: 18px;
+  background: rgba(16, 27, 20, 0.72);
+  backdrop-filter: blur(10px);
+}
+
+.chat-guide-panel span {
+  display: block;
+  color: #c6a46d;
+  font-size: 11px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+}
+
+.chat-guide-panel strong {
+  display: block;
+  margin-top: 4px;
+  color: #f7ead3;
+}
+
+.chat-guide-panel p {
+  max-width: 360px;
+  margin: 0;
+  color: rgba(243, 231, 208, 0.72);
+  font-size: 14px;
+  line-height: 1.45;
+}
+
+.welcome-bubble {
+  max-width: 560px;
+}
+
+.quick-prompts {
+  width: min(760px, 100%);
+  margin: 8px 0 24px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.quick-prompts form {
+  margin: 0;
+}
+
+.quick-prompt {
+  min-height: 42px;
+  padding: 0 16px;
+  border: 1px solid rgba(212, 170, 104, 0.26);
+  border-radius: 999px;
+  background: rgba(15, 28, 20, 0.74);
+  color: #f4dfb8;
+  font-weight: 700;
+  cursor: pointer;
+  transition: transform 0.2s ease, background 0.2s ease, border-color 0.2s ease;
+}
+
+.quick-prompt:hover {
+  transform: translateY(-1px);
+  border-color: rgba(212, 170, 104, 0.54);
+  background: rgba(34, 55, 39, 0.9);
+}
+
+.chat-input {
+  min-height: 72px !important;
+  resize: vertical;
+}
+
+.chat-submit-btn {
+  min-width: 150px;
+}
+
+.navbar-brand::after {
+  content: "Cocktails par conversation";
+  display: block;
+  margin-top: 12px;
+  color: rgba(232, 214, 180, 0.62);
+  font-size: 11px;
+  letter-spacing: 0.08em;
+}
+
+.navbar-links::before {
+  content: "Parcours";
+  display: block;
+  margin: 0 12px 2px;
+  color: rgba(198, 164, 109, 0.78);
+  font-size: 11px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+}
+
+@media (max-width: 992px) {
+  .hero-content-panel {
+    width: auto;
+    margin: 16px;
+    padding: 24px;
+    border-radius: 24px;
+  }
+
+  .hero-steps {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+
+  .hero-step {
+    min-height: auto;
+    padding: 14px;
+  }
+
+  .hero-actions {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .hero-actions form,
+  .hero-actions .hero-btn,
+  .hero-secondary-link {
+    width: 100%;
+    text-align: center;
+  }
+
+  .chat-intro {
+    font-size: 14px;
+  }
+
+  .chat-guide-panel {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 8px;
+    padding: 14px;
+  }
+
+  .chat-guide-panel p {
+    max-width: none;
+    font-size: 13px;
+  }
+
+  .quick-prompts {
+    gap: 8px;
+  }
+
+  .quick-prompts form,
+  .quick-prompt {
+    width: 100%;
+  }
+
+  .assistant-bubble.welcome-bubble {
+    width: 82vw;
+    max-width: 320px;
+  }
+
+  .chat-submit-btn {
+    min-width: 0;
+  }
+}
