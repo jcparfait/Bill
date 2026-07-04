@@ -46,8 +46,8 @@
         <source src="<%= asset_path('music.mp3') %>" type="audio/wav">
       </audio>
 
-      <button id="music-toggle" class="music-btn" data-turbo-permanent>
-        ♫
+      <button id="music-toggle" class="music-btn" data-turbo-permanent aria-label="Activer ou couper la musique">
+        <i class="fa-solid fa-volume-high"></i>
       </button>
     <% else %>
       <main id="main-content" class="app-content">
@@ -69,7 +69,9 @@
           audio.volume = 0.25
           audio.muted = isMuted
           button.classList.toggle("muted", isMuted)
-          button.innerText = isMuted ? "♫̸" : "♫"
+          button.innerHTML = isMuted
+            ? '<i class="fa-solid fa-volume-xmark"></i>'
+            : '<i class="fa-solid fa-volume-high"></i>'
         }
 
         if (audio && button) {
