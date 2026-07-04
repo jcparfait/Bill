@@ -23,7 +23,7 @@
           <span>Se déconnecter</span>
         <% end %>
 
-        <%= link_to registration_path(current_user),
+        <%= link_to user_registration_path,
                     data: {
                       turbo_method: :delete,
                       turbo_confirm: "Supprimer définitivement ton compte Bill ?"
