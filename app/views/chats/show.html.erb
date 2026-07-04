@@ -1,31 +1,74 @@
 <div class="chat-page">
   <div id="glass-animation-container">
-  <% if @chat.cocktail.present? %>
-    <div class="sliding-glass"></div>
-  <% end %>
-</div>
+    <% if @chat.cocktail.present? %>
+      <div class="sliding-glass"></div>
+    <% end %>
+  </div>
+
   <%= turbo_stream_from @chat %>
+
   <div class="chat-header">
     <%= link_to "← Mes conversations", chats_path, class: "back-link" %>
+
     <div class="chat-title-block">
       <span class="chat-subtitle">Conversation</span>
-      <h1><%= @chat.title %></h1>
+      <h1><%= @chat.title == Chat::DEFAULT_TITLE ? "Nouvelle conversation" : @chat.title %></h1>
+      <p class="chat-intro">
+        Dis à Bill comment tu te sens, ce que tu aimes, et ce que tu refuses dans ton verre. Il se charge du reste, avec une élégance discutable mais utile.
+      </p>
+    </div>
+
+    <div class="chat-guide-panel">
+      <div>
+        <span>À lui donner</span>
+        <strong>Humeur · Goût · Contraintes</strong>
+      </div>
+      <p>Exemple : “Je veux me détendre, plutôt réconfortant, sans gin ni menthe.”</p>
     </div>
   </div>
+
   <div class="chat-body">
     <div id="messages" class="messages-container">
       <% if @chat.messages.any? %>
         <%= render "messages/messages", messages: @chat.messages.order(:created_at, :id) %>
       <% else %>
         <div class="message-row assistant-row">
-          <div class="message-bubble assistant-bubble">
+          <div class="message-bubble assistant-bubble welcome-bubble">
             <div class="message-role">Bill</div>
-            <p>Bonjour, qu'est-ce que je peux faire pour vous ?</p>
+            <p>Installe-toi. Donne-moi ton humeur, une direction de goût, ou un ingrédient à éviter. On fera semblant que c'était simple depuis le début.</p>
           </div>
         </div>
+
+        <div class="quick-prompts" aria-label="Suggestions pour commencer">
+          <%= button_to "Je veux me détendre",
+                        chat_messages_path(@chat),
+                        method: :post,
+                        params: { message: { content: "Je veux me détendre, propose-moi quelque chose de réconfortant." } },
+                        class: "quick-prompt" %>
+
+          <%= button_to "Quelque chose de frais",
+                        chat_messages_path(@chat),
+                        method: :post,
+                        params: { message: { content: "Je cherche quelque chose de frais, avec alcool, mais pas trop fort." } },
+                        class: "quick-prompt" %>
+
+          <%= button_to "Sans alcool",
+                        chat_messages_path(@chat),
+                        method: :post,
+                        params: { message: { content: "Je veux un cocktail sans alcool, plutôt fruité." } },
+                        class: "quick-prompt" %>
+
+          <%= button_to "Surprends-moi",
+                        chat_messages_path(@chat),
+                        method: :post,
+                        params: { message: { content: "Surprends-moi, mais évite les cocktails trop sucrés." } },
+                        class: "quick-prompt" %>
+        </div>
       <% end %>
+
       <div id="messages-bottom"></div>
     </div>
+
     <div class="chat-input-container">
       <%= render "messages/form", chat: @chat, message: @message %>
     </div>
