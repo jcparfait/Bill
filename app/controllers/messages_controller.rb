@@ -46,15 +46,15 @@ class MessagesController < ApplicationController
 
   ALLOWED_TAGS = %w[
     fresh dry sweet bitter fruity strong light comfort sparkling creamy tropical mocktail soft sour simple
-    aromatic elegant aperitif slow citrus lively honey floral spicy easy balanced
+    aromatic elegant aperitif slow citrus lively honey floral spicy easy balanced coffee warm rich
   ].freeze
 
   INGREDIENT_ALIASES = {
-    "gin" => ["gin"],
+    "gin" => ["gin", "gyn"],
     "vodka" => ["vodka"],
     "rum" => ["rum", "rhum"],
     "tequila" => ["tequila"],
-    "whiskey" => ["whiskey", "whisky"],
+    "whiskey" => ["whiskey", "whisky", "scotch"],
     "bourbon" => ["bourbon"],
     "brandy" => ["brandy", "cognac"],
     "campari" => ["campari"],
@@ -88,6 +88,9 @@ class MessagesController < ApplicationController
     { name: "Caipirinha", tags: %w[fresh lively simple], ingredients: %w[lime] },
     { name: "Bee's Knees", tags: %w[soft fresh honey], ingredients: %w[gin lemon] },
     { name: "Whiskey Sour", tags: %w[comfort sour balanced], ingredients: %w[whiskey lemon] },
+    { name: "Old Fashioned", tags: %w[comfort strong slow], ingredients: %w[whiskey] },
+    { name: "Manhattan", tags: %w[comfort strong slow], ingredients: %w[whiskey vermouth] },
+    { name: "Godfather", tags: %w[comfort strong slow], ingredients: %w[whiskey] },
     { name: "Pisco Sour", tags: %w[soft sour elegant], ingredients: %w[lemon] },
     { name: "Clover Club", tags: %w[soft fruity elegant], ingredients: %w[gin lemon] },
     { name: "Aviation", tags: %w[floral dry elegant], ingredients: %w[gin lemon] },
@@ -96,7 +99,11 @@ class MessagesController < ApplicationController
     { name: "Planter's Punch", tags: %w[tropical fruity comfort], ingredients: %w[rum] },
     { name: "Sazerac", tags: %w[strong dry slow], ingredients: %w[whiskey] },
     { name: "Rusty Nail", tags: %w[strong slow comfort], ingredients: %w[whiskey] },
-    { name: "White Russian", tags: %w[sweet creamy comfort], ingredients: %w[vodka coffee cream] },
+    { name: "White Russian", tags: %w[sweet creamy comfort coffee], ingredients: %w[vodka coffee cream] },
+    { name: "Black Russian", tags: %w[strong slow coffee], ingredients: %w[vodka coffee] },
+    { name: "Espresso Martini", tags: %w[strong coffee rich], ingredients: %w[vodka coffee] },
+    { name: "Irish Coffee", tags: %w[comfort coffee creamy], ingredients: %w[whiskey coffee cream] },
+    { name: "Brandy Alexander", tags: %w[sweet creamy comfort], ingredients: %w[brandy cream] },
     { name: "Grasshopper", tags: %w[sweet creamy soft], ingredients: %w[cream mint] },
     { name: "Afterglow", tags: %w[soft fruity mocktail], ingredients: %w[orange pineapple] },
     { name: "Fruit Cooler", tags: %w[soft fresh mocktail], ingredients: %w[orange lemon] },
@@ -168,6 +175,9 @@ class MessagesController < ApplicationController
       Latest user message:
       #{latest_user_message}
 
+      Resolved ingredient constraints from the conversation:
+      #{ingredient_constraints_summary}
+
       User messages count in this chat: #{user_messages_count}
       Already proposed cocktails: #{proposed_names_in_chat.join(", ").presence || "none"}
 
@@ -203,7 +213,14 @@ class MessagesController < ApplicationController
   end
 
   def normalize_ingredients(value)
-    Array(value).map { |ingredient| normalize_text(ingredient) }.select { |ingredient| INGREDIENT_ALIASES.key?(ingredient) }.uniq
+    Array(value).map { |ingredient| canonical_ingredient(ingredient) }.compact.uniq
+  end
+
+  def canonical_ingredient(value)
+    normalized = normalize_text(value)
+    return normalized if INGREDIENT_ALIASES.key?(normalized)
+
+    INGREDIENT_ALIASES.find { |_ingredient, aliases| aliases.map { |name| normalize_text(name) }.include?(normalized) }&.first
   end
 
   def continue_conversation(decision)
@@ -250,13 +267,14 @@ class MessagesController < ApplicationController
     cocktail = fetch_cocktail_from_api(decision)
 
     if cocktail.present?
+      @chat.update!(cocktail: cocktail)
       @assistant_message.update!(content: recommendation_text(cocktail, decision), cocktail: cocktail)
       replace_assistant_message
       broadcast_cocktail_card(cocktail)
       broadcast_glass_animation
     else
       @assistant_message.update!(
-        content: "Je n'ai pas trouvé de cocktail fiable avec ces contraintes. Même les bars feutrés ont leurs limites, généralement rangées derrière les bouteilles vides."
+        content: "Je n'ai pas trouvé de cocktail fiable avec ces contraintes. Donne-moi une contrainte à assouplir, et je reprends le shaker sans faire semblant que c'était le plan depuis le début."
       )
       replace_assistant_message
     end
@@ -265,16 +283,21 @@ class MessagesController < ApplicationController
   def fetch_cocktail_from_api(decision = {})
     mood = decision[:mood].presence || cocktail_mood
     tool = RecommendCocktailTool.new(user: current_user, chat: @chat)
+    constraints = ingredient_constraints(decision)
 
     cocktail_candidates(decision).each do |candidate|
       result = tool.execute(cocktail_name: candidate[:name], mood: mood)
       Rails.logger.info "Bill cocktail result: #{result.inspect}"
-      @chat.reload
 
-      next if @chat.cocktail.blank?
-      next if proposed_names_in_chat.include?(@chat.cocktail.name.downcase)
+      next if result[:error].present?
 
-      return @chat.cocktail
+      cocktail = current_user.cocktails.find_by(id: result[:cocktail_id])
+
+      next if cocktail.blank?
+      next if proposed_names_in_chat.include?(cocktail.name.downcase)
+      next unless cocktail_matches_constraints?(cocktail, constraints)
+
+      return cocktail
     end
 
     nil
@@ -299,7 +322,20 @@ class MessagesController < ApplicationController
         candidate[:tags].include?("mocktail") ? 0 : 1,
         candidate[:name]
       ]
-    end.first(8)
+    end.first(10)
+  end
+
+  def cocktail_matches_constraints?(cocktail, constraints)
+    ingredients_text = normalize_text("#{cocktail.name} #{cocktail.ingredients}")
+
+    constraints[:included].all? { |ingredient| ingredient_present?(ingredients_text, ingredient) } &&
+      constraints[:excluded].none? { |ingredient| ingredient_present?(ingredients_text, ingredient) }
+  end
+
+  def ingredient_present?(text, ingredient)
+    INGREDIENT_ALIASES.fetch(ingredient, [ingredient]).any? do |name|
+      text.include?(normalize_text(name))
+    end
   end
 
   def cocktail_mood
@@ -336,23 +372,80 @@ class MessagesController < ApplicationController
   end
 
   def ingredient_constraints(decision = {})
-    included = Array(decision[:include])
-    excluded = Array(decision[:exclude])
+    ingredient_states = {}
 
-    INGREDIENT_ALIASES.each do |ingredient, aliases|
-      aliases.each do |name|
-        excluded << ingredient if normalized_text.match?(/(sans|pas de|sans aucun|no|without)[^.!?,;]*(#{Regexp.escape(name)})/)
-        included << ingredient if normalized_text.match?(/(avec|au|a la|a l|with|du|de la)[^.!?,;]*(#{Regexp.escape(name)})/)
-      end
+    Array(decision[:exclude]).each { |ingredient| ingredient_states[ingredient] = :excluded }
+    Array(decision[:include]).each { |ingredient| ingredient_states[ingredient] = :included }
+
+    user_ingredient_states.each do |ingredient, state|
+      ingredient_states[ingredient] = state
     end
+
+    included = ingredient_states.select { |_ingredient, state| state == :included }.keys
+    excluded = ingredient_states.select { |_ingredient, state| state == :excluded }.keys
 
     excluded.concat(LIQUOR_INGREDIENTS) if wants_no_alcohol?(decision)
 
     { included: included.uniq - excluded, excluded: excluded.uniq }
   end
 
+  def user_ingredient_states
+    states = {}
+
+    user_messages_in_order.each do |content|
+      ingredient_mentions(content).each do |ingredient, state|
+        states[ingredient] = state
+      end
+    end
+
+    states
+  end
+
+  def ingredient_mentions(content)
+    text = normalize_text(content)
+    mentions = {}
+
+    INGREDIENT_ALIASES.each do |ingredient, aliases|
+      aliases.each do |name|
+        normalized_name = Regexp.escape(normalize_text(name))
+
+        if text.match?(/(sans|pas de|sans aucun|no|without)[^.!?,;]*(#{normalized_name})/)
+          mentions[ingredient] = :excluded
+        elsif text.match?(/(avec|au|a la|a l|with|du|de la)[^.!?,;]*(#{normalized_name})/)
+          mentions[ingredient] = :included
+        end
+      end
+    end
+
+    mentions
+  end
+
   def wants_no_alcohol?(decision = {})
-    decision[:no_alcohol] == true || normalized_text.match?(/sans alcool|non alcool|mocktail|virgin|soft|pas d alcool|pas de alcool/)
+    preference = alcohol_preference
+    return true if preference == :without
+    return false if preference == :with
+
+    decision[:no_alcohol] == true
+  end
+
+  def alcohol_preference
+    @alcohol_preference ||= begin
+      preference = nil
+
+      user_messages_in_order.each do |content|
+        text = normalize_text(content)
+        preference = :without if text.match?(/sans alcool|non alcool|mocktail|virgin|soft|pas d alcool|pas de alcool/)
+        preference = :with if text.match?(/avec alcool|alcoolise|alcoolisee|avec de l alcool/)
+      end
+
+      preference
+    end
+  end
+
+  def ingredient_constraints_summary
+    constraints = ingredient_constraints({})
+
+    "included: #{constraints[:included].join(", ").presence || "none"}; excluded: #{constraints[:excluded].join(", ").presence || "none"}; no_alcohol: #{wants_no_alcohol?}"
   end
 
   def proposed_names_in_chat
@@ -427,6 +520,10 @@ class MessagesController < ApplicationController
          .join("\n")
   end
 
+  def user_messages_in_order
+    @user_messages_in_order ||= @chat.messages.where(role: "user").order(:created_at, :id).pluck(:content)
+  end
+
   def latest_user_message
     @message.content.to_s.strip
   end
@@ -440,9 +537,7 @@ class MessagesController < ApplicationController
   end
 
   def normalized_text
-    @normalized_text ||= normalize_text(
-      @chat.messages.where(role: "user").order(:created_at, :id).pluck(:content).join(" ")
-    )
+    @normalized_text ||= normalize_text(user_messages_in_order.join(" "))
   end
 
   def normalize_text(value)
