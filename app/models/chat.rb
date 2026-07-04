@@ -3,11 +3,10 @@ class Chat < ApplicationRecord
   belongs_to :cocktail, optional: true
   has_many :messages, -> { order(:created_at, :id) }, dependent: :destroy
 
-  DEFAULT_TITLE = "Nouvelle conversation"
-  LEGACY_DEFAULT_TITLE = "Untitled"
+  DEFAULT_TITLE = "Untitled"
 
   def generate_title_from_first_exchange
-    return unless [DEFAULT_TITLE, LEGACY_DEFAULT_TITLE].include?(title)
+    return unless title == DEFAULT_TITLE
 
     first_user_message = messages.where(role: "user").order(:created_at).first
     return if first_user_message.nil?
