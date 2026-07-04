@@ -334,7 +334,8 @@ class MessagesController < ApplicationController
 
   def ingredient_present?(text, ingredient)
     INGREDIENT_ALIASES.fetch(ingredient, [ingredient]).any? do |name|
-      text.include?(normalize_text(name))
+      normalized_name = Regexp.escape(normalize_text(name))
+      text.match?(/(^|[^a-z])#{normalized_name}([^a-z]|$)/)
     end
   end
 
