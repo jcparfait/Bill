@@ -2,201 +2,75 @@ html,
 body {
   margin: 0;
   padding: 0;
-  background: #f5e7d8;
+  background: #050403;
 }
 
 .app-layout {
   min-height: 100vh;
-  background: #f5e7d8;
+  background: #050403;
 }
 
 .app-content {
   min-height: 100vh;
-  margin-left: 260px;
+  margin-left: 0;
   padding: 0;
 }
 
 /* =========================
-   DESKTOP SIDEBAR
+   GLOBAL QUICK ACTIONS
    ========================= */
 
-.bartender-navbar {
+.app-quick-actions {
   position: fixed;
-  top: 0;
-  left: 0;
-  z-index: 1000;
+  top: 24px;
+  right: 24px;
+  z-index: 9999;
 
-  width: 260px;
-  height: 100vh;
-  padding: 32px 24px;
-
-  background:
-    linear-gradient(rgba(29, 44, 30, 1), rgba(5, 4, 3, 1)),
-    url("bar-background.jpg");
-
-  background-size: cover;
-  background-position: center;
-
-  border-right: 1px solid rgba(212, 170, 104, 0.25);
-
-  color: #e8d6b4;
-  font-family: "Georgia", serif;
+  display: flex;
+  gap: 12px;
 }
 
-.navbar-brand {
-  display: block;
-  margin-bottom: 28px;
-
-  color: #d8b477;
-  text-align: center;
-  text-decoration: none;
-}
-
-.navbar-mark {
-  width: 54px;
-  height: 54px;
-  margin: 0 auto 14px;
+.quick-action-link {
+  width: 46px;
+  height: 46px;
 
   display: flex;
   align-items: center;
   justify-content: center;
 
-  border: 1px solid rgba(216, 180, 119, 0.46);
-  border-radius: 18px;
+  border: 1px solid rgba(212, 170, 104, 0.28);
+  border-radius: 50%;
 
-  background:
-    radial-gradient(circle at 35% 20%, rgba(244, 212, 155, 0.25), rgba(24, 37, 26, 0.72));
-  color: #f4d49b;
+  background: rgba(11, 14, 10, 0.72);
+  color: #e8d6b4;
 
-  font-size: 24px;
-  font-weight: 400;
-  letter-spacing: 2px;
+  text-decoration: none;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
 
-  box-shadow: 0 14px 34px rgba(0, 0, 0, 0.22);
-}
-
-.navbar-icon {
-  margin-bottom: 12px;
-  font-size: 28px;
-}
-
-.navbar-title {
-  margin-bottom: 0;
-}
-
-.navbar-title span {
-  display: block;
-
-  font-size: 12px;
-  letter-spacing: 4px;
-  text-transform: uppercase;
-}
-
-.navbar-title strong {
-  display: block;
-
-  font-size: 24px;
-  font-weight: 400;
-  letter-spacing: 5px;
-  text-transform: uppercase;
-}
-
-.navbar-new-chat {
-  width: 100%;
-  min-height: 46px;
-  margin: 0 0 34px;
-  padding: 0 16px;
-
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 10px;
-
-  border: 0;
-  border-radius: 14px;
-
-  background: #c6a46d;
-  color: #120d09;
-
-  font-family: "Georgia", serif;
-  font-size: 14px;
-  font-weight: 800;
-  letter-spacing: 0.02em;
-
-  cursor: pointer;
-  box-shadow: 0 12px 26px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 12px 34px rgba(0, 0, 0, 0.24);
 
   transition:
     background 0.2s ease,
-    transform 0.2s ease,
-    box-shadow 0.2s ease;
+    border-color 0.2s ease,
+    color 0.2s ease,
+    transform 0.2s ease;
 }
 
-.navbar-new-chat:hover {
-  background: #ddb87c;
+.quick-action-link:hover {
   transform: translateY(-1px);
-  box-shadow: 0 16px 34px rgba(0, 0, 0, 0.24);
-}
-
-.navbar-links {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
-
-.navbar-link,
-.navbar-logout {
-  padding: 12px 12px;
-
-  display: flex;
-  align-items: center;
-  gap: 12px;
-
-  border-radius: 12px;
-
-  color: #e8d6b4;
-  font-size: 15px;
-  letter-spacing: 0.4px;
-  text-decoration: none;
-
-  transition: 0.2s ease;
-}
-
-.navbar-link i,
-.navbar-logout i {
-  width: 18px;
-  color: rgba(216, 180, 119, 0.92);
-  font-size: 15px;
-  text-align: center;
-}
-
-.navbar-link:hover,
-.navbar-logout:hover {
-  background: rgba(212, 170, 104, 0.12);
+  border-color: rgba(212, 170, 104, 0.56);
+  background: rgba(29, 44, 30, 0.9);
   color: #f4d49b;
 }
 
-.navbar-actions {
-  position: absolute;
-  right: 24px;
-  bottom: 32px;
-  left: 24px;
-
-  padding-top: 24px;
-
-  border-top: 1px solid rgba(212, 170, 104, 0.2);
+.quick-action-link i {
+  font-size: 17px;
+  line-height: 1;
 }
 
 /* =========================
-   MOBILE BOTTOM NAV
-   ========================= */
-
-.mobile-bottom-nav {
-  display: none;
-}
-
-/* =========================
-   MUSIC BUTTON DESKTOP
+   MUSIC BUTTON
    ========================= */
 
 .music-btn {
@@ -223,27 +97,18 @@ body {
 .music-btn:hover {
   transform: scale(1.05);
   background: rgba(40, 40, 40, 0.9);
+  color: rgb(255, 239, 207);
 }
 
 .music-btn.muted {
   opacity: 0.55;
 }
 
-/* =========================
-   MOBILE
-   ========================= */
-
 @media (max-width: 992px) {
   html,
   body {
     width: 100%;
     overflow-x: hidden;
-  }
-
-  .bartender-navbar,
-  .burger-button,
-  .sidebar-overlay {
-    display: none !important;
   }
 
   .app-layout {
@@ -257,193 +122,22 @@ body {
     width: 100% !important;
     min-height: 100vh;
     margin-left: 0 !important;
-    padding-bottom: calc(64px + env(safe-area-inset-bottom));
+    padding-bottom: env(safe-area-inset-bottom);
     overflow-x: hidden;
   }
 
-  .mobile-bottom-nav {
-    position: fixed;
-    right: 0;
-    bottom: 0;
-    left: 0;
-    z-index: 99999;
-
-    box-sizing: border-box;
-    height: calc(58px + env(safe-area-inset-bottom));
-    padding: 4px 12px calc(4px + env(safe-area-inset-bottom));
-
-    display: grid !important;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 4px;
-
-    border-top: 1px solid rgba(212, 170, 104, 0.22);
-    border-radius: 0;
-
-    background:
-      linear-gradient(
-        180deg,
-        rgba(20, 32, 23, 0.98),
-        rgba(5, 5, 4, 0.98)
-      );
-
-    box-shadow:
-      0 -8px 24px rgba(0, 0, 0, 0.28),
-      inset 0 1px 0 rgba(255, 255, 255, 0.04);
-
-    backdrop-filter: blur(16px);
-    -webkit-backdrop-filter: blur(16px);
+  .app-quick-actions {
+    top: 14px;
+    right: 14px;
+    gap: 10px;
   }
 
-  .mobile-nav-link,
-  .mobile-nav-menu-button {
-    width: 100%;
-    height: 46px;
-
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-
-    gap: 3px;
-
-    border: 0;
-    border-radius: 12px;
-
-    background: transparent;
-    color: rgba(232, 214, 180, 0.72);
-
-    font-family: "Georgia", serif;
-    font-size: 10px;
-    font-weight: 700;
-    letter-spacing: 0.03em;
-    line-height: 1;
-    text-decoration: none;
-
-    cursor: pointer;
-
-    transition:
-      background 0.2s ease,
-      color 0.2s ease,
-      transform 0.2s ease;
-  }
-
-  .mobile-nav-link.active {
-    background: rgba(212, 170, 104, 0.16);
-    color: #f4d49b;
-  }
-
-  .mobile-nav-link:active,
-  .mobile-nav-menu-button:active {
-    transform: scale(0.96);
-  }
-
-  .mobile-nav-icon {
-    display: block;
-    font-size: 16px;
-    line-height: 1;
-  }
-
-  .mobile-nav-label {
-    display: block;
-    font-size: 10px;
-    font-weight: 700;
-    letter-spacing: 0.03em;
-    line-height: 1;
-  }
-
-  .mobile-nav-menu {
-    position: relative;
-  }
-
-  .mobile-nav-menu summary {
-    list-style: none;
-  }
-
-  .mobile-nav-menu summary::-webkit-details-marker {
-    display: none;
-  }
-
-  .mobile-nav-menu[open] .mobile-nav-menu-button {
-    background: rgba(212, 170, 104, 0.16);
-    color: #f4d49b;
-  }
-
-  .mobile-nav-panel {
-    position: absolute;
-    left: 50%;
-    bottom: calc(64px + env(safe-area-inset-bottom));
-    transform: translateX(-50%);
-
-    width: 220px;
-    padding: 10px;
-
-    border: 1px solid rgba(212, 170, 104, 0.22);
-    border-radius: 22px;
-
-    background:
-      linear-gradient(
-        180deg,
-        rgba(25, 38, 28, 0.98),
-        rgba(8, 7, 6, 0.98)
-      );
-
-    box-shadow: 0 18px 60px rgba(0, 0, 0, 0.45);
-
-    backdrop-filter: blur(16px);
-    -webkit-backdrop-filter: blur(16px);
-  }
-
-  .mobile-nav-panel-link {
-    width: 100%;
-    min-height: 44px;
-    padding: 0 14px;
-
-    display: flex;
-    align-items: center;
-    gap: 12px;
-
-    border: 0;
-    border-radius: 14px;
-
-    background: transparent;
-    color: rgba(232, 214, 180, 0.82);
-
-    font-family: "Georgia", serif;
-    font-size: 14px;
-    text-decoration: none;
-
-    cursor: pointer;
-  }
-
-  .mobile-nav-panel-link i {
-    width: 18px;
-    font-size: 14px;
-    text-align: center;
-  }
-
-  .mobile-nav-panel-link:hover,
-  .mobile-nav-panel-link:active {
-    background: rgba(212, 170, 104, 0.12);
-    color: #f4d49b;
-  }
-
-  .mobile-nav-danger {
-    color: rgba(255, 185, 170, 0.9);
+  .quick-action-link {
+    width: 42px;
+    height: 42px;
   }
 
   .music-btn {
-    color:#d8b477;
     display: none !important;
   }
-}
-
-@media (min-width: 993px) {
-  .mobile-bottom-nav {
-    display: none !important;
-  }
-.music-btn:hover {
-  transform: scale(1.05);
-  background: rgba(40,40,40,0.9);
-  color:rgb(255, 239, 207)
-}
 }
