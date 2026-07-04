@@ -1,10 +1,10 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title><%= content_for(:title) || "The Bartender" %></title>
+    <title><%= content_for(:title) || "Bill" %></title>
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="application-name" content="The Bartender">
+    <meta name="application-name" content="Bill">
     <meta name="mobile-web-app-capable" content="yes">
 
     <%= csrf_meta_tags %>
@@ -30,14 +30,13 @@
           <div class="navbar-icon">♔</div>
 
           <div class="navbar-title">
-            <span>The</span>
-            <strong>Bartender</strong>
+            <strong>Bill</strong>
           </div>
         <% end %>
 
         <div class="navbar-links">
-          <%= link_to "Mes Chats", chats_path, class: "navbar-link" %>
-          <%= link_to "Mes Cocktails", cocktails_path, class: "navbar-link" %>
+          <%= link_to "Mes conversations", chats_path, class: "navbar-link" %>
+          <%= link_to "Mes cocktails", cocktails_path, class: "navbar-link" %>
         </div>
 
         <div class="navbar-actions">
@@ -71,7 +70,7 @@
           <div class="mobile-nav-panel">
             <%= link_to chats_path, class: "mobile-nav-panel-link" do %>
               <i class="fa-regular fa-clock"></i>
-              <span>Mes Conversations</span>
+              <span>Mes conversations</span>
             <% end %>
 
             <button type="button" class="mobile-nav-panel-link mobile-sound-toggle">
