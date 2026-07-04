@@ -1,7 +1,7 @@
 <div id="<%= dom_id(message) %>" class="message-row <%= message.role == "user" ? "user-row" : "assistant-row" %>">
   <div class="message-bubble <%= message.role == "user" ? "user-bubble" : "assistant-bubble" %>">
     <div class="message-role">
-      <%= message.role == "user" ? "Vous" : "The Bartender" %>
+      <%= message.role == "user" ? "Vous" : "Bill" %>
     </div>
     <% if message.content.present? %>
       <p><%= message.content %></p>
