@@ -1,26 +1,11 @@
-<section class="chat-hero">
-
+<section class="chat-hero minimal-chat-hero">
   <div class="hero-overlay">
-
-    <div class="hero-content">
-      <span class="hero-subtitle">
-        BILL
-      </span>
-
-      <h1>Parle à Bill</h1>
-
-      <p>
-        Commence une conversation avec Bill.
-        Parle-lui de ton mood, de ta journée,
-        ou de l'ambiance que tu cherches pour ta soirée.
-      </p>
-
-      <%= button_to "Commencer à discuter",
-                    chats_path,
+    <div class="hero-content minimal-hero-content">
+      <%= button_to chats_path,
                     method: :post,
-                    class: "hero-btn" %>
+                    class: "hero-btn hero-main-action" do %>
+        Parler à Bill
+      <% end %>
     </div>
-
   </div>
-
 </section>
