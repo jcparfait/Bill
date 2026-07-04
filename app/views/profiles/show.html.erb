@@ -1,0 +1,88 @@
+<div class="profile-page">
+  <section class="profile-hero">
+    <span class="menu-subtitle">BILL</span>
+    <h1>Profil</h1>
+    <p>Ton compte, tes conversations, et la sortie discrète quand le bar ferme.</p>
+  </section>
+
+  <section class="profile-grid">
+    <article class="profile-panel profile-account-panel">
+      <span class="profile-panel-label">Compte</span>
+      <h2><%= current_user.email %></h2>
+
+      <div class="profile-actions-list">
+        <%= link_to edit_user_registration_path, class: "profile-action" do %>
+          <i class="fa-solid fa-key"></i>
+          <span>Changer mon mot de passe</span>
+        <% end %>
+
+        <%= link_to destroy_user_session_path,
+                    data: { turbo_method: :delete },
+                    class: "profile-action" do %>
+          <i class="fa-solid fa-arrow-right-from-bracket"></i>
+          <span>Se déconnecter</span>
+        <% end %>
+
+        <%= link_to registration_path(current_user),
+                    data: {
+                      turbo_method: :delete,
+                      turbo_confirm: "Supprimer définitivement ton compte Bill ?"
+                    },
+                    class: "profile-action profile-danger" do %>
+          <i class="fa-regular fa-trash-can"></i>
+          <span>Supprimer mon compte</span>
+        <% end %>
+      </div>
+    </article>
+
+    <article class="profile-panel profile-history-panel">
+      <div class="profile-panel-header">
+        <div>
+          <span class="profile-panel-label">Historique</span>
+          <h2>Conversations</h2>
+        </div>
+
+        <%= link_to chats_path,
+                    data: { turbo_method: :post },
+                    class: "profile-new-chat" do %>
+          <i class="fa-solid fa-plus"></i>
+          <span>Nouveau chat</span>
+        <% end %>
+      </div>
+
+      <% if @chats.any? %>
+        <div class="profile-chat-list">
+          <% @chats.each do |chat| %>
+            <article class="profile-chat-item">
+              <%= link_to chat_path(chat), class: "profile-chat-link" do %>
+                <strong><%= chat.title.presence || "Conversation" %></strong>
+                <span>
+                  <% if chat.cocktail.present? %>
+                    <%= chat.cocktail.name %>
+                  <% else %>
+                    Conversation en cours
+                  <% end %>
+                </span>
+              <% end %>
+
+              <%= link_to chat_path(chat),
+                          data: {
+                            turbo_method: :delete,
+                            turbo_confirm: "Supprimer cette conversation ?"
+                          },
+                          class: "profile-chat-delete",
+                          title: "Supprimer" do %>
+                <i class="fa-regular fa-trash-can"></i>
+              <% end %>
+            </article>
+          <% end %>
+        </div>
+      <% else %>
+        <div class="profile-empty-state">
+          <p>Aucune conversation pour le moment.</p>
+          <%= link_to "Parler à Bill", chats_path, data: { turbo_method: :post }, class: "profile-new-chat" %>
+        </div>
+      <% end %>
+    </article>
+  </section>
+</div>
