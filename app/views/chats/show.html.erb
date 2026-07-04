@@ -5,6 +5,7 @@
   <% end %>
 </div>
   <%= turbo_stream_from @chat %>
+  <% chat_title = @chat.title == "Untitled" ? "Conversation" : @chat.title.presence || "Conversation" %>
   <div class="chat-header">
     <div class="chat-header-actions">
       <%= link_to chats_path,
@@ -17,7 +18,7 @@
 
     <div class="chat-title-block">
       <span class="chat-subtitle">Conversation</span>
-      <h1><%= @chat.title %></h1>
+      <h1><%= chat_title %></h1>
     </div>
   </div>
   <div class="chat-body">
