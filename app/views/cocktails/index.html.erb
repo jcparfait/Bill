@@ -1,58 +1,87 @@
 <div class="cocktails-page">
-  <div class="cocktails-hero">
-    <div class="cocktails-hero-overlay">
-      <span class="menu-subtitle">BILL</span>
 
-      <h1>Mes cocktails</h1>
+  <div class="cocktails-hero">
+
+    <div class="cocktails-hero-overlay">
+
+      <span class="menu-subtitle">
+        THE BARTENDER
+      </span>
+
+      <h1>Mes Cocktails</h1>
 
       <p>
-        Les recommandations que tu as gardées. Une petite cave personnelle, mais avec moins de poussière.
+        Une collection de délicieux moments.
       </p>
+
     </div>
+
   </div>
 
   <div class="cocktails-content">
+
     <div class="cocktails-header">
-      <%= link_to "Demander une recommandation",
-                  chats_path,
-                  data: { turbo_method: :post },
-                  class: "new-cocktail-btn" %>
+
+      <%= link_to "＋ Nouveau Cocktail",
+      new_cocktail_path,
+      class: "new-cocktail-btn" %>
+
     </div>
 
-    <% if @cocktails.any? %>
-      <div class="cocktails-grid">
-        <% @cocktails.each do |cocktail| %>
-          <%= link_to cocktail_path(cocktail), class: "cocktail-card" do %>
-            <div class="cocktail-card-content compact">
-              <div class="cocktail-glass">
-                <% if cocktail.image_url.present? %>
-                  <%= image_tag cocktail.image_url, alt: cocktail.name %>
-                <% else %>
-                  <%= image_tag "cocktails/#{cocktail.name.parameterize}.jpg", alt: cocktail.name %>
-                <% end %>
-              </div>
+    <div class="cocktails-grid">
 
-              <div class="cocktail-info">
-                <h2><%= cocktail.name %></h2>
+      <% @cocktails.each do |cocktail| %>
 
-                <% if cocktail.mood.present? %>
-                  <p class="cocktail-mood"><%= cocktail.mood %></p>
-                <% end %>
+        <%= link_to cocktail_path(cocktail),
+        class: "cocktail-card" do %>
 
-                <p class="cocktail-description">
-                  Recommandé par Bill, donc probablement défendable devant témoins.
-                </p>
-              </div>
+          <div class="cocktail-card-content compact">
+
+            <div class="cocktail-glass">
+              <% if cocktail.image_url.present? %>
+                <%= image_tag cocktail.image_url, alt: cocktail.name %>
+              <% else %>
+                <%= image_tag "cocktails/#{cocktail.name.parameterize}.jpg", alt: cocktail.name %>
+              <% end %>
             </div>
-          <% end %>
+
+            <div class="cocktail-info">
+                  <h2><%= cocktail.name %></h2>
+                  <p class="cocktail-mood">
+                    <%= cocktail.mood %>
+                  </p>
+                  <p class="cocktail-description">
+
+                    <% if cocktail.name == "Mojito" %>
+                      Frais, léger et parfait pour les soirées d’été.
+
+                    <% elsif cocktail.name == "Espresso Martini" %>
+                      L’alliance élégante du café et de la vodka.
+
+                    <% elsif cocktail.name == "Virgin Mule" %>
+                      Une création douce et épicée à savourer lentement.
+
+                    <% elsif cocktail.name == "Old Fashioned" %>
+                      Un grand classique au caractère affirmé.
+
+                    <% elsif cocktail.name == "Negroni" %>
+                      Amer, intense et délicieusement intemporel.
+
+                    <% else %>
+                      Un cocktail signature imaginé par le bartender.
+
+                    <% end %>
+
+                    </p>
+            </div>
+          </div>
+
         <% end %>
-      </div>
-    <% else %>
-      <div class="empty-chats">
-        <h2>Aucun cocktail gardé.</h2>
-        <p>Commence une conversation avec Bill et ajoute une recommandation à ta collection.</p>
-        <%= link_to "Parler à Bill", chats_path, data: { turbo_method: :post }, class: "new-cocktail-btn" %>
-      </div>
-    <% end %>
+
+      <% end %>
+
+    </div>
+
   </div>
+
 </div>
