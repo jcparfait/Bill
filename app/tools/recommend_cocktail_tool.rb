@@ -3,7 +3,7 @@ require "json"
 require "cgi"
 
 class RecommendCocktailTool < RubyLLM::Tool
-  description "Searches a real cocktail from TheCocktailDB by name, saves it for the current user, and links it to the current chat."
+  description "Searches a real cocktail from TheCocktailDB by name and saves it for the current user."
 
   param :cocktail_name,
         desc: "The name of the cocktail to search for, for example Mojito, Margarita, Negroni, Daiquiri, Old Fashioned."
@@ -46,8 +46,6 @@ class RecommendCocktailTool < RubyLLM::Tool
 
       status = "created"
     end
-
-    @chat.update!(cocktail: cocktail)
 
     {
       status: status,
