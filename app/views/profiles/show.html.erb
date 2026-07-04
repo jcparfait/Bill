@@ -53,9 +53,10 @@
       <% if @chats.any? %>
         <div class="profile-chat-list">
           <% @chats.each do |chat| %>
+            <% chat_title = chat.title == "Untitled" ? "Conversation" : chat.title.presence || "Conversation" %>
             <article class="profile-chat-item">
               <%= link_to chat_path(chat), class: "profile-chat-link" do %>
-                <strong><%= chat.title.presence || "Conversation" %></strong>
+                <strong><%= chat_title %></strong>
                 <span>
                   <% if chat.cocktail.present? %>
                     <%= chat.cocktail.name %>
