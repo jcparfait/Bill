@@ -7,11 +7,6 @@
   <%= turbo_stream_from @chat %>
   <div class="chat-header">
     <div class="chat-header-actions">
-      <%= link_to profile_path, class: "back-link" do %>
-        <i class="fa-solid fa-chevron-left"></i>
-        <span>Profil</span>
-      <% end %>
-
       <%= link_to chats_path,
                   data: { turbo_method: :post },
                   class: "chat-new-link" do %>
