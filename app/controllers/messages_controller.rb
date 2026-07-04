@@ -96,7 +96,9 @@ class MessagesController < ApplicationController
     @assistant_message = Message.create!(role: "bartender", content: "", chat: @chat)
     broadcast_message(@assistant_message)
 
-    if should_recommend_cocktail?
+    if closing_intent?
+      close_conversation
+    elsif should_recommend_cocktail?
       recommend_cocktail
     else
       ask_next_question
@@ -113,7 +115,63 @@ class MessagesController < ApplicationController
 
   private
 
+  def closing_intent?
+    return false if latest_user_text.blank?
+    return false if wants_another_recommendation?
+    return false if latest_message_has_new_constraints?
+
+    latest_user_text.match?(closures_pattern)
+  end
+
+  def closures_pattern
+    /\A(?:ok|merci|merci beaucoup|parfait|super|top|nickel|tres bien|ca me va|c est bon|c'est bon|ca ira|je prends|je vais prendre|bonne idee|allons y|vas y|go)(?:[\s.!?]+.*)?\z/
+  end
+
+  def wants_another_recommendation?
+    latest_user_text.match?(/autre|un autre|autre chose|pas celui|pas ca|pas ça|change|nouveau|nouvelle proposition|repropose/)
+  end
+
+  def latest_message_has_new_constraints?
+    latest_user_text.match?(/avec|sans|pas de|frais|amer|doux|sec|fruite|fort|leger|reconfort|petillant|cremeux|alcool|gin|vodka|rhum|rum|tequila|whisky|whiskey|menthe|citron|cafe|orange/)
+  end
+
+  def close_conversation
+    @assistant_message.update!(content: closing_text)
+    replace_assistant_message
+  end
+
+  def closing_text
+    return fallback_closing_text unless llm_available?
+
+    response = RubyLLM.chat
+                      .with_instructions(BILL_VOICE_PROMPT)
+                      .ask(closing_prompt)
+
+    response.content.to_s.strip.presence || fallback_closing_text
+  rescue StandardError => e
+    Rails.logger.warn "Bill closing fallback: #{e.class} - #{e.message}"
+    fallback_closing_text
+  end
+
+  def closing_prompt
+    <<~PROMPT
+      Recent user messages:
+      #{recent_user_context}
+
+      The user is accepting, thanking, or closing the conversation.
+      Reply as Bill.
+      Do not recommend another drink.
+      Do not ask another question.
+      Keep it short and natural.
+    PROMPT
+  end
+
+  def fallback_closing_text
+    "Parfait. Je te laisse avec ça, alors. Certaines soirées gagnent à ne pas être trop commentées."
+  end
+
   def should_recommend_cocktail?
+    return false if closing_intent?
     return false if user_messages_count < 4
 
     recommendation_ready? || user_explicitly_asks_for_cocktail? || user_messages_count >= 6
@@ -136,7 +194,7 @@ class MessagesController < ApplicationController
   end
 
   def user_explicitly_asks_for_cocktail?
-    normalized_text.match?(/propose|recommande|conseille|sers|donne|choisis|cocktail|boisson|verre/)
+    latest_user_text.match?(/propose|recommande|conseille|sers|donne|choisis|cocktail|boisson|verre|un autre|autre chose/)
   end
 
   def ask_next_question
@@ -368,6 +426,10 @@ class MessagesController < ApplicationController
          .reverse
          .pluck(:content)
          .join("\n")
+  end
+
+  def latest_user_text
+    @latest_user_text ||= I18n.transliterate(@message.content.to_s.downcase.squish)
   end
 
   def llm_available?
