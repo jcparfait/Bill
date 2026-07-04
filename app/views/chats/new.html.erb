@@ -1,40 +1,26 @@
 <section class="chat-hero">
-  <div class="hero-overlay">
-    <div class="hero-content hero-content-panel">
-      <span class="hero-subtitle">BILL</span>
 
-      <h1>Entre au bar.</h1>
+  <div class="hero-overlay">
+
+    <div class="hero-content">
+      <span class="hero-subtitle">
+        BILL
+      </span>
+
+      <h1>Parle à Bill</h1>
 
       <p>
-        Bill t'aide à trouver un cocktail à partir de ton humeur, de tes goûts et de ce que tu veux éviter. Pas besoin de connaître les recettes, c'est son travail.
+        Commence une conversation avec Bill.
+        Parle-lui de ton mood, de ta journée,
+        ou de l'ambiance que tu cherches pour ta soirée.
       </p>
 
-      <div class="hero-steps" aria-label="Parcours de recommandation">
-        <div class="hero-step">
-          <span>1</span>
-          <strong>Ton humeur</strong>
-          <small>Détente, fête, fatigue, calme.</small>
-        </div>
-        <div class="hero-step">
-          <span>2</span>
-          <strong>Tes goûts</strong>
-          <small>Frais, amer, doux, fort, fruité.</small>
-        </div>
-        <div class="hero-step">
-          <span>3</span>
-          <strong>Tes contraintes</strong>
-          <small>Avec rhum, sans gin, sans alcool.</small>
-        </div>
-      </div>
-
-      <div class="hero-actions">
-        <%= button_to "Commencer une conversation",
-                      chats_path,
-                      method: :post,
-                      class: "hero-btn" %>
-
-        <%= link_to "Voir mes cocktails", cocktails_path, class: "hero-secondary-link" %>
-      </div>
+      <%= button_to "Commencer à discuter",
+                    chats_path,
+                    method: :post,
+                    class: "hero-btn" %>
     </div>
+
   </div>
+
 </section>
