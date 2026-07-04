@@ -1,9 +1,19 @@
 class MessagesController < ApplicationController
   QUESTION_FLOW = [
-    "D'accord. Avant de sortir le shaker, dis-moi juste: tu veux quelque chose qui apaise, qui réveille, ou qui accompagne tranquillement la soirée ?",
-    "Très bien. Tu penches plutôt vers frais, amer, doux, sec, fruité ou fort ?",
-    "Dernier détail utile: alcoolisé, léger, sans alcool, ou avec un ingrédient précis à inclure ou à éviter ?"
+    "Ask whether the user wants something calming, energizing, or quietly suitable for the evening.",
+    "Ask whether the user wants something fresh, bitter, sweet, dry, fruity, strong, light, or comforting.",
+    "Ask whether the drink should be alcoholic, light, alcohol-free, or include/exclude specific ingredients."
   ].freeze
+
+  BILL_VOICE_PROMPT = <<~PROMPT
+    You are Bill, a fictional cocktail bar host.
+    Voice: calm, dry, understated, gently ironic, cinematic, never loud.
+    You are not motivational, corporate, or theatrical.
+    Reply in French.
+    Keep it to 2 or 3 short sentences.
+    Never list ingredients or recipes.
+    Do not use emoji.
+  PROMPT
 
   LIQUOR_INGREDIENTS = %w[gin vodka rum tequila whiskey bourbon brandy cognac campari vermouth champagne prosecco].freeze
 
@@ -104,7 +114,21 @@ class MessagesController < ApplicationController
   private
 
   def should_recommend_cocktail?
-    user_messages_count >= 4 || (user_messages_count >= 3 && user_explicitly_asks_for_cocktail?)
+    return false if user_messages_count < 4
+
+    recommendation_ready? || user_explicitly_asks_for_cocktail? || user_messages_count >= 6
+  end
+
+  def recommendation_ready?
+    conversation_signal_score >= 2
+  end
+
+  def conversation_signal_score
+    score = 0
+    score += 1 if normalized_text.match?(/fatigue|epuise|stress|anxieux|nerveux|fete|celebr|triste|melancol|chaud|calme|bof|forme|energie/)
+    score += 1 if normalized_text.match?(/frais|amer|doux|sec|fruite|fort|leger|reconfort|petillant|cremeux|tropical/)
+    score += 1 if wants_no_alcohol? || ingredient_constraints.values.any?(&:present?)
+    score
   end
 
   def user_messages_count
@@ -116,11 +140,56 @@ class MessagesController < ApplicationController
   end
 
   def ask_next_question
-    question = QUESTION_FLOW[user_messages_count - 1]
-    question ||= "Je n'ai pas encore le bon angle. Tu veux éviter quelque chose, ou tu me laisses choisir sans trop de cérémonie ?"
-
+    question = natural_question_text
     @assistant_message.update!(content: question)
     replace_assistant_message
+  end
+
+  def natural_question_text
+    target = question_target
+    return fallback_question(target) unless llm_available?
+
+    response = RubyLLM.chat
+                      .with_instructions(BILL_VOICE_PROMPT)
+                      .ask(question_prompt(target))
+
+    response.content.to_s.strip.presence || fallback_question(target)
+  rescue StandardError => e
+    Rails.logger.warn "Bill voice fallback: #{e.class} - #{e.message}"
+    fallback_question(target)
+  end
+
+  def question_target
+    QUESTION_FLOW[user_messages_count - 1] ||
+      "Ask one missing detail that would help choose the drink without sounding like a form."
+  end
+
+  def fallback_question(target)
+    case target
+    when QUESTION_FLOW[0]
+      "D'accord. Avant de sortir le shaker, tu veux quelque chose qui apaise, qui réveille, ou qui accompagne tranquillement la soirée ?"
+    when QUESTION_FLOW[1]
+      "Très bien. Tu penches plutôt vers frais, amer, doux, sec, fruité ou fort ?"
+    when QUESTION_FLOW[2]
+      "Dernier détail utile: alcoolisé, léger, sans alcool, ou avec un ingrédient précis à inclure ou à éviter ?"
+    else
+      "Il me manque encore un angle. Tu veux éviter quelque chose, ou tu me laisses choisir sans trop de cérémonie ?"
+    end
+  end
+
+  def question_prompt(target)
+    <<~PROMPT
+      Recent user messages:
+      #{recent_user_context}
+
+      Current goal:
+      #{target}
+
+      Write Bill's next reply.
+      It must end with exactly one short question.
+      Do not recommend a drink yet.
+      Do not mention cocktail names.
+    PROMPT
   end
 
   def recommend_cocktail
@@ -238,6 +307,38 @@ class MessagesController < ApplicationController
   end
 
   def recommendation_text(cocktail)
+    return fallback_recommendation_text(cocktail) unless llm_available?
+
+    response = RubyLLM.chat
+                      .with_instructions(BILL_VOICE_PROMPT)
+                      .ask(recommendation_prompt(cocktail))
+
+    response.content.to_s.strip.presence || fallback_recommendation_text(cocktail)
+  rescue StandardError => e
+    Rails.logger.warn "Bill recommendation fallback: #{e.class} - #{e.message}"
+    fallback_recommendation_text(cocktail)
+  end
+
+  def recommendation_prompt(cocktail)
+    <<~PROMPT
+      Recent user messages:
+      #{recent_user_context}
+
+      Mood detected by the app:
+      #{cocktail_mood}
+
+      Recommended cocktail:
+      #{cocktail.name}
+
+      Write Bill's recommendation.
+      Start with: "Je te propose un #{cocktail.name}." or "Je partirais sur un #{cocktail.name}."
+      Explain why it fits in one short sentence.
+      Do not mention ingredients or recipe.
+      Do not ask another question.
+    PROMPT
+  end
+
+  def fallback_recommendation_text(cocktail)
     "Je te propose un #{cocktail.name}. #{recommendation_reason} La fiche est là, sobrement posée; ce qui est souvent mieux qu'un long discours au comptoir."
   end
 
@@ -257,6 +358,20 @@ class MessagesController < ApplicationController
     else
       "C'est équilibré, précis, et ça laisse la soirée décider du reste."
     end
+  end
+
+  def recent_user_context
+    @chat.messages
+         .where(role: "user")
+         .order(created_at: :desc)
+         .limit(4)
+         .reverse
+         .pluck(:content)
+         .join("\n")
+  end
+
+  def llm_available?
+    ENV["GITHUB_TOKEN"].present? || ENV["OPENAI_API_KEY"].present?
   end
 
   def normalized_text
