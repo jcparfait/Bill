@@ -11,7 +11,7 @@ Le projet combine une interface Rails / Hotwire, une authentification Devise, un
 - Application web Rails fonctionnelle.
 - Authentification utilisateur avec Devise.
 - Conversations sauvegardees par utilisateur.
-- Recommandations de cocktails via LLM et TheCocktailDB.
+- Recommandations de cocktails via RubyLLM, GitHub Models et TheCocktailDB.
 - Historique des chats et cocktails recommandes.
 - README en cours de preparation pour une demonstration recruteur.
 
@@ -37,7 +37,7 @@ Le projet combine une interface Rails / Hotwire, une authentification Devise, un
 | UI | Rails views, Hotwire, Turbo Streams, Stimulus |
 | Styles | Bootstrap, Sass, Font Awesome |
 | Base de donnees | PostgreSQL |
-| IA | RubyLLM, OpenAI API |
+| IA | RubyLLM, GitHub Models, Azure OpenAI Playground |
 | Donnees cocktail | TheCocktailDB |
 | Tests | Minitest Rails |
 
@@ -64,7 +64,7 @@ Prerequis:
 - Ruby compatible Rails 8.1 ;
 - PostgreSQL ;
 - Bundler ;
-- une cle API OpenAI.
+- un jeton GitHub avec l'autorisation `Models` en lecture seule.
 
 Installation:
 
@@ -85,7 +85,7 @@ http://localhost:3000
 
 ## Variables d'environnement
 
-Le projet utilise RubyLLM avec OpenAI. En local, creer un fichier `.env` a partir de `.env.example`:
+Le projet utilise RubyLLM avec GitHub Models via l'endpoint Azure OpenAI Playground du Wagon. En local, creer un fichier `.env` a partir de `.env.example`:
 
 ```bash
 cp .env.example .env
@@ -94,8 +94,12 @@ cp .env.example .env
 Variables principales:
 
 ```text
-OPENAI_API_KEY=sk-...
+GITHUB_TOKEN=github_pat_...
+GITHUB_MODELS_API_BASE=https://models.inference.ai.azure.com
+GITHUB_MODELS_MODEL=gpt-4o
 ```
+
+Le token GitHub doit etre un fine-grained personal access token avec `Account permissions > Models > Read-only`.
 
 ## Compte de demonstration
 
@@ -141,7 +145,7 @@ A renforcer avant presentation finale:
 - tests modeles `User`, `Cocktail`, `Chat`, `Message` ;
 - tests controleurs sur les parcours authentifies ;
 - tests d'isolation entre utilisateurs ;
-- tests du `RecommendCocktailTool` avec mocks pour OpenAI et TheCocktailDB ;
+- tests du `RecommendCocktailTool` avec mocks pour GitHub Models et TheCocktailDB ;
 - CI GitHub Actions.
 
 ## Notes produit
