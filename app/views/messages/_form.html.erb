@@ -7,13 +7,12 @@
                       } do |f| %>
     <%= f.input :content,
                 label: false,
-                placeholder: "Ex : fatigué, envie de réconfort, sans gin ni menthe...",
+                placeholder: "Confie toi à bill",
                 input_html: {
                   class: "chat-input",
-                  rows: 2,
                   data: { action: "keydown->submit-on-enter#submit" }
                 } %>
 
-    <%= f.submit "Parler à Bill", class: "chat-submit-btn" %>
+    <%= f.submit "Envoyer", class: "chat-submit-btn" %>
   <% end %>
 </div>
