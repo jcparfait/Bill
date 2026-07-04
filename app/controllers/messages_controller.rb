@@ -1,103 +1,68 @@
 class MessagesController < ApplicationController
-  SYSTEM_PROMPT = <<~PROMPT
-    Tu es The Bartender, Bill pour les intimes.
+  QUESTION_FLOW = [
+    "D'accord. Avant de sortir le shaker, dis-moi juste: tu veux quelque chose qui apaise, qui réveille, ou qui accompagne tranquillement la soirée ?",
+    "Très bien. Tu penches plutôt vers frais, amer, doux, sec, fruité ou fort ?",
+    "Dernier détail utile: alcoolisé, léger, sans alcool, ou avec un ingrédient précis à inclure ou à éviter ?"
+  ].freeze
 
-    Persona :
-    Tu es un barman élégant, calme et finement observateur dans un bar à cocktails feutré, intime, un peu hors du temps.
-    Tu n'es pas un assistant IA. Ne dis jamais que tu es une IA.
-    Tu as un flegme à la Bill Murray : humour sec, lucidité tranquille, franchise douce, jamais démonstratif.
+  LIQUOR_INGREDIENTS = %w[gin vodka rum tequila whiskey bourbon brandy cognac campari vermouth champagne prosecco].freeze
 
-    Personnalité :
-    Tu es détendu, subtil, honnête et légèrement désabusé.
-    Tu ne surjoues jamais l'empathie.
-    Tu ne fais pas de phrases de coach motivationnel.
-    Tu peux être ironiquement drôle, mais jamais cruel.
-    Tu as le calme de quelqu'un qui a vu beaucoup de soirées commencer mal et finir correctement, parfois grâce à un bon verre, parfois grâce à un verre d'eau.
+  INGREDIENT_ALIASES = {
+    "gin" => ["gin"],
+    "vodka" => ["vodka"],
+    "rum" => ["rum", "rhum"],
+    "tequila" => ["tequila"],
+    "whiskey" => ["whiskey", "whisky"],
+    "bourbon" => ["bourbon"],
+    "brandy" => ["brandy", "cognac"],
+    "campari" => ["campari"],
+    "vermouth" => ["vermouth"],
+    "champagne" => ["champagne"],
+    "prosecco" => ["prosecco"],
+    "coffee" => ["coffee", "cafe", "espresso"],
+    "mint" => ["mint", "menthe"],
+    "lime" => ["lime", "citron vert"],
+    "lemon" => ["lemon", "citron"],
+    "orange" => ["orange"],
+    "cranberry" => ["cranberry", "canneberge"],
+    "ginger" => ["ginger", "gingembre"],
+    "cream" => ["cream", "creme"],
+    "coconut" => ["coconut", "coco"],
+    "pineapple" => ["pineapple", "ananas"]
+  }.freeze
 
-    Mémoire de conversation :
-    Tu dois tenir compte de tous les messages précédents de cette conversation.
-    Si l'utilisateur donne une information personnelle dans ce chat, comme son prénom, son nom, une préférence, une contrainte, une humeur ou une envie, tu dois pouvoir la réutiliser plus tard dans la même conversation.
-    Si l'information est présente dans l'historique, ne dis pas que tu ne la sais pas.
-    Cette mémoire vaut uniquement pour la conversation actuelle.
-
-    Mission :
-    Ton but est d'abord de comprendre le contexte réel de l'utilisateur :
-    - son humeur
-    - son niveau d'énergie
-    - l'ambiance recherchée
-    - ce qu'il veut éviter
-    - s'il cherche quelque chose d'alcoolisé, léger, amer, frais, sec, sucré, fort, réconfortant ou sans alcool
-
-    Stratégie de conversation :
-    Ne recommande jamais de boisson dès le premier message.
-    Au premier message, pose une seule question utile.
-    Au deuxième message, continue à comprendre l'utilisateur sauf s'il demande explicitement une recommandation.
-    À partir du troisième message utilisateur, tu peux recommander une boisson si tu as une direction cohérente.
-    Si l'utilisateur demande clairement une boisson, un verre, un cocktail ou une recommandation, tu peux recommander plus tôt.
-    Si l'utilisateur reste vague après plusieurs messages, choisis quand même une direction raisonnable au lieu de faire durer inutilement.
-
-    Critères pour recommander :
-    Tu peux recommander quand tu as au moins deux informations utiles parmi celles-ci :
-    - humeur ou état émotionnel
-    - niveau d'énergie
-    - moment de la journée
-    - envie sensorielle : frais, amer, fruité, sec, doux, fort, léger, crémeux, pétillant
-    - contexte : après travail, fatigue, fête, solitude, chaleur, stress, célébration, digestion
-    - contrainte : sans alcool, peu alcoolisé, pas trop sucré, pas de café, pas de menthe, etc.
-
-    Choix du cocktail :
-    Tu dois être éclectique.
-    Évite les choix réflexes comme Mojito, Espresso Martini, Margarita, Negroni, Old Fashioned ou Martini, sauf si les indices de l'utilisateur pointent clairement vers eux.
-    Privilégie parfois des cocktails moins évidents mais réels et connus :
-    Daiquiri, Gimlet, Southside, Tom Collins, French 75, Paloma, Moscow Mule, Americano, Boulevardier, Sidecar, Bramble, Caipirinha, Bee's Knees, Whiskey Sour, Pisco Sour, Clover Club, Aviation, Sea Breeze, Mai Tai, Planter's Punch, Sazerac, Rusty Nail, White Russian, Grasshopper.
-
-    Important :
-    Quand une boisson est recommandée, l'application appelle elle-même l'API cocktail.
-    Tu ne dois jamais inventer une recette.
-    Tu ne dois jamais inventer une liste d'ingrédients.
-    Tu ne dois pas recopier la recette ni les ingrédients dans ta réponse conversationnelle.
-    La fiche structurée du cocktail sera affichée séparément par l'application.
-
-    Recommandation :
-    Quand tu proposes une boisson, commence toujours par une phrase naturelle comme :
-    "Je te propose un [nom de la boisson]."
-    ou
-    "Je partirais sur un [nom de la boisson]."
-
-    Ensuite, explique en 1 ou 2 phrases pourquoi cette boisson correspond à l'humeur de l'utilisateur.
-    Cette justification doit être écrite naturellement, sans titre comme "Pourquoi ce choix".
-    Elle doit ressembler à une remarque de barman, pas à une rubrique de formulaire.
-
-    Sécurité :
-    Si l'utilisateur semble triste, vulnérable, épuisé, anxieux, ivre ou fragile émotionnellement, ne présente jamais l'alcool comme une solution.
-    Dans ce cas, privilégie la modération, l'eau, le repos, un mocktail ou une boisson réconfortante sans alcool.
-    Si le contexte semble vraiment préoccupant, reste sobre, humain, et évite de dramatiser.
-
-    Style :
-    Réponds toujours en français.
-    Réponds en 2 à 5 phrases courtes.
-    Sois humain, élégant, concis, un peu cinématographique et légèrement décalé.
-    Utilise un humour sec quand c'est approprié.
-    Évite le langage corporate.
-    Évite les formulations robotiques.
-    Évite les émojis.
-    Ne fais pas de liste sauf si l'utilisateur le demande explicitement.
-
-    Humour :
-    Ton humour est sec, discret, jamais clownesque.
-    Tu peux faire une observation légèrement absurde ou désabusée sur la situation.
-    L'humour doit servir le personnage, pas chercher la punchline.
-    Tu peux faire sourire, mais tu ne dois jamais casser l'intimité du bar.
-    Évite les blagues longues.
-    Une seule touche d'humour suffit.
-
-    Format :
-    Réponds directement comme le barman.
-  PROMPT
+  COCKTAIL_CATALOG = [
+    { name: "Daiquiri", tags: %w[fresh dry sour simple], ingredients: %w[rum lime] },
+    { name: "Gimlet", tags: %w[fresh dry simple], ingredients: %w[gin lime] },
+    { name: "Southside", tags: %w[fresh light aromatic], ingredients: %w[gin mint lemon] },
+    { name: "Tom Collins", tags: %w[fresh light sparkling], ingredients: %w[gin lemon] },
+    { name: "French 75", tags: %w[fresh sparkling elegant], ingredients: %w[gin lemon champagne] },
+    { name: "Paloma", tags: %w[fresh fruity light], ingredients: %w[tequila] },
+    { name: "Moscow Mule", tags: %w[fresh spicy easy], ingredients: %w[vodka ginger lime] },
+    { name: "Americano", tags: %w[light bitter aperitif], ingredients: %w[campari vermouth] },
+    { name: "Boulevardier", tags: %w[bitter strong slow], ingredients: %w[whiskey campari vermouth] },
+    { name: "Sidecar", tags: %w[dry citrus elegant], ingredients: %w[brandy lemon] },
+    { name: "Bramble", tags: %w[fruity fresh soft], ingredients: %w[gin lemon] },
+    { name: "Caipirinha", tags: %w[fresh lively simple], ingredients: %w[lime] },
+    { name: "Bee's Knees", tags: %w[soft fresh honey], ingredients: %w[gin lemon] },
+    { name: "Whiskey Sour", tags: %w[comfort sour balanced], ingredients: %w[whiskey lemon] },
+    { name: "Pisco Sour", tags: %w[soft sour elegant], ingredients: %w[lemon] },
+    { name: "Clover Club", tags: %w[soft fruity elegant], ingredients: %w[gin lemon] },
+    { name: "Aviation", tags: %w[floral dry elegant], ingredients: %w[gin lemon] },
+    { name: "Sea Breeze", tags: %w[fruity light fresh], ingredients: %w[vodka cranberry] },
+    { name: "Mai Tai", tags: %w[tropical strong fruity], ingredients: %w[rum lime] },
+    { name: "Planter's Punch", tags: %w[tropical fruity comfort], ingredients: %w[rum] },
+    { name: "Sazerac", tags: %w[strong dry slow], ingredients: %w[whiskey] },
+    { name: "Rusty Nail", tags: %w[strong slow comfort], ingredients: %w[whiskey] },
+    { name: "White Russian", tags: %w[sweet creamy comfort], ingredients: %w[vodka coffee cream] },
+    { name: "Grasshopper", tags: %w[sweet creamy soft], ingredients: %w[cream mint] },
+    { name: "Afterglow", tags: %w[soft fruity mocktail], ingredients: %w[orange pineapple] },
+    { name: "Fruit Cooler", tags: %w[soft fresh mocktail], ingredients: %w[orange lemon] },
+    { name: "Shirley Temple", tags: %w[soft sweet mocktail], ingredients: %w[ginger] }
+  ].freeze
 
   def create
     @chat = current_user.chats.find(params[:chat_id])
-
     @message = Message.new(message_params)
     @message.chat = @chat
     @message.role = "user"
@@ -111,27 +76,20 @@ class MessagesController < ApplicationController
             locals: { chat: @chat, message: @message }
           )
         end
-
         format.html { render "chats/show", status: :unprocessable_entity }
       end
-
       return
     end
 
     broadcast_message(@message)
 
-    @assistant_message = Message.create!(
-      role: "bartender",
-      content: "",
-      chat: @chat
-    )
-
+    @assistant_message = Message.create!(role: "bartender", content: "", chat: @chat)
     broadcast_message(@assistant_message)
 
     if should_recommend_cocktail?
       recommend_cocktail
     else
-      ask_one_question
+      ask_next_question
     end
 
     @chat.reload
@@ -146,83 +104,52 @@ class MessagesController < ApplicationController
   private
 
   def should_recommend_cocktail?
-    user_messages_count = @chat.messages.where(role: "user").count
-    return false if user_messages_count < 2
-    return true if user_explicitly_asks_for_cocktail?
-    return true if user_messages_count >= 3
+    user_messages_count >= 4 || (user_messages_count >= 3 && user_explicitly_asks_for_cocktail?)
+  end
 
-    false
+  def user_messages_count
+    @chat.messages.where(role: "user").count
   end
 
   def user_explicitly_asks_for_cocktail?
-    content = @message.content.to_s.downcase
-
-    content.match?(
-      /propose|recommande|conseille|sers|donne|choisis|cocktail|boisson|verre|je veux boire|qu'est-ce que tu me conseilles/
-    )
+    normalized_text.match?(/propose|recommande|conseille|sers|donne|choisis|cocktail|boisson|verre/)
   end
 
-  def ask_one_question
-    response = RubyLLM.chat
-                      .with_instructions(conversation_instructions)
-                      .ask(message_with_conversation_history)
+  def ask_next_question
+    question = QUESTION_FLOW[user_messages_count - 1]
+    question ||= "Je n'ai pas encore le bon angle. Tu veux éviter quelque chose, ou tu me laisses choisir sans trop de cérémonie ?"
 
-    @assistant_message.update!(content: response.content.to_s.strip)
-
+    @assistant_message.update!(content: question)
     replace_assistant_message
   end
 
-  def conversation_instructions
-    user_messages_count = @chat.messages.where(role: "user").count
-
-    if user_messages_count == 1
-      question_instructions
-    else
-      follow_up_instructions
-    end
-  end
-
-  def recommend_cocktail # rubocop:disable Metrics/MethodLength
+  def recommend_cocktail
     cocktail = fetch_cocktail_from_api
+
     if cocktail.present?
-      response = RubyLLM.chat
-                        .with_instructions(recommendation_instructions(cocktail))
-                        .ask(message_with_conversation_history)
-      @assistant_message.update!(
-        content: response.content.to_s.strip,
-        cocktail: cocktail
-      )
+      @assistant_message.update!(content: recommendation_text(cocktail), cocktail: cocktail)
       replace_assistant_message
       broadcast_cocktail_card(cocktail)
       broadcast_glass_animation
     else
       @assistant_message.update!(
-        content: "Je voulais te sortir quelque chose de précis, mais le bar vient de perdre sa cave. Même les endroits feutrés ont parfois des problèmes de plomberie."
+        content: "Je n'ai pas trouvé de cocktail fiable avec ces contraintes. Même les bars feutrés ont leurs limites, généralement rangées derrière les bouteilles vides."
       )
       replace_assistant_message
     end
   end
 
-  def fetch_cocktail_from_api # rubocop:disable Metrics/MethodLength
-    previous_cocktail_id = @chat.cocktail_id
+  def fetch_cocktail_from_api
+    mood = cocktail_mood
+    tool = RecommendCocktailTool.new(user: current_user, chat: @chat)
 
-    cocktail_candidates.each do |cocktail_name|
-      Rails.logger.warn "🍸 Trying cocktail API with: #{cocktail_name}"
-
-      result = RecommendCocktailTool.new(
-        user: current_user,
-        chat: @chat
-      ).execute(
-        cocktail_name: cocktail_name,
-        mood: cocktail_mood
-      )
-
-      Rails.logger.warn "🍸 Cocktail tool result: #{result.inspect}"
-
+    cocktail_candidates.each do |candidate|
+      result = tool.execute(cocktail_name: candidate[:name], mood: mood)
+      Rails.logger.info "Bill cocktail result: #{result.inspect}"
       @chat.reload
 
       next if @chat.cocktail.blank?
-      next if @chat.cocktail_id == previous_cocktail_id && result[:error].present?
+      next if proposed_names_in_chat.include?(@chat.cocktail.name.downcase)
 
       return @chat.cocktail
     end
@@ -231,214 +158,111 @@ class MessagesController < ApplicationController
   end
 
   def cocktail_candidates
-    names_from_llm = choose_cocktail_candidates
+    constraints = ingredient_constraints
+    excluded_names = proposed_names_in_chat
+    selected_tags = mood_tags
 
-    fallback_names = [
-      "Daiquiri",
-      "Tom Collins",
-      "French 75",
-      "Paloma",
-      "Bee's Knees",
-      "Whiskey Sour",
-      "Pisco Sour",
-      "Clover Club",
-      "Aviation",
-      "Sidecar",
-      "Bramble",
-      "Southside",
-      "Gimlet",
-      "Americano",
-      "Caipirinha",
-      "Boulevardier",
-      "Rusty Nail",
-      "White Russian",
-      "Mai Tai"
-    ]
+    candidates = COCKTAIL_CATALOG.reject do |candidate|
+      excluded_names.include?(candidate[:name].downcase) ||
+        constraints[:excluded].intersect?(candidate[:ingredients]) ||
+        constraints[:included].any? { |ingredient| candidate[:ingredients].exclude?(ingredient) }
+    end
 
-    recent_names = recent_cocktail_names.map(&:downcase)
+    candidates = candidates.select { |candidate| candidate[:tags].include?("mocktail") } if wants_no_alcohol?
 
-    (names_from_llm + fallback_names)
-      .map { |name| clean_cocktail_name(name) }
-      .reject(&:blank?)
-      .uniq
-      .sort_by { |name| recent_names.include?(name.downcase) ? 1 : 0 }
-      .first(8)
-  end
-
-  def choose_cocktail_candidates
-    prompt = <<~PROMPT
-      Tu dois choisir 5 cocktails réels et connus, trouvables dans TheCocktailDB.
-
-      Contexte :
-      #{message_with_conversation_history}
-
-      Cocktails déjà proposés récemment :
-      #{recent_cocktail_names.join(', ').presence || 'Aucun'}
-
-      Contraintes :
-      - Réponds uniquement avec les noms des cocktails.
-      - Un cocktail par ligne.
-      - Pas de numéros.
-      - Pas de tirets.
-      - Pas d'explication.
-      - Évite les cocktails déjà proposés récemment.
-      - Évite Dark 'n' Stormy si une autre option cohérente existe.
-      - Évite Mojito, Margarita, Negroni, Old Fashioned, Martini ou Espresso Martini sauf si c'est clairement le meilleur choix.
-      - Si l'utilisateur demande sans alcool ou semble fragile, propose des options sans alcool connues.
-
-      Exemples de format :
-      Daiquiri
-      Tom Collins
-      French 75
-      Paloma
-      Bee's Knees
-    PROMPT
-
-    response = RubyLLM.chat.ask(prompt)
-
-    response.content.to_s.lines.map { |line| clean_cocktail_name(line) }
-  end
-
-  def recent_cocktail_names
-    current_user.messages
-                .includes(:cocktail)
-                .where(role: "bartender")
-                .where.not(cocktail_id: nil)
-                .order(created_at: :desc)
-                .limit(10)
-                .map { |message| message.cocktail&.name }
-                .compact
-  rescue NoMethodError
-    current_user.chats
-                .includes(:cocktail)
-                .where.not(cocktail_id: nil)
-                .order(updated_at: :desc)
-                .limit(10)
-                .map { |chat| chat.cocktail&.name }
-                .compact
+    candidates.sort_by do |candidate|
+      [
+        -(candidate[:tags] & selected_tags).size,
+        candidate[:tags].include?("mocktail") ? 0 : 1,
+        candidate[:name]
+      ]
+    end.first(8)
   end
 
   def cocktail_mood
-    prompt = <<~PROMPT
-      Résume en français l'humeur ou le besoin de l'utilisateur en une phrase courte.
-
-      Contexte :
-      #{message_with_conversation_history}
-
-      Contraintes :
-      - Une seule phrase.
-      - Pas d'explication.
-      - Pas de titre.
-    PROMPT
-
-    RubyLLM.chat.ask(prompt).content.to_s.strip
+    if wants_no_alcohol?
+      "sans alcool, doux et prudent"
+    elsif normalized_text.match?(/fatigue|epuise|vide|longue journee|creve/)
+      "fatigue, besoin de quelque chose de net mais pas brutal"
+    elsif normalized_text.match?(/stress|anxieux|nerveux|pression|tendu/)
+      "tendu, besoin de calme et de legerete"
+    elsif normalized_text.match?(/fete|celebr|danser|sortie|amis/)
+      "festif, envie de quelque chose de vivant"
+    elsif normalized_text.match?(/triste|melancol|seul|solitude|bof/)
+      "melancolique, besoin de douceur"
+    elsif normalized_text.match?(/chaud|soleil|ete|frais|rafraich/)
+      "envie de fraicheur"
+    else
+      "humeur calme, envie d'un cocktail equilibre"
+    end
   end
 
-  def question_instructions
-    <<~PROMPT
-      #{SYSTEM_PROMPT}
+  def mood_tags
+    text = normalized_text
+    return %w[mocktail soft fresh] if wants_no_alcohol?
+    return %w[fresh light] if text.match?(/chaud|soleil|ete|frais|rafraich|leger/)
+    return %w[bitter dry slow] if text.match?(/amer|sec|calme|lent|digestion/)
+    return %w[sweet creamy comfort soft] if text.match?(/doux|sucre|reconfort|triste|melancol|fatigue/)
+    return %w[strong dry slow] if text.match?(/fort|cors|whisky|serieux/)
+    return %w[fruity tropical fresh] if text.match?(/fruit|exotique|tropical|fete/)
 
-      Étape actuelle :
-      Premier message utilisateur.
-
-      Objectif :
-      Ne recommande pas encore de boisson.
-      Ne cite aucun nom de cocktail.
-      Ne donne ni ingrédients ni recette.
-
-      Réponds naturellement.
-      Reformule brièvement ce que tu comprends de son état.
-      Pose une seule question courte pour obtenir l'information la plus utile.
-
-      La meilleure question doit chercher une précision parmi :
-      - humeur réelle
-      - énergie
-      - envie sensorielle
-      - alcoolisé ou sans alcool
-      - ambiance recherchée
-
-      Ne pose qu'une seule question.
-    PROMPT
+    %w[fresh balanced soft]
   end
 
-  def follow_up_instructions
-    <<~PROMPT
-      #{SYSTEM_PROMPT}
+  def ingredient_constraints
+    included = []
+    excluded = []
 
-      Étape actuelle :
-      Deuxième message utilisateur.
+    INGREDIENT_ALIASES.each do |ingredient, aliases|
+      aliases.each do |name|
+        excluded << ingredient if normalized_text.match?(/(sans|pas de|sans aucun|no|without)[^.!?,;]*(#{Regexp.escape(name)})/)
+        included << ingredient if normalized_text.match?(/(avec|au|a la|a l|with|du|de la)[^.!?,;]*(#{Regexp.escape(name)})/)
+      end
+    end
 
-      Objectif :
-      Ne recommande pas encore de cocktail, sauf si l'utilisateur le demande explicitement.
-      Tu dois continuer à comprendre son humeur, son énergie, son contexte ou son envie sensorielle.
+    excluded.concat(LIQUOR_INGREDIENTS) if wants_no_alcohol?
 
-      Comportement :
-      - Réponds avec une remarque courte, humaine, légèrement ironique si c'est naturel.
-      - Montre que tu as retenu ce qu'il a dit avant.
-      - Pose une seule question courte.
-      - La question doit aider à choisir plus tard entre quelque chose de frais, sec, amer, doux, fort, léger, alcoolisé ou sans alcool.
-      - Ne cite aucun nom de cocktail.
-      - Ne donne pas de recette.
-      - Ne fais pas une liste.
-      - Ne sonne pas comme un formulaire.
-
-      Ton :
-      Barman calme, flegmatique, humour sec, lucidité tranquille.
-      Tu peux avoir une phrase un peu décalée, mais jamais forcée.
-
-      Exemple de ton :
-      "D'accord. Donc on n'est pas sur une soirée triomphale, plutôt sur une négociation avec la gravité. Tu veux quelque chose qui réveille ou quelque chose qui apaise ?"
-
-      Réponds directement comme The Bartender.
-    PROMPT
+    { included: included.uniq - excluded, excluded: excluded.uniq }
   end
 
-  def recommendation_instructions(cocktail)
-    <<~PROMPT
-      #{SYSTEM_PROMPT}
-
-      Étape actuelle :
-      Recommandation.
-
-      Tu dois maintenant recommander ce cocktail précis :
-      #{cocktail.name}
-
-      Règles strictes :
-      - Commence par "Je te propose un #{cocktail.name}." ou "Je partirais sur un #{cocktail.name}."
-      - Explique en 1 ou 2 phrases pourquoi il correspond au contexte de l'utilisateur.
-      - Fais explicitement référence à au moins un élément donné par l'utilisateur dans la conversation.
-      - Utilise les informations de l'historique de conversation.
-      - Ne donne pas les ingrédients.
-      - Ne donne pas la recette.
-      - Ne termine pas par une question.
-      - Ne propose aucun autre cocktail.
-      - Réponds comme The Bartender.
-    PROMPT
+  def wants_no_alcohol?
+    normalized_text.match?(/sans alcool|non alcool|mocktail|virgin|soft|pas d alcool|pas de alcool/)
   end
 
-  def message_with_conversation_history
-    previous_messages = @chat.messages
-                             .where.not(id: @message.id)
-                             .where.not(content: [nil, ""])
-                             .order(created_at: :desc)
-                             .limit(12)
-                             .reverse
+  def proposed_names_in_chat
+    @chat.messages
+         .includes(:cocktail)
+         .where.not(cocktail_id: nil)
+         .map { |message| message.cocktail&.name.to_s.downcase }
+         .compact
+  end
 
-    history = previous_messages.map do |message|
-      speaker = message.role == "user" ? "Utilisateur" : "The Bartender"
-      "#{speaker} : #{message.content}"
-    end.join("\n\n")
+  def recommendation_text(cocktail)
+    "Je te propose un #{cocktail.name}. #{recommendation_reason} La fiche est là, sobrement posée; ce qui est souvent mieux qu'un long discours au comptoir."
+  end
 
-    <<~PROMPT
-      Historique récent de la conversation :
+  def recommendation_reason
+    mood = cocktail_mood
 
-      #{history.presence || 'Aucun message précédent.'}
+    if wants_no_alcohol?
+      "Ça reste dans une zone sans alcool, plus élégante que punitive."
+    elsif mood.include?("fatigue")
+      "Ça répond à cette fatigue sans transformer la soirée en bras de fer."
+    elsif mood.include?("tendu")
+      "C'est assez net pour marquer une pause, assez léger pour ne pas rajouter du bruit au bruit."
+    elsif mood.include?("festif")
+      "Ça garde de l'élan, avec juste assez de tenue pour ne pas partir dans tous les sens."
+    elsif mood.include?("melancolique")
+      "C'est doux sans être mou, ce qui est une petite victoire discrète."
+    else
+      "C'est équilibré, précis, et ça laisse la soirée décider du reste."
+    end
+  end
 
-      Message actuel de l'utilisateur :
-      #{@message.content}
-
-      Réponds au message actuel en tenant compte de l'historique ci-dessus.
-    PROMPT
+  def normalized_text
+    @normalized_text ||= I18n.transliterate(
+      @chat.messages.where(role: "user").order(:created_at, :id).pluck(:content).join(" ").downcase
+    )
   end
 
   def broadcast_message(message)
@@ -466,19 +290,6 @@ class MessagesController < ApplicationController
       partial: "chats/cocktail_recommendation",
       locals: { cocktail: cocktail, chat: @chat }
     )
-  end
-
-  def clean_cocktail_name(name)
-    name.to_s
-        .lines
-        .first
-        .to_s
-        .strip
-        .gsub(/\A["“”'«\s\-0-9.)]+/, "")
-        .gsub(/["“”'»\s]+\z/, "")
-        .gsub(/\Aun\s+/i, "")
-        .gsub(/\Aune\s+/i, "")
-        .strip
   end
 
   def message_params
