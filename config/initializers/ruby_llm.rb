@@ -6,7 +6,5 @@ RubyLLM.configure do |config|
   elsif ENV["OPENAI_API_KEY"].present?
     config.openai_api_key = ENV.fetch("OPENAI_API_KEY")
     config.default_model = ENV.fetch("OPENAI_MODEL", "gpt-4o")
-  else
-    raise KeyError, "Missing GITHUB_TOKEN or OPENAI_API_KEY. Set GITHUB_TOKEN for GitHub Models, or OPENAI_API_KEY for OpenAI."
   end
 end
