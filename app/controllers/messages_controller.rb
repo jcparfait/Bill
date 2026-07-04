@@ -1,21 +1,53 @@
 class MessagesController < ApplicationController
-  QUESTION_FLOW = [
-    "Ask whether the user wants something calming, energizing, or quietly suitable for the evening.",
-    "Ask whether the user wants something fresh, bitter, sweet, dry, fruity, strong, light, or comforting.",
-    "Ask whether the drink should be alcoholic, light, alcohol-free, or include/exclude specific ingredients."
-  ].freeze
-
-  BILL_VOICE_PROMPT = <<~PROMPT
+  BILL_DECISION_PROMPT = <<~PROMPT
     You are Bill, a fictional cocktail bar host.
     Voice: calm, dry, understated, gently ironic, cinematic, never loud.
     You are not motivational, corporate, or theatrical.
     Reply in French.
-    Keep it to 2 or 3 short sentences.
+
+    Your job is to have a real bar conversation first, then recommend a cocktail only when it makes sense.
+    Understand the user's latest message literally: greetings, names, thanks, acceptance, refusal, hesitation, jokes, and ingredient constraints all matter.
+    Do not repeat bonsoir/bonjour if Bill has already greeted in the conversation.
+    If the user gives their name, acknowledge it briefly and continue naturally.
+    If the user thanks you, accepts, says it is fine, or closes the conversation, answer naturally and do not recommend another cocktail.
+    If the user dislikes a cocktail or asks for another one, continue toward a new recommendation.
+    Ask at most one question at a time.
+
+    Prefer action "chat" until you have enough useful information about mood and drink preference.
+    Choose action "recommend" only when the user has given enough signal to pick a cocktail, or explicitly asks you to choose/recommend/serve one.
+    Before recommending, try to know at least: mood or occasion, taste direction, and alcohol/ingredient constraints.
+
+    Return strict JSON only, with this shape:
+    {
+      "action": "chat" or "recommend",
+      "content": "Bill's natural reply when action is chat. Empty string when action is recommend.",
+      "mood": "short mood summary in French",
+      "tags": ["fresh", "dry", "sweet", "bitter", "fruity", "strong", "light", "comfort", "sparkling", "creamy", "tropical", "mocktail", "soft"],
+      "include": ["gin", "vodka", "rum", "tequila", "whiskey", "brandy", "campari", "vermouth", "champagne", "prosecco", "coffee", "mint", "lime", "lemon", "orange", "cranberry", "ginger", "cream", "coconut", "pineapple"],
+      "exclude": ["gin", "vodka", "rum", "tequila", "whiskey", "brandy", "campari", "vermouth", "champagne", "prosecco", "coffee", "mint", "lime", "lemon", "orange", "cranberry", "ginger", "cream", "coconut", "pineapple"],
+      "no_alcohol": true or false
+    }
+
+    Keep chat content to 1 or 2 short sentences.
     Never list ingredients or recipes.
     Do not use emoji.
   PROMPT
 
+  BILL_RECOMMENDATION_PROMPT = <<~PROMPT
+    You are Bill, a fictional cocktail bar host.
+    Voice: calm, dry, understated, gently ironic, cinematic, never loud.
+    Reply in French.
+    Keep it to 2 short sentences.
+    Do not list ingredients or recipes.
+    Do not use emoji.
+  PROMPT
+
   LIQUOR_INGREDIENTS = %w[gin vodka rum tequila whiskey bourbon brandy cognac campari vermouth champagne prosecco].freeze
+
+  ALLOWED_TAGS = %w[
+    fresh dry sweet bitter fruity strong light comfort sparkling creamy tropical mocktail soft sour simple
+    aromatic elegant aperitif slow citrus lively honey floral spicy easy balanced
+  ].freeze
 
   INGREDIENT_ALIASES = {
     "gin" => ["gin"],
@@ -96,12 +128,12 @@ class MessagesController < ApplicationController
     @assistant_message = Message.create!(role: "bartender", content: "", chat: @chat)
     broadcast_message(@assistant_message)
 
-    if closing_intent?
-      close_conversation
-    elsif should_recommend_cocktail?
-      recommend_cocktail
+    decision = conversation_decision
+
+    if decision[:action] == "recommend" && recommendation_allowed?
+      recommend_cocktail(decision)
     else
-      ask_next_question
+      continue_conversation(decision)
     end
 
     @chat.reload
@@ -115,78 +147,95 @@ class MessagesController < ApplicationController
 
   private
 
-  def closing_intent?
-    return false if latest_user_text.blank?
-    return false if wants_another_recommendation?
-    return false if latest_message_has_new_constraints?
-
-    latest_user_text.match?(closures_pattern)
-  end
-
-  def closures_pattern
-    /\A(?:ok|merci|merci beaucoup|parfait|super|top|nickel|tres bien|ca me va|c est bon|c'est bon|ca ira|je prends|je vais prendre|bonne idee|allons y|vas y|go)(?:[\s.!?]+.*)?\z/
-  end
-
-  def wants_another_recommendation?
-    latest_user_text.match?(/autre|un autre|autre chose|pas celui|pas ca|pas ça|change|nouveau|nouvelle proposition|repropose/)
-  end
-
-  def latest_message_has_new_constraints?
-    latest_user_text.match?(/avec|sans|pas de|frais|amer|doux|sec|fruite|fort|leger|reconfort|petillant|cremeux|alcool|gin|vodka|rhum|rum|tequila|whisky|whiskey|menthe|citron|cafe|orange/)
-  end
-
-  def close_conversation
-    @assistant_message.update!(content: closing_text)
-    replace_assistant_message
-  end
-
-  def closing_text
-    return fallback_closing_text unless llm_available?
+  def conversation_decision
+    return fallback_decision unless llm_available?
 
     response = RubyLLM.chat
-                      .with_instructions(BILL_VOICE_PROMPT)
-                      .ask(closing_prompt)
+                      .with_instructions(BILL_DECISION_PROMPT)
+                      .ask(decision_prompt)
 
-    response.content.to_s.strip.presence || fallback_closing_text
+    parse_decision(response.content)
   rescue StandardError => e
-    Rails.logger.warn "Bill closing fallback: #{e.class} - #{e.message}"
-    fallback_closing_text
+    Rails.logger.warn "Bill decision fallback: #{e.class} - #{e.message}"
+    fallback_decision
   end
 
-  def closing_prompt
+  def decision_prompt
     <<~PROMPT
-      Recent user messages:
-      #{recent_user_context}
+      Conversation so far:
+      #{conversation_context}
 
-      The user is accepting, thanking, or closing the conversation.
-      Reply as Bill.
-      Do not recommend another drink.
-      Do not ask another question.
-      Keep it short and natural.
+      Latest user message:
+      #{latest_user_message}
+
+      User messages count in this chat: #{user_messages_count}
+      Already proposed cocktails: #{proposed_names_in_chat.join(", ").presence || "none"}
+
+      Decide Bill's next move.
+      If the user is simply answering a normal question, respond to that answer and continue naturally.
+      If the user says their name, do not ignore it.
+      If Bill has already greeted, do not greet again.
+      If the user is done, grateful, or accepting the suggestion, choose action "chat".
+      If action is "recommend", the app will fetch the cocktail from an API, so do not write a recommendation in content.
     PROMPT
   end
 
-  def fallback_closing_text
-    "Parfait. Je te laisse avec ça, alors. Certaines soirées gagnent à ne pas être trop commentées."
+  def parse_decision(raw_content)
+    raw_json = raw_content.to_s.strip[/\{.*\}/m] || raw_content.to_s
+    data = JSON.parse(raw_json)
+
+    {
+      action: data["action"] == "recommend" ? "recommend" : "chat",
+      content: data["content"].to_s.strip,
+      mood: data["mood"].to_s.strip,
+      tags: normalize_tags(data["tags"]),
+      include: normalize_ingredients(data["include"]),
+      exclude: normalize_ingredients(data["exclude"]),
+      no_alcohol: data["no_alcohol"] == true
+    }
+  rescue JSON::ParserError => e
+    Rails.logger.warn "Bill decision JSON fallback: #{e.class} - #{e.message}"
+    fallback_decision
   end
 
-  def should_recommend_cocktail?
-    return false if closing_intent?
-    return false if user_messages_count < 4
-
-    recommendation_ready? || user_explicitly_asks_for_cocktail? || user_messages_count >= 6
+  def normalize_tags(value)
+    Array(value).map { |tag| normalize_text(tag) }.select { |tag| ALLOWED_TAGS.include?(tag) }.uniq
   end
 
-  def recommendation_ready?
-    conversation_signal_score >= 2
+  def normalize_ingredients(value)
+    Array(value).map { |ingredient| normalize_text(ingredient) }.select { |ingredient| INGREDIENT_ALIASES.key?(ingredient) }.uniq
   end
 
-  def conversation_signal_score
-    score = 0
-    score += 1 if normalized_text.match?(/fatigue|epuise|stress|anxieux|nerveux|fete|celebr|triste|melancol|chaud|calme|bof|forme|energie/)
-    score += 1 if normalized_text.match?(/frais|amer|doux|sec|fruite|fort|leger|reconfort|petillant|cremeux|tropical/)
-    score += 1 if wants_no_alcohol? || ingredient_constraints.values.any?(&:present?)
-    score
+  def continue_conversation(decision)
+    content = decision[:content].presence || fallback_chat_text
+    @assistant_message.update!(content: content)
+    replace_assistant_message
+  end
+
+  def fallback_decision
+    {
+      action: user_messages_count >= 4 || user_explicitly_asks_for_cocktail? ? "recommend" : "chat",
+      content: fallback_chat_text,
+      mood: cocktail_mood,
+      tags: mood_tags,
+      include: [],
+      exclude: [],
+      no_alcohol: wants_no_alcohol?
+    }
+  end
+
+  def fallback_chat_text
+    if user_messages_count <= 1
+      "D'accord. On va faire ça proprement, ce qui est déjà une ambition raisonnable. Tu veux quelque chose de plutôt calme, frais, fort, ou doux ?"
+    elsif user_messages_count == 2
+      "Je vois le genre. Et côté verre, tu veux rester léger, partir sur quelque chose d'alcoolisé, ou éviter un ingrédient précis ?"
+    else
+      "On approche du comptoir. Donne-moi juste une dernière direction: frais, amer, fruité, sec, ou réconfortant ?"
+    end
+  end
+
+  def recommendation_allowed?
+    user_messages_count >= 3 || user_explicitly_asks_for_cocktail?
   end
 
   def user_messages_count
@@ -197,64 +246,11 @@ class MessagesController < ApplicationController
     latest_user_text.match?(/propose|recommande|conseille|sers|donne|choisis|cocktail|boisson|verre|un autre|autre chose/)
   end
 
-  def ask_next_question
-    question = natural_question_text
-    @assistant_message.update!(content: question)
-    replace_assistant_message
-  end
-
-  def natural_question_text
-    target = question_target
-    return fallback_question(target) unless llm_available?
-
-    response = RubyLLM.chat
-                      .with_instructions(BILL_VOICE_PROMPT)
-                      .ask(question_prompt(target))
-
-    response.content.to_s.strip.presence || fallback_question(target)
-  rescue StandardError => e
-    Rails.logger.warn "Bill voice fallback: #{e.class} - #{e.message}"
-    fallback_question(target)
-  end
-
-  def question_target
-    QUESTION_FLOW[user_messages_count - 1] ||
-      "Ask one missing detail that would help choose the drink without sounding like a form."
-  end
-
-  def fallback_question(target)
-    case target
-    when QUESTION_FLOW[0]
-      "D'accord. Avant de sortir le shaker, tu veux quelque chose qui apaise, qui réveille, ou qui accompagne tranquillement la soirée ?"
-    when QUESTION_FLOW[1]
-      "Très bien. Tu penches plutôt vers frais, amer, doux, sec, fruité ou fort ?"
-    when QUESTION_FLOW[2]
-      "Dernier détail utile: alcoolisé, léger, sans alcool, ou avec un ingrédient précis à inclure ou à éviter ?"
-    else
-      "Il me manque encore un angle. Tu veux éviter quelque chose, ou tu me laisses choisir sans trop de cérémonie ?"
-    end
-  end
-
-  def question_prompt(target)
-    <<~PROMPT
-      Recent user messages:
-      #{recent_user_context}
-
-      Current goal:
-      #{target}
-
-      Write Bill's next reply.
-      It must end with exactly one short question.
-      Do not recommend a drink yet.
-      Do not mention cocktail names.
-    PROMPT
-  end
-
-  def recommend_cocktail
-    cocktail = fetch_cocktail_from_api
+  def recommend_cocktail(decision = {})
+    cocktail = fetch_cocktail_from_api(decision)
 
     if cocktail.present?
-      @assistant_message.update!(content: recommendation_text(cocktail), cocktail: cocktail)
+      @assistant_message.update!(content: recommendation_text(cocktail, decision), cocktail: cocktail)
       replace_assistant_message
       broadcast_cocktail_card(cocktail)
       broadcast_glass_animation
@@ -266,11 +262,11 @@ class MessagesController < ApplicationController
     end
   end
 
-  def fetch_cocktail_from_api
-    mood = cocktail_mood
+  def fetch_cocktail_from_api(decision = {})
+    mood = decision[:mood].presence || cocktail_mood
     tool = RecommendCocktailTool.new(user: current_user, chat: @chat)
 
-    cocktail_candidates.each do |candidate|
+    cocktail_candidates(decision).each do |candidate|
       result = tool.execute(cocktail_name: candidate[:name], mood: mood)
       Rails.logger.info "Bill cocktail result: #{result.inspect}"
       @chat.reload
@@ -284,10 +280,10 @@ class MessagesController < ApplicationController
     nil
   end
 
-  def cocktail_candidates
-    constraints = ingredient_constraints
+  def cocktail_candidates(decision = {})
+    constraints = ingredient_constraints(decision)
     excluded_names = proposed_names_in_chat
-    selected_tags = mood_tags
+    selected_tags = mood_tags(decision)
 
     candidates = COCKTAIL_CATALOG.reject do |candidate|
       excluded_names.include?(candidate[:name].downcase) ||
@@ -295,7 +291,7 @@ class MessagesController < ApplicationController
         constraints[:included].any? { |ingredient| candidate[:ingredients].exclude?(ingredient) }
     end
 
-    candidates = candidates.select { |candidate| candidate[:tags].include?("mocktail") } if wants_no_alcohol?
+    candidates = candidates.select { |candidate| candidate[:tags].include?("mocktail") } if wants_no_alcohol?(decision)
 
     candidates.sort_by do |candidate|
       [
@@ -309,8 +305,8 @@ class MessagesController < ApplicationController
   def cocktail_mood
     if wants_no_alcohol?
       "sans alcool, doux et prudent"
-    elsif normalized_text.match?(/fatigue|epuise|vide|longue journee|creve/)
-      "fatigue, besoin de quelque chose de net mais pas brutal"
+    elsif normalized_text.match?(/fatigue|epuise|vide|longue journee|creve|detendre|relax|relacher/)
+      "fatigue ou tension, besoin de quelque chose de net mais pas brutal"
     elsif normalized_text.match?(/stress|anxieux|nerveux|pression|tendu/)
       "tendu, besoin de calme et de legerete"
     elsif normalized_text.match?(/fete|celebr|danser|sortie|amis/)
@@ -324,10 +320,13 @@ class MessagesController < ApplicationController
     end
   end
 
-  def mood_tags
+  def mood_tags(decision = {})
+    decision_tags = Array(decision[:tags]).presence
+    return decision_tags if decision_tags.present?
+
     text = normalized_text
-    return %w[mocktail soft fresh] if wants_no_alcohol?
-    return %w[fresh light] if text.match?(/chaud|soleil|ete|frais|rafraich|leger/)
+    return %w[mocktail soft fresh] if wants_no_alcohol?(decision)
+    return %w[fresh light] if text.match?(/chaud|soleil|ete|frais|rafraich|leger|detendre|relax/)
     return %w[bitter dry slow] if text.match?(/amer|sec|calme|lent|digestion/)
     return %w[sweet creamy comfort soft] if text.match?(/doux|sucre|reconfort|triste|melancol|fatigue/)
     return %w[strong dry slow] if text.match?(/fort|cors|whisky|serieux/)
@@ -336,9 +335,9 @@ class MessagesController < ApplicationController
     %w[fresh balanced soft]
   end
 
-  def ingredient_constraints
-    included = []
-    excluded = []
+  def ingredient_constraints(decision = {})
+    included = Array(decision[:include])
+    excluded = Array(decision[:exclude])
 
     INGREDIENT_ALIASES.each do |ingredient, aliases|
       aliases.each do |name|
@@ -347,13 +346,13 @@ class MessagesController < ApplicationController
       end
     end
 
-    excluded.concat(LIQUOR_INGREDIENTS) if wants_no_alcohol?
+    excluded.concat(LIQUOR_INGREDIENTS) if wants_no_alcohol?(decision)
 
     { included: included.uniq - excluded, excluded: excluded.uniq }
   end
 
-  def wants_no_alcohol?
-    normalized_text.match?(/sans alcool|non alcool|mocktail|virgin|soft|pas d alcool|pas de alcool/)
+  def wants_no_alcohol?(decision = {})
+    decision[:no_alcohol] == true || normalized_text.match?(/sans alcool|non alcool|mocktail|virgin|soft|pas d alcool|pas de alcool/)
   end
 
   def proposed_names_in_chat
@@ -364,51 +363,48 @@ class MessagesController < ApplicationController
          .compact
   end
 
-  def recommendation_text(cocktail)
-    return fallback_recommendation_text(cocktail) unless llm_available?
+  def recommendation_text(cocktail, decision = {})
+    return fallback_recommendation_text(cocktail, decision) unless llm_available?
 
     response = RubyLLM.chat
-                      .with_instructions(BILL_VOICE_PROMPT)
-                      .ask(recommendation_prompt(cocktail))
+                      .with_instructions(BILL_RECOMMENDATION_PROMPT)
+                      .ask(recommendation_prompt(cocktail, decision))
 
-    response.content.to_s.strip.presence || fallback_recommendation_text(cocktail)
+    response.content.to_s.strip.presence || fallback_recommendation_text(cocktail, decision)
   rescue StandardError => e
     Rails.logger.warn "Bill recommendation fallback: #{e.class} - #{e.message}"
-    fallback_recommendation_text(cocktail)
+    fallback_recommendation_text(cocktail, decision)
   end
 
-  def recommendation_prompt(cocktail)
+  def recommendation_prompt(cocktail, decision = {})
     <<~PROMPT
-      Recent user messages:
-      #{recent_user_context}
+      Conversation so far:
+      #{conversation_context}
 
-      Mood detected by the app:
-      #{cocktail_mood}
+      Mood understood by Bill:
+      #{decision[:mood].presence || cocktail_mood}
 
-      Recommended cocktail:
+      Cocktail returned by the API:
       #{cocktail.name}
 
       Write Bill's recommendation.
-      Start with: "Je te propose un #{cocktail.name}." or "Je partirais sur un #{cocktail.name}."
-      Explain why it fits in one short sentence.
-      Do not mention ingredients or recipe.
+      Start naturally with the cocktail name, for example "Je partirais sur un #{cocktail.name}."
+      Explain why it fits the user's mood in one short sentence.
       Do not ask another question.
     PROMPT
   end
 
-  def fallback_recommendation_text(cocktail)
-    "Je te propose un #{cocktail.name}. #{recommendation_reason} La fiche est là, sobrement posée; ce qui est souvent mieux qu'un long discours au comptoir."
+  def fallback_recommendation_text(cocktail, decision = {})
+    "Je partirais sur un #{cocktail.name}. #{recommendation_reason(decision)}"
   end
 
-  def recommendation_reason
-    mood = cocktail_mood
+  def recommendation_reason(decision = {})
+    mood = decision[:mood].presence || cocktail_mood
 
-    if wants_no_alcohol?
-      "Ça reste dans une zone sans alcool, plus élégante que punitive."
-    elsif mood.include?("fatigue")
-      "Ça répond à cette fatigue sans transformer la soirée en bras de fer."
-    elsif mood.include?("tendu")
-      "C'est assez net pour marquer une pause, assez léger pour ne pas rajouter du bruit au bruit."
+    if wants_no_alcohol?(decision)
+      "Ça reste sans alcool, mais pas sans intention; c'est déjà mieux que beaucoup de réunions."
+    elsif mood.include?("fatigue") || mood.include?("tension")
+      "Ça devrait détendre l'affaire sans transformer la soirée en négociation internationale."
     elsif mood.include?("festif")
       "Ça garde de l'élan, avec juste assez de tenue pour ne pas partir dans tous les sens."
     elsif mood.include?("melancolique")
@@ -418,18 +414,25 @@ class MessagesController < ApplicationController
     end
   end
 
-  def recent_user_context
+  def conversation_context
     @chat.messages
-         .where(role: "user")
-         .order(created_at: :desc)
-         .limit(4)
-         .reverse
-         .pluck(:content)
+         .order(:created_at, :id)
+         .last(10)
+         .filter_map do |message|
+           next if message.content.blank?
+
+           speaker = message.role == "user" ? "User" : "Bill"
+           "#{speaker}: #{message.content}"
+         end
          .join("\n")
   end
 
+  def latest_user_message
+    @message.content.to_s.strip
+  end
+
   def latest_user_text
-    @latest_user_text ||= I18n.transliterate(@message.content.to_s.downcase.squish)
+    @latest_user_text ||= normalize_text(latest_user_message)
   end
 
   def llm_available?
@@ -437,9 +440,13 @@ class MessagesController < ApplicationController
   end
 
   def normalized_text
-    @normalized_text ||= I18n.transliterate(
-      @chat.messages.where(role: "user").order(:created_at, :id).pluck(:content).join(" ").downcase
+    @normalized_text ||= normalize_text(
+      @chat.messages.where(role: "user").order(:created_at, :id).pluck(:content).join(" ")
     )
+  end
+
+  def normalize_text(value)
+    I18n.transliterate(value.to_s.downcase.squish)
   end
 
   def broadcast_message(message)
