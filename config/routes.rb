@@ -5,6 +5,8 @@ Rails.application.routes.draw do
 
   get "up" => "rails/health#show", as: :rails_health_check
 
+  resource :profile, only: :show
+
   resources :cocktails
 
   resources :chats, only: [:index, :new, :show, :create, :destroy] do
