@@ -12,7 +12,8 @@
 
     <div class="chat-title-block">
       <span class="chat-subtitle">Conversation</span>
-      <h1><%= @chat.title == Chat::DEFAULT_TITLE ? "Nouvelle conversation" : @chat.title %></h1>
+      <% display_title = [Chat::DEFAULT_TITLE, Chat::LEGACY_DEFAULT_TITLE].include?(@chat.title) ? "Nouvelle conversation" : @chat.title %>
+      <h1><%= display_title %></h1>
       <p class="chat-intro">
         Dis à Bill comment tu te sens, ce que tu aimes, et ce que tu refuses dans ton verre. Il se charge du reste, avec une élégance discutable mais utile.
       </p>
