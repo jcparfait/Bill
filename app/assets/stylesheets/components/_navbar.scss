@@ -45,11 +45,34 @@ body {
 
 .navbar-brand {
   display: block;
-  margin-bottom: 48px;
+  margin-bottom: 28px;
 
   color: #d8b477;
   text-align: center;
   text-decoration: none;
+}
+
+.navbar-mark {
+  width: 54px;
+  height: 54px;
+  margin: 0 auto 14px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border: 1px solid rgba(216, 180, 119, 0.46);
+  border-radius: 18px;
+
+  background:
+    radial-gradient(circle at 35% 20%, rgba(244, 212, 155, 0.25), rgba(24, 37, 26, 0.72));
+  color: #f4d49b;
+
+  font-size: 24px;
+  font-weight: 400;
+  letter-spacing: 2px;
+
+  box-shadow: 0 14px 34px rgba(0, 0, 0, 0.22);
 }
 
 .navbar-icon {
@@ -58,7 +81,7 @@ body {
 }
 
 .navbar-title {
-  margin-bottom: 50px;
+  margin-bottom: 0;
 }
 
 .navbar-title span {
@@ -78,17 +101,58 @@ body {
   text-transform: uppercase;
 }
 
+.navbar-new-chat {
+  width: 100%;
+  min-height: 46px;
+  margin: 0 0 34px;
+  padding: 0 16px;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+
+  border: 0;
+  border-radius: 14px;
+
+  background: #c6a46d;
+  color: #120d09;
+
+  font-family: "Georgia", serif;
+  font-size: 14px;
+  font-weight: 800;
+  letter-spacing: 0.02em;
+
+  cursor: pointer;
+  box-shadow: 0 12px 26px rgba(0, 0, 0, 0.2);
+
+  transition:
+    background 0.2s ease,
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.navbar-new-chat:hover {
+  background: #ddb87c;
+  transform: translateY(-1px);
+  box-shadow: 0 16px 34px rgba(0, 0, 0, 0.24);
+}
+
 .navbar-links {
   display: flex;
   flex-direction: column;
-  gap: 22px;
+  gap: 12px;
 }
 
 .navbar-link,
 .navbar-logout {
-  padding: 10px 12px;
+  padding: 12px 12px;
 
-  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+
+  border-radius: 12px;
 
   color: #e8d6b4;
   font-size: 15px;
@@ -96,6 +160,14 @@ body {
   text-decoration: none;
 
   transition: 0.2s ease;
+}
+
+.navbar-link i,
+.navbar-logout i {
+  width: 18px;
+  color: rgba(216, 180, 119, 0.92);
+  font-size: 15px;
+  text-align: center;
 }
 
 .navbar-link:hover,
@@ -232,10 +304,10 @@ body {
     align-items: center;
     justify-content: center;
 
-    gap: 2px;
+    gap: 3px;
 
     border: 0;
-    border-radius: 10px;
+    border-radius: 12px;
 
     background: transparent;
     color: rgba(232, 214, 180, 0.72);
@@ -267,7 +339,7 @@ body {
 
   .mobile-nav-icon {
     display: block;
-    font-size: 17px;
+    font-size: 16px;
     line-height: 1;
   }
 
