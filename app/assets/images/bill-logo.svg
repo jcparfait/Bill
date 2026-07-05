@@ -1,30 +1,30 @@
-<svg width="360" height="128" viewBox="0 0 360 128" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="billLogoTitle">
+<svg width="360" height="360" viewBox="0 0 360 360" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="billLogoTitle">
   <title id="billLogoTitle">Bill</title>
   <defs>
-    <linearGradient id="billMark" x1="35" y1="15" x2="123" y2="107" gradientUnits="userSpaceOnUse">
-      <stop stop-color="#9FFFE0"/>
-      <stop offset="1" stop-color="#43D6B5"/>
-    </linearGradient>
-    <linearGradient id="billText" x1="142" y1="31" x2="316" y2="91" gradientUnits="userSpaceOnUse">
+    <linearGradient id="ivory" x1="62" y1="32" x2="296" y2="323" gradientUnits="userSpaceOnUse">
       <stop stop-color="#FFF8EA"/>
-      <stop offset="1" stop-color="#CFEFE6"/>
+      <stop offset="1" stop-color="#E7DDD0"/>
     </linearGradient>
-    <filter id="softGlow" x="0" y="0" width="360" height="128" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
-      <feDropShadow dx="0" dy="12" stdDeviation="18" flood-color="#43D6B5" flood-opacity="0.20"/>
-      <feDropShadow dx="0" dy="18" stdDeviation="26" flood-color="#000000" flood-opacity="0.45"/>
+    <filter id="logoShadow" x="0" y="0" width="360" height="360" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+      <feDropShadow dx="0" dy="18" stdDeviation="24" flood-color="#000000" flood-opacity="0.58"/>
+      <feDropShadow dx="0" dy="0" stdDeviation="18" flood-color="#FFF8EA" flood-opacity="0.10"/>
     </filter>
   </defs>
 
-  <g filter="url(#softGlow)">
-    <path d="M73 20C97.853 20 118 40.147 118 65C118 89.853 97.853 110 73 110C48.147 110 28 89.853 28 65C28 40.147 48.147 20 73 20Z" fill="rgba(2, 8, 7, 0.58)" stroke="url(#billMark)" stroke-width="3"/>
-    <path d="M61 42H77.5C88.27 42 95 47.11 95 55.58C95 61.38 91.82 65.31 86.35 67.04C93.08 68.54 97 73.16 97 79.95C97 89.58 89.4 95 78.1 95H61V42Z" fill="url(#billMark)"/>
-    <path d="M73.2 51.9V63.66H77.08C81.02 63.66 83.82 61.58 83.82 57.62C83.82 53.78 81.14 51.9 77.08 51.9H73.2ZM73.2 72.58V85.1H78.06C82.58 85.1 85.62 82.9 85.62 78.7C85.62 74.66 82.64 72.58 78.06 72.58H73.2Z" fill="#03110E"/>
-    <path d="M51 101C61.8 93.8 84.3 92.9 96 101" stroke="#9FFFE0" stroke-width="3" stroke-linecap="round" opacity="0.78"/>
+  <g filter="url(#logoShadow)">
+    <path fill-rule="evenodd" clip-rule="evenodd" d="M92 52H197.5C236.4 52 260 73.6 260 107.7C260 129.3 249.5 145.5 230.7 154.2C256.4 162.4 272 183.4 272 211.8C272 250.4 243.2 275 198.5 275H92V52ZM132 86V148H187.7C207.8 148 220 136.4 220 117.4C220 98.1 207.8 86 187.7 86H132ZM132 181V241H196.4C218 241 231 229.6 231 211.2C231 192.5 218 181 196.4 181H132Z" fill="url(#ivory)"/>
+
+    <path d="M116 123H225L191 169C187.4 173.9 185.5 179.9 185.5 186V241H155.5V186C155.5 179.9 153.6 173.9 150 169L116 123Z" fill="#050403"/>
+    <path d="M127 135H214L193.7 162.4C188.4 169.5 185.5 178.2 185.5 187V238H155.5V187C155.5 178.2 152.6 169.5 147.3 162.4L127 135Z" fill="#050403"/>
+    <circle cx="174" cy="150" r="12" fill="url(#ivory)"/>
+    <path d="M183 142L215 104" stroke="#050403" stroke-width="9" stroke-linecap="round"/>
+    <path d="M154 241H187" stroke="#050403" stroke-width="12" stroke-linecap="round"/>
   </g>
 
-  <path d="M148 39H174.3C190.1 39 199.2 46.6 199.2 58.5C199.2 66.1 195.4 71.5 188.5 74C197.1 76.4 201.9 82.4 201.9 91.2C201.9 104.3 191.9 112 175.4 112H148V39ZM164.4 52.8V68.5H174C179.7 68.5 183.2 65.5 183.2 60.5C183.2 55.6 179.7 52.8 174 52.8H164.4ZM164.4 81.2V98.1H175.2C181.7 98.1 185.5 95.1 185.5 89.6C185.5 84.3 181.7 81.2 175.2 81.2H164.4Z" fill="url(#billText)"/>
-  <path d="M215 39H231.7V112H215V39Z" fill="url(#billText)"/>
-  <path d="M249 39H265.7V97.4H298.4V112H249V39Z" fill="url(#billText)"/>
-  <path d="M307 39H323.7V97.4H356.4V112H307V39Z" fill="url(#billText)"/>
-  <path d="M149 24H322" stroke="#43D6B5" stroke-width="2" stroke-linecap="round" opacity="0.28"/>
+  <g fill="url(#ivory)">
+    <path d="M70 302H103.7C123.8 302 135.6 311.6 135.6 326.4C135.6 342.2 123.4 352 102.5 352H70V302ZM84.8 314.2V322.6H103.8C114.2 322.6 120.5 319.2 120.5 309.8C120.5 316.3 114.2 314.2 103.8 314.2H84.8ZM84.8 333.6V339.8H103.3C114.5 339.8 120.4 337.5 120.4 331.7C120.4 335.9 114.5 333.6 103.3 333.6H84.8Z"/>
+    <rect x="156" y="302" width="16" height="50" rx="1"/>
+    <path d="M197 302H213V338H246V352H197V302Z"/>
+    <path d="M266 302H282V338H315V352H266V302Z"/>
+  </g>
 </svg>
