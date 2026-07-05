@@ -1,9 +1,9 @@
 <svg width="360" height="360" viewBox="0 0 360 360" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="billLogoTitle">
   <title id="billLogoTitle">Bill</title>
   <defs>
-    <linearGradient id="ivory" x1="62" y1="32" x2="296" y2="323" gradientUnits="userSpaceOnUse">
+    <linearGradient id="ivory" x1="68" y1="44" x2="286" y2="320" gradientUnits="userSpaceOnUse">
       <stop stop-color="#FFF8EA"/>
-      <stop offset="1" stop-color="#E7DDD0"/>
+      <stop offset="1" stop-color="#E4D8C8"/>
     </linearGradient>
     <filter id="logoShadow" x="0" y="0" width="360" height="360" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
       <feDropShadow dx="0" dy="18" stdDeviation="24" flood-color="#000000" flood-opacity="0.58"/>
@@ -12,19 +12,13 @@
   </defs>
 
   <g filter="url(#logoShadow)">
-    <path fill-rule="evenodd" clip-rule="evenodd" d="M92 52H197.5C236.4 52 260 73.6 260 107.7C260 129.3 249.5 145.5 230.7 154.2C256.4 162.4 272 183.4 272 211.8C272 250.4 243.2 275 198.5 275H92V52ZM132 86V148H187.7C207.8 148 220 136.4 220 117.4C220 98.1 207.8 86 187.7 86H132ZM132 181V241H196.4C218 241 231 229.6 231 211.2C231 192.5 218 181 196.4 181H132Z" fill="url(#ivory)"/>
+    <path fill-rule="evenodd" clip-rule="evenodd" d="M92 44H197.5C236.4 44 260 66.4 260 101.8C260 124.8 249.5 141.9 230.7 151C256.4 159.5 272 181.6 272 211.4C272 251.5 243.2 277 198.5 277H92V44ZM132 82V141H187.7C207.8 141 220 130.1 220 112.1C220 93.6 207.8 82 187.7 82H132ZM132 180V239H196.4C218 239 231 228 231 210C231 191.4 218 180 196.4 180H132Z" fill="url(#ivory)"/>
 
-    <path d="M116 123H225L191 169C187.4 173.9 185.5 179.9 185.5 186V241H155.5V186C155.5 179.9 153.6 173.9 150 169L116 123Z" fill="#050403"/>
-    <path d="M127 135H214L193.7 162.4C188.4 169.5 185.5 178.2 185.5 187V238H155.5V187C155.5 178.2 152.6 169.5 147.3 162.4L127 135Z" fill="#050403"/>
-    <circle cx="174" cy="150" r="12" fill="url(#ivory)"/>
-    <path d="M183 142L215 104" stroke="#050403" stroke-width="9" stroke-linecap="round"/>
+    <path d="M116 120H225L190.5 168C187.2 172.6 185.5 178.1 185.5 183.8V241H155.5V183.8C155.5 178.1 153.8 172.6 150.5 168L116 120Z" fill="#050403"/>
+    <circle cx="174" cy="149" r="12" fill="url(#ivory)"/>
+    <path d="M183 141L215 103" stroke="#050403" stroke-width="9" stroke-linecap="round"/>
     <path d="M154 241H187" stroke="#050403" stroke-width="12" stroke-linecap="round"/>
   </g>
 
-  <g fill="url(#ivory)">
-    <path d="M70 302H103.7C123.8 302 135.6 311.6 135.6 326.4C135.6 342.2 123.4 352 102.5 352H70V302ZM84.8 314.2V322.6H103.8C114.2 322.6 120.5 319.2 120.5 309.8C120.5 316.3 114.2 314.2 103.8 314.2H84.8ZM84.8 333.6V339.8H103.3C114.5 339.8 120.4 337.5 120.4 331.7C120.4 335.9 114.5 333.6 103.3 333.6H84.8Z"/>
-    <rect x="156" y="302" width="16" height="50" rx="1"/>
-    <path d="M197 302H213V338H246V352H197V302Z"/>
-    <path d="M266 302H282V338H315V352H266V302Z"/>
-  </g>
+  <text x="180" y="335" text-anchor="middle" fill="url(#ivory)" font-family="Arial Black, Arial, Helvetica, sans-serif" font-size="64" font-weight="900" letter-spacing="24">BILL</text>
 </svg>
