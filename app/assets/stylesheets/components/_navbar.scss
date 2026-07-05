@@ -20,14 +20,22 @@ body {
    GLOBAL QUICK ACTIONS
    ========================= */
 
+.app-home-action,
 .app-quick-actions {
   position: fixed;
   top: 24px;
-  right: 24px;
   z-index: 9999;
 
   display: flex;
   gap: 12px;
+}
+
+.app-home-action {
+  left: 24px;
+}
+
+.app-quick-actions {
+  right: 24px;
 }
 
 .quick-action-link {
@@ -38,17 +46,19 @@ body {
   align-items: center;
   justify-content: center;
 
-  border: 1px solid rgba(212, 170, 104, 0.28);
+  border: 1px solid rgba(159, 255, 224, 0.18);
   border-radius: 50%;
 
-  background: rgba(11, 14, 10, 0.72);
-  color: #e8d6b4;
+  background: rgba(3, 12, 10, 0.66);
+  color: #dffcf4;
 
   text-decoration: none;
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
 
-  box-shadow: 0 12px 34px rgba(0, 0, 0, 0.24);
+  box-shadow:
+    0 16px 42px rgba(0, 0, 0, 0.32),
+    inset 0 1px 0 rgba(255, 255, 255, 0.08);
 
   transition:
     background 0.2s ease,
@@ -59,9 +69,9 @@ body {
 
 .quick-action-link:hover {
   transform: translateY(-1px);
-  border-color: rgba(212, 170, 104, 0.56);
-  background: rgba(29, 44, 30, 0.9);
-  color: #f4d49b;
+  border-color: rgba(159, 255, 224, 0.48);
+  background: rgba(26, 224, 181, 0.14);
+  color: #9fffe0;
 }
 
 .quick-action-link i {
@@ -86,22 +96,23 @@ body {
   align-items: center;
   justify-content: center;
 
-  border: none;
+  border: 1px solid rgba(159, 255, 224, 0.14);
   border-radius: 50%;
 
-  background: rgba(20, 20, 20, 0.8);
-  color: rgb(255, 206, 154);
+  background: rgba(3, 12, 10, 0.72);
+  color: #9fffe0;
 
   cursor: pointer;
-  backdrop-filter: blur(4px);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
 
   transition: 0.2s ease;
 }
 
 .music-btn:hover {
   transform: scale(1.05);
-  background: rgba(40, 40, 40, 0.9);
-  color: rgb(255, 239, 207);
+  background: rgba(26, 224, 181, 0.14);
+  color: #dffcf4;
 }
 
 .music-btn.muted {
@@ -130,10 +141,18 @@ body {
     overflow-x: hidden;
   }
 
+  .app-home-action,
   .app-quick-actions {
     top: 14px;
-    right: 14px;
     gap: 10px;
+  }
+
+  .app-home-action {
+    left: 14px;
+  }
+
+  .app-quick-actions {
+    right: 14px;
   }
 
   .quick-action-link {
