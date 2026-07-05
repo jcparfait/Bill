@@ -1,6 +1,8 @@
 <section class="chat-hero minimal-chat-hero">
   <div class="hero-overlay">
     <div class="hero-content minimal-hero-content">
+      <%= image_tag "bill-logo.svg", alt: "Bill", class: "bill-home-logo" %>
+
       <%= button_to chats_path,
                     method: :post,
                     class: "hero-btn hero-main-action" do %>
