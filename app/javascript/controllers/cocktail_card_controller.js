@@ -9,9 +9,18 @@ export default class extends Controller {
     this.dismiss("cocktail-card-slide-out-left")
   }
 
-  collapse(event) {
+  decline(event) {
     event.preventDefault()
-    this.persistChoice(`/chats/${this.chatIdValue}/remove_cocktail`)
+
+    if (!event.currentTarget.dataset.saved) {
+      this.persistChoice(`/chats/${this.chatIdValue}/remove_cocktail`)
+    }
+
+    this.dismiss("cocktail-card-slide-out-right")
+  }
+
+  close(event) {
+    event.preventDefault()
     this.dismiss("cocktail-card-slide-out-right")
   }
 
