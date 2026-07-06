@@ -1,0 +1,9 @@
+@media (max-width: 992px) {
+  .chat-page #messages-bottom {
+    height: 300px;
+  }
+
+  .chat-page .messages-container {
+    scroll-padding-bottom: 300px;
+  }
+}
