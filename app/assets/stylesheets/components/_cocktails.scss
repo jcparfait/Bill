@@ -18,17 +18,24 @@ body {
   background-attachment: fixed;
 }
 
+.cocktails-top-actions {
+  max-width: 1180px;
+  margin: 0 auto 14px;
+  display: flex;
+  justify-content: flex-start;
+}
+
 .cocktails-hero {
-  min-height: 300px;
-  margin-bottom: 34px;
-  padding: 48px;
+  min-height: 190px;
+  margin-bottom: 28px;
+  padding: 30px 36px;
 
   display: flex;
-  align-items: flex-end;
+  align-items: flex-start;
 
   overflow: hidden;
   border: 1px solid rgba(255, 248, 234, 0.12);
-  border-radius: 32px;
+  border-radius: 30px;
   background:
     linear-gradient(135deg, rgba(5, 4, 3, 0.26), rgba(5, 4, 3, 0.74)),
     rgba(255, 248, 234, 0.03);
@@ -54,9 +61,9 @@ body {
 }
 
 .cocktails-hero-overlay h1 {
-  margin: 0 0 12px;
+  margin: 0 0 10px;
   color: #fff8ea;
-  font-size: 62px;
+  font-size: 58px;
   font-weight: 700;
   line-height: 0.98;
   letter-spacing: -1px;
@@ -66,8 +73,8 @@ body {
   max-width: 520px;
   margin: 0;
   color: rgba(255, 248, 234, 0.76);
-  font-size: 18px;
-  line-height: 1.6;
+  font-size: 17px;
+  line-height: 1.5;
 }
 
 .cocktails-content {
@@ -77,18 +84,8 @@ body {
 
 .cocktails-header {
   display: flex;
-  align-items: end;
-  justify-content: space-between;
-  gap: 18px;
-  margin-bottom: 24px;
-}
-
-.cocktails-header h2 {
-  margin: 0;
-  color: #fff8ea;
-  font-size: 34px;
-  font-weight: 700;
-  letter-spacing: -0.5px;
+  justify-content: flex-end;
+  margin-bottom: 18px;
 }
 
 .cocktails-header-actions {
@@ -150,14 +147,14 @@ body {
 
 .cocktails-grid {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 18px;
 }
 
 .cocktails-page .cocktail-card {
   position: relative;
   overflow: hidden;
-  min-height: 190px;
+  min-height: 360px;
   padding: 18px;
 
   border: 1px solid rgba(255, 248, 234, 0.12);
@@ -188,18 +185,43 @@ body {
     rgba(5, 4, 3, 0.82);
 }
 
-.cocktail-card-content {
+.cocktails-page .cocktail-card-content {
   position: relative;
   z-index: 1;
   display: flex;
-  gap: 18px;
+  flex-direction: column;
+  gap: 14px;
   height: 100%;
-  align-items: center;
+  align-items: stretch;
+}
+
+.cocktails-page .cocktail-info {
+  min-width: 0;
+  min-height: 72px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+}
+
+.cocktails-page .cocktail-info h2 {
+  margin: 0;
+  color: #fff8ea;
+  font-size: 26px;
+  font-weight: 800;
+  line-height: 1.08;
+}
+
+.cocktails-page .cocktail-mood {
+  margin: 8px 0 0;
+  color: rgba(255, 248, 234, 0.72);
+  font-size: 15px;
+  font-style: italic;
 }
 
 .cocktail-glass {
-  width: 118px;
-  height: 142px;
+  width: 100%;
+  aspect-ratio: 4 / 5;
+  height: auto;
   flex-shrink: 0;
   overflow: hidden;
 
@@ -216,33 +238,17 @@ body {
   object-position: center;
 }
 
-.cocktails-page .cocktail-info {
-  min-width: 0;
-  display: flex;
-  flex-direction: column;
-}
-
-.cocktails-page .cocktail-info h2 {
-  margin: 0;
-  color: #fff8ea;
-  font-size: 28px;
-  font-weight: 800;
-  line-height: 1.08;
-}
-
-.cocktails-page .cocktail-mood {
-  margin: 10px 0 0;
-  color: rgba(255, 248, 234, 0.72);
-  font-size: 15px;
-  font-style: italic;
-}
-
 .cocktail-description {
-  margin: 16px 0 0;
-  max-width: 320px;
+  margin: 0;
   color: rgba(255, 248, 234, 0.58);
   font-size: 14px;
   line-height: 1.55;
+}
+
+@media (max-width: 1180px) {
+  .cocktails-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
 }
 
 @media (max-width: 992px) {
@@ -252,14 +258,18 @@ body {
     background-attachment: scroll;
   }
 
+  .cocktails-top-actions {
+    margin-bottom: 12px;
+  }
+
   .cocktails-hero {
-    min-height: 220px;
-    padding: 28px;
+    min-height: 150px;
+    padding: 22px;
     border-radius: 24px;
   }
 
   .cocktails-hero-overlay h1 {
-    font-size: 42px;
+    font-size: 40px;
     letter-spacing: -0.5px;
   }
 
@@ -269,17 +279,7 @@ body {
   }
 
   .cocktails-header {
-    align-items: stretch;
-    flex-direction: column;
-  }
-
-  .cocktails-header h2 {
-    font-size: 26px;
-  }
-
-  .cocktails-header-actions {
-    align-items: stretch;
-    flex-direction: column;
+    justify-content: stretch;
   }
 
   .new-cocktail-btn,
@@ -298,23 +298,23 @@ body {
     border-radius: 22px;
   }
 
-  .cocktail-card-content {
-    gap: 14px;
-    align-items: flex-start;
+  .cocktails-page .cocktail-card-content {
+    gap: 12px;
   }
 
-  .cocktail-glass {
-    width: 92px;
-    height: 116px;
-    border-radius: 18px;
+  .cocktails-page .cocktail-info {
+    min-height: auto;
   }
 
   .cocktails-page .cocktail-info h2 {
     font-size: 22px;
   }
 
+  .cocktail-glass {
+    border-radius: 18px;
+  }
+
   .cocktail-description {
-    margin-top: 12px;
     font-size: 13px;
   }
 }
