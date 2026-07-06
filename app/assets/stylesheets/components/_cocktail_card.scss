@@ -160,12 +160,13 @@
   overflow: hidden;
   border-radius: 22px;
   border: 1px solid rgba(255, 248, 234, 0.12);
-  background: rgba(255, 248, 234, 0.06);
+  background: rgba(0, 0, 0, 0.36);
 
   .cocktail-card-img {
     width: 100%;
-    height: 230px;
-    object-fit: cover;
+    max-height: 230px;
+    height: auto;
+    object-fit: contain;
     display: block;
   }
 }
@@ -228,6 +229,20 @@
     background: #ffffff;
     transform: translateY(-1px);
   }
+
+  &:disabled,
+  &.is-saved {
+    cursor: default;
+    background: rgba(255, 248, 234, 0.12);
+    color: rgba(255, 248, 234, 0.72);
+    border: 1px solid rgba(255, 248, 234, 0.16);
+  }
+
+  &:disabled:hover,
+  &.is-saved:hover {
+    transform: none;
+    background: rgba(255, 248, 234, 0.12);
+  }
 }
 
 .cocktail-card-btn-decline {
@@ -259,44 +274,79 @@
     left: 0;
     height: auto;
     width: 100%;
-    padding: 0 14px 12px;
+    padding: 0 12px 10px;
     align-items: flex-end;
   }
 
   .cocktail-card-container .cocktail-card {
-    max-height: 72vh;
-    padding: 14px;
-    border-radius: 24px;
+    max-height: 54vh;
+    padding: 10px;
+    border-radius: 20px;
+  }
+
+  .cocktail-card-collapse {
+    top: 12px;
+    right: 12px;
+    width: 34px;
+    height: 34px;
   }
 
   .cocktail-card-header {
-    padding: 14px 44px 14px 6px;
-    margin-bottom: 10px;
+    padding: 10px 42px 8px 4px;
+    margin-bottom: 8px;
   }
 
   .cocktail-card-header h2 {
-    font-size: 24px;
+    font-size: 22px;
+  }
+
+  .cocktail-card-mood {
+    font-size: 13px;
   }
 
   .cocktail-card-label {
-    font-size: 9px;
-    letter-spacing: 3px;
+    margin-bottom: 8px;
+    font-size: 8px;
+    letter-spacing: 2.4px;
   }
 
   .cocktail-card-image {
-    border-radius: 18px;
+    margin-bottom: 12px;
+    border-radius: 16px;
   }
 
   .cocktail-card-image .cocktail-card-img {
-    height: 180px;
+    max-height: 118px;
+  }
+
+  .cocktail-card-details {
+    gap: 12px;
+    padding: 0 4px;
+  }
+
+  .cocktail-card-section h4 {
+    margin-bottom: 6px;
+    font-size: 8px;
+    letter-spacing: 2.2px;
   }
 
   .cocktail-card-text {
-    font-size: 13px;
-    line-height: 1.5;
+    font-size: 12px;
+    line-height: 1.45;
   }
 
   .cocktail-card-actions {
-    margin-top: 18px;
+    position: sticky;
+    bottom: -10px;
+    margin: 14px -2px -2px;
+    padding: 10px 2px 2px;
+    gap: 8px;
+    background: linear-gradient(to top, rgba(5, 4, 3, 0.94), rgba(5, 4, 3, 0.74), rgba(5, 4, 3, 0));
+  }
+
+  .cocktail-card-accept,
+  .cocktail-card-btn-decline {
+    min-height: 42px;
+    font-size: 13px;
   }
 }
