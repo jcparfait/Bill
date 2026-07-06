@@ -5,10 +5,9 @@
   <% end %>
 </div>
   <%= turbo_stream_from @chat %>
-  <% chat_title = @chat.title == "Untitled" ? "Conversation" : @chat.title.presence || "Conversation" %>
   <div class="chat-header">
     <div class="chat-title-block">
-      <h1><%= chat_title %></h1>
+      <h1 id="<%= dom_id(@chat, :title) %>"><%= @chat.display_title %></h1>
     </div>
   </div>
   <div class="chat-body">
