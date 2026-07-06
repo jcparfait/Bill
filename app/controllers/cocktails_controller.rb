@@ -3,6 +3,7 @@ class CocktailsController < ApplicationController
 
   def index
     @cocktails = current_user.cocktails.saved.order(created_at: :desc)
+    @last_chat = current_user.chats.order(updated_at: :desc).first
   end
 
   def show
