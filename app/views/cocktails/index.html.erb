@@ -1,42 +1,28 @@
 <div class="cocktails-page">
-
   <div class="cocktails-hero">
-
     <div class="cocktails-hero-overlay">
-
-      <span class="menu-subtitle">
-        THE BARTENDER
-      </span>
-
-      <h1>Mes Cocktails</h1>
-
-      <p>
-        Une collection de délicieux moments.
-      </p>
-
+      <span class="menu-subtitle">Bill</span>
+      <h1>Mes cocktails</h1>
+      <p>Ta collection personnelle, gardée au frais derrière le comptoir.</p>
     </div>
-
   </div>
 
   <div class="cocktails-content">
-
     <div class="cocktails-header">
+      <div>
+        <span class="menu-subtitle">Collection</span>
+        <h2>Les verres déjà adoptés</h2>
+      </div>
 
-      <%= link_to "＋ Nouveau Cocktail",
-      new_cocktail_path,
-      class: "new-cocktail-btn" %>
-
+      <%= link_to "Nouveau cocktail",
+                  new_cocktail_path,
+                  class: "new-cocktail-btn" %>
     </div>
 
     <div class="cocktails-grid">
-
       <% @cocktails.each do |cocktail| %>
-
-        <%= link_to cocktail_path(cocktail),
-        class: "cocktail-card" do %>
-
+        <%= link_to cocktail_path(cocktail), class: "cocktail-card" do %>
           <div class="cocktail-card-content compact">
-
             <div class="cocktail-glass">
               <% if cocktail.image_url.present? %>
                 <%= image_tag cocktail.image_url, alt: cocktail.name %>
@@ -46,42 +32,31 @@
             </div>
 
             <div class="cocktail-info">
-                  <h2><%= cocktail.name %></h2>
-                  <p class="cocktail-mood">
-                    <%= cocktail.mood %>
-                  </p>
-                  <p class="cocktail-description">
+              <h2><%= cocktail.name %></h2>
 
-                    <% if cocktail.name == "Mojito" %>
-                      Frais, léger et parfait pour les soirées d’été.
+              <% if cocktail.mood.present? %>
+                <p class="cocktail-mood"><%= cocktail.mood %></p>
+              <% end %>
 
-                    <% elsif cocktail.name == "Espresso Martini" %>
-                      L’alliance élégante du café et de la vodka.
-
-                    <% elsif cocktail.name == "Virgin Mule" %>
-                      Une création douce et épicée à savourer lentement.
-
-                    <% elsif cocktail.name == "Old Fashioned" %>
-                      Un grand classique au caractère affirmé.
-
-                    <% elsif cocktail.name == "Negroni" %>
-                      Amer, intense et délicieusement intemporel.
-
-                    <% else %>
-                      Un cocktail signature imaginé par le bartender.
-
-                    <% end %>
-
-                    </p>
+              <p class="cocktail-description">
+                <% if cocktail.name == "Mojito" %>
+                  Frais, léger et parfait pour les soirées d’été.
+                <% elsif cocktail.name == "Espresso Martini" %>
+                  L’alliance élégante du café et de la vodka.
+                <% elsif cocktail.name == "Virgin Mule" %>
+                  Une création douce et épicée à savourer lentement.
+                <% elsif cocktail.name == "Old Fashioned" %>
+                  Un grand classique au caractère affirmé.
+                <% elsif cocktail.name == "Negroni" %>
+                  Amer, intense et délicieusement intemporel.
+                <% else %>
+                  Un cocktail gardé dans ta sélection Bill.
+                <% end %>
+              </p>
             </div>
           </div>
-
         <% end %>
-
       <% end %>
-
     </div>
-
   </div>
-
 </div>
