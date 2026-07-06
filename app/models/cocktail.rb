@@ -4,6 +4,8 @@ class Cocktail < ApplicationRecord
   has_many :chats, dependent: :nullify
   has_many :messages, dependent: :nullify
 
+  scope :saved, -> { where(saved: true) }
+
   validates :name, presence: true
   validates :ingredients, presence: true
   validates :recipe, presence: true
