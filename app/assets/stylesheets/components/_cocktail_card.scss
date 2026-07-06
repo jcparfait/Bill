@@ -18,7 +18,10 @@
   pointer-events: all;
   width: 100%;
   max-height: calc(100vh - 184px);
-  overflow-y: auto;
+  overflow: hidden;
+
+  display: flex;
+  flex-direction: column;
 
   padding: 18px;
 
@@ -38,11 +41,17 @@
     inset 0 1px 0 rgba(255, 248, 234, 0.07);
 }
 
-.cocktail-card-container .cocktail-card::-webkit-scrollbar {
+.cocktail-card-scroll {
+  min-height: 0;
+  overflow-y: auto;
+  padding-right: 4px;
+}
+
+.cocktail-card-scroll::-webkit-scrollbar {
   width: 6px;
 }
 
-.cocktail-card-container .cocktail-card::-webkit-scrollbar-thumb {
+.cocktail-card-scroll::-webkit-scrollbar-thumb {
   border-radius: 999px;
   background: rgba(255, 248, 234, 0.22);
 }
@@ -203,11 +212,15 @@
 
 // Boutons accept/decline
 .cocktail-card-actions {
+  flex-shrink: 0;
   display: flex;
   flex-direction: column;
   gap: 10px;
-  margin-top: 22px;
-  padding: 0 8px 6px;
+  margin-top: 18px;
+  padding: 14px 8px 6px;
+
+  border-top: 1px solid rgba(255, 248, 234, 0.10);
+  background: linear-gradient(to top, rgba(5, 4, 3, 0.82), rgba(5, 4, 3, 0.58), rgba(5, 4, 3, 0));
 }
 
 .cocktail-card-accept {
@@ -230,18 +243,15 @@
     transform: translateY(-1px);
   }
 
-  &:disabled,
   &.is-saved {
-    cursor: default;
     background: rgba(255, 248, 234, 0.12);
     color: rgba(255, 248, 234, 0.72);
     border: 1px solid rgba(255, 248, 234, 0.16);
   }
 
-  &:disabled:hover,
   &.is-saved:hover {
     transform: none;
-    background: rgba(255, 248, 234, 0.12);
+    background: rgba(255, 248, 234, 0.16);
   }
 }
 
@@ -336,12 +346,9 @@
   }
 
   .cocktail-card-actions {
-    position: sticky;
-    bottom: -10px;
-    margin: 14px -2px -2px;
+    margin: 12px -2px -2px;
     padding: 10px 2px 2px;
     gap: 8px;
-    background: linear-gradient(to top, rgba(5, 4, 3, 0.94), rgba(5, 4, 3, 0.74), rgba(5, 4, 3, 0));
   }
 
   .cocktail-card-accept,
