@@ -26,8 +26,8 @@
   <body class="<%= user_signed_in? ? 'logged-in' : 'logged-out' %>">
     <% if user_signed_in? %>
       <nav class="app-home-action" aria-label="Retour accueil">
-        <%= link_to root_path, class: "quick-action-link", title: "Accueil", aria: { label: "Accueil" } do %>
-          <i class="fa-solid fa-house"></i>
+        <%= link_to root_path, class: "quick-action-link home-logo-link", title: "Accueil", aria: { label: "Accueil" } do %>
+          <%= image_tag "logo/logo.png", alt: "Accueil", class: "home-logo-icon" %>
         <% end %>
       </nav>
 
@@ -52,9 +52,23 @@
         <source src="<%= asset_path('music.mp3') %>" type="audio/wav">
       </audio>
 
-      <button id="music-toggle" class="music-btn" data-turbo-permanent aria-label="Activer ou couper la musique">
+      <button class="music-btn desktop-music-btn" data-music-toggle data-turbo-permanent aria-label="Activer ou couper la musique">
         <i class="fa-solid fa-volume-high"></i>
       </button>
+
+      <nav class="mobile-bottom-nav" aria-label="Navigation mobile">
+        <%= link_to cocktails_path, class: "mobile-nav-action", title: "Mes cocktails", aria: { label: "Mes cocktails" } do %>
+          <i class="fa-solid fa-martini-glass-citrus"></i>
+        <% end %>
+
+        <%= link_to profile_path, class: "mobile-nav-action", title: "Profil", aria: { label: "Profil" } do %>
+          <i class="fa-regular fa-user"></i>
+        <% end %>
+
+        <button class="mobile-nav-action mobile-sound-action" data-music-toggle data-turbo-permanent aria-label="Activer ou couper la musique">
+          <i class="fa-solid fa-volume-high"></i>
+        </button>
+      </nav>
     <% else %>
       <main id="main-content" class="app-content">
         <%= render "shared/flashes" %>
@@ -65,41 +79,46 @@
     <script>
       document.addEventListener("turbo:load", () => {
         const audio = document.getElementById("bg-music")
-        const button = document.getElementById("music-toggle")
+        const buttons = document.querySelectorAll("[data-music-toggle]")
 
         const syncMusicState = () => {
-          if (!audio || !button) return
+          if (!audio || buttons.length === 0) return
 
           const isMuted = localStorage.getItem("music-muted") === "true"
 
           audio.volume = 0.25
           audio.muted = isMuted
-          button.classList.toggle("muted", isMuted)
-          button.innerHTML = isMuted
-            ? '<i class="fa-solid fa-volume-xmark"></i>'
-            : '<i class="fa-solid fa-volume-high"></i>'
+
+          buttons.forEach((button) => {
+            button.classList.toggle("muted", isMuted)
+            button.innerHTML = isMuted
+              ? '<i class="fa-solid fa-volume-xmark"></i>'
+              : '<i class="fa-solid fa-volume-high"></i>'
+          })
         }
 
-        if (audio && button) {
+        if (audio && buttons.length > 0) {
           syncMusicState()
 
           audio.addEventListener("play", syncMusicState)
 
           audio.play().catch(() => {})
 
-          button.onclick = () => {
-            const newMutedState = !audio.muted
+          buttons.forEach((button) => {
+            button.onclick = () => {
+              const newMutedState = !audio.muted
 
-            localStorage.setItem(
-              "music-muted",
-              newMutedState ? "true" : "false"
-            )
+              localStorage.setItem(
+                "music-muted",
+                newMutedState ? "true" : "false"
+              )
 
-            audio.muted = newMutedState
-            syncMusicState()
+              audio.muted = newMutedState
+              syncMusicState()
 
-            audio.play().catch(() => {})
-          }
+              audio.play().catch(() => {})
+            }
+          })
         }
 
         const forceScrollMessagesToBottom = () => {
