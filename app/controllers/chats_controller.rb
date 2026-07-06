@@ -1,5 +1,5 @@
 class ChatsController < ApplicationController
-  before_action :set_chat, only: %i[show destroy]
+  before_action :set_chat, only: %i[show destroy save_cocktail remove_cocktail]
 
   def index
     @chats = current_user.chats.order(created_at: :desc)
@@ -27,10 +27,21 @@ class ChatsController < ApplicationController
     redirect_to chats_path, notice: "Conversation deleted."
   end
 
+  def save_cocktail
+    cocktail = recommended_cocktail
+    cocktail&.update!(saved: true)
+
+    head :ok
+  end
+
   def remove_cocktail
-    @chat = current_user.chats.find(params[:id])
+    cocktail = recommended_cocktail
+
     @chat.messages.where(role: "bartender").where.not(cocktail_id: nil).update_all(cocktail_id: nil)
     @chat.update(cocktail_id: nil)
+
+    cocktail&.destroy if cocktail && !cocktail.saved?
+
     head :ok
   end
 
@@ -38,5 +49,9 @@ class ChatsController < ApplicationController
 
   def set_chat
     @chat = current_user.chats.find(params[:id])
+  end
+
+  def recommended_cocktail
+    @chat.cocktail || @chat.messages.where(role: "bartender").where.not(cocktail_id: nil).last&.cocktail
   end
 end
