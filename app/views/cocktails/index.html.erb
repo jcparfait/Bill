@@ -14,9 +14,17 @@
         <h2>Les verres déjà adoptés</h2>
       </div>
 
-      <%= link_to "Nouveau cocktail",
-                  new_cocktail_path,
-                  class: "new-cocktail-btn" %>
+      <div class="cocktails-header-actions">
+        <% if @last_chat.present? %>
+          <%= link_to "Dernière conversation",
+                      chat_path(@last_chat),
+                      class: "last-chat-btn" %>
+        <% end %>
+
+        <%= link_to "Nouveau cocktail",
+                    new_cocktail_path,
+                    class: "new-cocktail-btn" %>
+      </div>
     </div>
 
     <div class="cocktails-grid">
