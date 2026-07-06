@@ -2,20 +2,21 @@
      data-controller="cocktail-card"
      data-cocktail-card-chat-id-value="<%= chat.id %>">
 
-  <button class="cocktail-card-collapse"
+  <button type="button"
+          class="cocktail-card-collapse"
           data-action="click->cocktail-card#close">
     ›
   </button>
 
-  <div class="cocktail-card-scroll">
-    <div class="cocktail-card-header">
-      <span class="cocktail-card-label">Recommandation</span>
-      <h2><%= cocktail.name %></h2>
-      <% if cocktail.mood.present? %>
-        <p class="cocktail-card-mood"><%= cocktail.mood.capitalize %></p>
-      <% end %>
-    </div>
+  <div class="cocktail-card-header">
+    <span class="cocktail-card-label">Recommandation</span>
+    <h2><%= cocktail.name %></h2>
+    <% if cocktail.mood.present? %>
+      <p class="cocktail-card-mood"><%= cocktail.mood.capitalize %></p>
+    <% end %>
+  </div>
 
+  <div class="cocktail-card-scroll">
     <% if cocktail.image_url.present? %>
       <div class="cocktail-card-image">
         <%= image_tag cocktail.image_url,
@@ -43,20 +44,29 @@
 
   <div class="cocktail-card-actions">
     <% if cocktail.saved? %>
-      <button class="cocktail-card-accept is-saved"
+      <button type="button"
+              class="cocktail-card-accept is-saved"
               data-action="click->cocktail-card#close">
         Déjà dans mes cocktails
       </button>
+
+      <button type="button"
+              class="cocktail-card-btn-decline"
+              data-action="click->cocktail-card#close">
+        Non merci
+      </button>
     <% else %>
-      <button class="cocktail-card-accept"
+      <button type="button"
+              class="cocktail-card-accept"
               data-action="click->cocktail-card#accept">
         Ajouter à mes cocktails
       </button>
-    <% end %>
 
-    <button class="cocktail-card-btn-decline"
-            data-action="click->cocktail-card#<%= cocktail.saved? ? 'close' : 'decline' %>">
-      Non merci
-    </button>
+      <button type="button"
+              class="cocktail-card-btn-decline"
+              data-action="click->cocktail-card#decline">
+        Non merci
+      </button>
+    <% end %>
   </div>
 </div>
