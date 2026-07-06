@@ -3,7 +3,7 @@ require "json"
 require "cgi"
 
 class RecommendCocktailTool < RubyLLM::Tool
-  description "Searches a real cocktail from TheCocktailDB by name and saves it for the current user."
+  description "Searches a real cocktail from TheCocktailDB by name and prepares it as a recommendation for the current chat."
 
   param :cocktail_name,
         desc: "The name of the cocktail to search for, for example Mojito, Margarita, Negroni, Daiquiri, Old Fashioned."
@@ -41,7 +41,8 @@ class RecommendCocktailTool < RubyLLM::Tool
         image_url: api_cocktail["strDrinkThumb"],
         ingredients: format_ingredients(api_cocktail),
         recipe: api_cocktail["strInstructions"].to_s.strip,
-        mood: mood
+        mood: mood,
+        saved: false
       )
 
       status = "created"
