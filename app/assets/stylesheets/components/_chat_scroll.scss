@@ -1,24 +1,48 @@
+.chat-page .chat-header {
+  position: sticky;
+  top: 88px;
+  z-index: 20;
+  padding: 0 0 18px;
+
+  background: linear-gradient(
+    to bottom,
+    rgba(5, 4, 3, 0.78),
+    rgba(5, 4, 3, 0.42),
+    rgba(5, 4, 3, 0)
+  );
+
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
 @media (min-width: 993px) {
   .chat-page .chat-header,
   .chat-page .chat-body,
   .chat-page .messages-container {
-    max-width: 1460px;
+    max-width: 1320px;
   }
 
   .chat-page .assistant-row {
-    padding-right: 46%;
+    padding-right: 41%;
   }
 
   .chat-page .user-row {
-    padding-left: 46%;
+    padding-left: 41%;
   }
 
   .chat-page .message-bubble {
-    max-width: 460px;
+    max-width: 360px;
+    padding: 24px 22px;
+    line-height: 1.75;
   }
 }
 
 @media (max-width: 992px) {
+  .chat-page .chat-header {
+    top: 72px;
+    padding-right: 76px;
+  }
+
   .chat-page #messages-bottom {
     height: 300px;
   }
