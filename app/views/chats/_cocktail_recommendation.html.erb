@@ -3,45 +3,48 @@
      data-cocktail-card-chat-id-value="<%= chat.id %>">
 
   <button class="cocktail-card-collapse"
-          data-action="click->cocktail-card#collapse">
+          data-action="click->cocktail-card#close">
     ›
   </button>
 
-  <div class="cocktail-card-header">
-    <span class="cocktail-card-label">Recommandation</span>
-    <h2><%= cocktail.name %></h2>
-    <% if cocktail.mood.present? %>
-      <p class="cocktail-card-mood"><%= cocktail.mood.capitalize %></p>
-    <% end %>
-  </div>
-
-  <% if cocktail.image_url.present? %>
-    <div class="cocktail-card-image">
-      <%= image_tag cocktail.image_url,
-                    alt: cocktail.name,
-                    class: "cocktail-card-img" %>
+  <div class="cocktail-card-scroll">
+    <div class="cocktail-card-header">
+      <span class="cocktail-card-label">Recommandation</span>
+      <h2><%= cocktail.name %></h2>
+      <% if cocktail.mood.present? %>
+        <p class="cocktail-card-mood"><%= cocktail.mood.capitalize %></p>
+      <% end %>
     </div>
-  <% end %>
 
-  <div class="cocktail-card-details">
-    <div class="cocktail-card-section">
-      <h4>Ingrédients</h4>
-      <div class="cocktail-card-text">
-        <%= simple_format(cocktail.ingredients) %>
+    <% if cocktail.image_url.present? %>
+      <div class="cocktail-card-image">
+        <%= image_tag cocktail.image_url,
+                      alt: cocktail.name,
+                      class: "cocktail-card-img" %>
       </div>
-    </div>
+    <% end %>
 
-    <div class="cocktail-card-section">
-      <h4>Recette</h4>
-      <div class="cocktail-card-text">
-        <%= simple_format(cocktail.recipe) %>
+    <div class="cocktail-card-details">
+      <div class="cocktail-card-section">
+        <h4>Ingrédients</h4>
+        <div class="cocktail-card-text">
+          <%= simple_format(cocktail.ingredients) %>
+        </div>
+      </div>
+
+      <div class="cocktail-card-section">
+        <h4>Recette</h4>
+        <div class="cocktail-card-text">
+          <%= simple_format(cocktail.recipe) %>
+        </div>
       </div>
     </div>
   </div>
 
   <div class="cocktail-card-actions">
     <% if cocktail.saved? %>
-      <button class="cocktail-card-accept is-saved" disabled>
+      <button class="cocktail-card-accept is-saved"
+              data-action="click->cocktail-card#close">
         Déjà dans mes cocktails
       </button>
     <% else %>
@@ -52,7 +55,7 @@
     <% end %>
 
     <button class="cocktail-card-btn-decline"
-            data-action="click->cocktail-card#collapse">
+            data-action="click->cocktail-card#decline">
       Non merci
     </button>
   </div>
