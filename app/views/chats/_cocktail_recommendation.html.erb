@@ -55,7 +55,7 @@
     <% end %>
 
     <button class="cocktail-card-btn-decline"
-            data-action="click->cocktail-card#decline">
+            data-action="click->cocktail-card#<%= cocktail.saved? ? 'close' : 'decline' %>">
       Non merci
     </button>
   </div>
