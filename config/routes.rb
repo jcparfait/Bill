@@ -12,6 +12,7 @@ Rails.application.routes.draw do
   resources :chats, only: [:index, :new, :show, :create, :destroy] do
     resources :messages, only: [:create]
     member do
+      patch :save_cocktail
       patch :remove_cocktail
     end
   end
