@@ -2,7 +2,7 @@ class CocktailsController < ApplicationController
   before_action :set_cocktail, only: %i[show edit update destroy]
 
   def index
-    @cocktails = current_user.cocktails.order(created_at: :desc)
+    @cocktails = current_user.cocktails.saved.order(created_at: :desc)
   end
 
   def show
@@ -15,6 +15,7 @@ class CocktailsController < ApplicationController
   def create
     @cocktail = Cocktail.new(cocktail_params)
     @cocktail.user = current_user
+    @cocktail.saved = true
 
     if @cocktail.save
       redirect_to cocktail_path(@cocktail)
@@ -42,7 +43,7 @@ class CocktailsController < ApplicationController
   private
 
   def set_cocktail
-    @cocktail = current_user.cocktails.find(params[:id])
+    @cocktail = current_user.cocktails.saved.find(params[:id])
   end
 
   def cocktail_params
