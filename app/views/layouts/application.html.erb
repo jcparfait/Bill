@@ -25,11 +25,13 @@
 
   <body class="<%= user_signed_in? ? 'logged-in' : 'logged-out' %>">
     <% if user_signed_in? %>
-      <nav class="app-home-action" aria-label="Retour accueil">
-        <%= link_to root_path, class: "quick-action-link home-logo-link", title: "Accueil", aria: { label: "Accueil" } do %>
-          <%= image_tag "logo/logo.png", alt: "Accueil", class: "home-logo-icon" %>
-        <% end %>
-      </nav>
+      <% unless current_page?(root_path) %>
+        <nav class="app-home-action" aria-label="Retour accueil">
+          <%= link_to root_path, class: "quick-action-link home-logo-link", title: "Accueil", aria: { label: "Accueil" } do %>
+            <%= image_tag "logo/logo.png", alt: "Accueil", class: "home-logo-icon" %>
+          <% end %>
+        </nav>
+      <% end %>
 
       <nav class="app-quick-actions" aria-label="Navigation principale">
         <%= link_to cocktails_path, class: "quick-action-link", title: "Mes cocktails", aria: { label: "Mes cocktails" } do %>
