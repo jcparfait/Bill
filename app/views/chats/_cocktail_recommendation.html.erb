@@ -40,10 +40,17 @@
   </div>
 
   <div class="cocktail-card-actions">
-    <button class="cocktail-card-accept"
-            data-action="click->cocktail-card#accept">
-      Ajouter à mes cocktails
-    </button>
+    <% if cocktail.saved? %>
+      <button class="cocktail-card-accept is-saved" disabled>
+        Déjà dans mes cocktails
+      </button>
+    <% else %>
+      <button class="cocktail-card-accept"
+              data-action="click->cocktail-card#accept">
+        Ajouter à mes cocktails
+      </button>
+    <% end %>
+
     <button class="cocktail-card-btn-decline"
             data-action="click->cocktail-card#collapse">
       Non merci
