@@ -1,7 +1,14 @@
 <div class="cocktails-page">
+  <% if @last_chat.present? %>
+    <div class="cocktails-top-actions">
+      <%= link_to "Retour à la dernière conversation",
+                  chat_path(@last_chat),
+                  class: "last-chat-btn" %>
+    </div>
+  <% end %>
+
   <div class="cocktails-hero">
     <div class="cocktails-hero-overlay">
-      <span class="menu-subtitle">Bill</span>
       <h1>Mes cocktails</h1>
       <p>Ta collection personnelle, gardée au frais derrière le comptoir.</p>
     </div>
@@ -9,28 +16,23 @@
 
   <div class="cocktails-content">
     <div class="cocktails-header">
-      <div>
-        <span class="menu-subtitle">Collection</span>
-        <h2>Les verres déjà adoptés</h2>
-      </div>
-
-      <div class="cocktails-header-actions">
-        <% if @last_chat.present? %>
-          <%= link_to "Dernière conversation",
-                      chat_path(@last_chat),
-                      class: "last-chat-btn" %>
-        <% end %>
-
-        <%= link_to "Nouveau cocktail",
-                    new_cocktail_path,
-                    class: "new-cocktail-btn" %>
-      </div>
+      <%= link_to "Nouveau cocktail",
+                  new_cocktail_path,
+                  class: "new-cocktail-btn" %>
     </div>
 
     <div class="cocktails-grid">
       <% @cocktails.each do |cocktail| %>
         <%= link_to cocktail_path(cocktail), class: "cocktail-card" do %>
           <div class="cocktail-card-content compact">
+            <div class="cocktail-info">
+              <h2><%= cocktail.name %></h2>
+
+              <% if cocktail.mood.present? %>
+                <p class="cocktail-mood"><%= cocktail.mood %></p>
+              <% end %>
+            </div>
+
             <div class="cocktail-glass">
               <% if cocktail.image_url.present? %>
                 <%= image_tag cocktail.image_url, alt: cocktail.name %>
@@ -39,29 +41,21 @@
               <% end %>
             </div>
 
-            <div class="cocktail-info">
-              <h2><%= cocktail.name %></h2>
-
-              <% if cocktail.mood.present? %>
-                <p class="cocktail-mood"><%= cocktail.mood %></p>
+            <p class="cocktail-description">
+              <% if cocktail.name == "Mojito" %>
+                Frais, léger et parfait pour les soirées d’été.
+              <% elsif cocktail.name == "Espresso Martini" %>
+                L’alliance élégante du café et de la vodka.
+              <% elsif cocktail.name == "Virgin Mule" %>
+                Une création douce et épicée à savourer lentement.
+              <% elsif cocktail.name == "Old Fashioned" %>
+                Un grand classique au caractère affirmé.
+              <% elsif cocktail.name == "Negroni" %>
+                Amer, intense et délicieusement intemporel.
+              <% else %>
+                Un cocktail gardé dans ta sélection Bill.
               <% end %>
-
-              <p class="cocktail-description">
-                <% if cocktail.name == "Mojito" %>
-                  Frais, léger et parfait pour les soirées d’été.
-                <% elsif cocktail.name == "Espresso Martini" %>
-                  L’alliance élégante du café et de la vodka.
-                <% elsif cocktail.name == "Virgin Mule" %>
-                  Une création douce et épicée à savourer lentement.
-                <% elsif cocktail.name == "Old Fashioned" %>
-                  Un grand classique au caractère affirmé.
-                <% elsif cocktail.name == "Negroni" %>
-                  Amer, intense et délicieusement intemporel.
-                <% else %>
-                  Un cocktail gardé dans ta sélection Bill.
-                <% end %>
-              </p>
-            </div>
+            </p>
           </div>
         <% end %>
       <% end %>
