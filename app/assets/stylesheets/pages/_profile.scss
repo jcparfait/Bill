@@ -17,8 +17,31 @@
   margin-bottom: 28px;
 }
 
+.profile-page-icon {
+  width: 54px;
+  height: 54px;
+  margin-bottom: 16px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border: 1px solid rgba(255, 248, 234, 0.16);
+  border-radius: 50%;
+  background: rgba(5, 4, 3, 0.54);
+  color: rgba(255, 248, 234, 0.88);
+
+  font-size: 21px;
+  box-shadow:
+    0 16px 42px rgba(0, 0, 0, 0.28),
+    inset 0 1px 0 rgba(255, 248, 234, 0.06);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  pointer-events: none;
+}
+
 .profile-hero h1 {
-  margin: 10px 0 10px;
+  margin: 0 0 10px;
   color: #fff8ea;
   font-size: 54px;
   font-weight: 800;
@@ -234,6 +257,13 @@
     min-height: 100dvh;
     padding: 82px 18px calc(92px + env(safe-area-inset-bottom));
     background-attachment: scroll;
+  }
+
+  .profile-page-icon {
+    width: 48px;
+    height: 48px;
+    margin-bottom: 14px;
+    font-size: 19px;
   }
 
   .profile-hero h1 {
