@@ -1,11 +1,24 @@
 <!DOCTYPE html>
-<html>
+<html lang="fr">
   <head>
-    <title><%= content_for(:title) || "Bill" %></title>
+    <% app_description = "Bill est un bar conversationnel: discute avec un barman ironique, décris ton humeur, et reçois un cocktail adapté avec recette et ingrédients." %>
+    <title><%= content_for(:title) || "Bill - Bar conversationnel" %></title>
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="<%= app_description %>">
+    <meta name="theme-color" content="#0b0b0a">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="application-name" content="Bill">
     <meta name="mobile-web-app-capable" content="yes">
+
+    <meta property="og:site_name" content="Bill">
+    <meta property="og:title" content="Bill - Bar conversationnel">
+    <meta property="og:description" content="<%= app_description %>">
+    <meta property="og:type" content="website">
+    <meta property="og:image" content="<%= image_url('logo/logo.png') %>">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Bill - Bar conversationnel">
+    <meta name="twitter:description" content="<%= app_description %>">
+    <meta name="twitter:image" content="<%= image_url('logo/logo.png') %>">
 
     <%= csrf_meta_tags %>
     <%= csp_meta_tag %>
@@ -127,7 +140,6 @@
           const messages = document.getElementById("messages")
           const bottom = document.getElementById("messages-bottom")
 
-          // PAS une page de chat → on ne fait rien
           if (!messages || !bottom) return
 
           setTimeout(() => {
