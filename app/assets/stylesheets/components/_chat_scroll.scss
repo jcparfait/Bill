@@ -1,18 +1,28 @@
 .chat-page .chat-header {
-  position: sticky;
+  position: fixed;
   top: 88px;
+  right: 40px;
+  left: 40px;
   z-index: 20;
-  padding: 0 0 18px;
 
-  background: linear-gradient(
-    to bottom,
-    rgba(5, 4, 3, 0.78),
-    rgba(5, 4, 3, 0.42),
-    rgba(5, 4, 3, 0)
-  );
+  max-width: 1320px;
+  margin: 0 auto;
+  padding: 0;
 
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
+  background: transparent;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  pointer-events: none;
+}
+
+.chat-page .chat-body {
+  padding-top: 76px;
+}
+
+.chat-page .messages-container {
+  max-height: calc(100vh - 352px);
+  overflow-y: auto;
+  padding-top: 2px;
 }
 
 @media (min-width: 993px) {
@@ -40,14 +50,21 @@
 @media (max-width: 992px) {
   .chat-page .chat-header {
     top: 72px;
+    right: 16px;
+    left: 16px;
     padding-right: 76px;
+  }
+
+  .chat-page .chat-body {
+    padding-top: 70px;
+  }
+
+  .chat-page .messages-container {
+    max-height: calc(100dvh - 338px);
+    scroll-padding-bottom: 300px;
   }
 
   .chat-page #messages-bottom {
     height: 300px;
-  }
-
-  .chat-page .messages-container {
-    scroll-padding-bottom: 300px;
   }
 }
