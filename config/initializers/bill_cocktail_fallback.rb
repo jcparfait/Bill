@@ -2,6 +2,30 @@ Rails.application.config.to_prepare do
   MessagesController.class_eval do
     private
 
+    def fallback_chat_text
+      options = if user_messages_count <= 1
+                  [
+                    "D'accord. On va faire ça proprement, ce qui est déjà une ambition raisonnable. Tu veux quelque chose de plutôt calme, frais, fort, ou doux ?",
+                    "Installe-toi. On va éviter le drame, sauf dans le verre. Tu cherches plutôt du frais, du doux, du fort, ou du calme ?",
+                    "Très bien. Je prends le tablier imaginaire. Tu veux une direction fraîche, réconfortante, sèche, ou un peu plus franche ?"
+                  ]
+                elsif user_messages_count == 2
+                  [
+                    "Je vois le genre. Et côté verre, tu veux rester léger, partir sur quelque chose d'alcoolisé, ou éviter un ingrédient précis ?",
+                    "On commence à voir la silhouette du verre. Tu veux de l'alcool, quelque chose de léger, ou une chose à bannir du comptoir ?",
+                    "Parfait. Enfin, parfait pour un bar, donc raisonnablement imparfait. Alcoolisé, léger, ou avec une contrainte précise ?"
+                  ]
+                else
+                  [
+                    "On approche du comptoir. Donne-moi juste une dernière direction: frais, amer, fruité, sec, ou réconfortant ?",
+                    "Il ne manque plus que le dernier coup de chiffon sur le comptoir: frais, amer, fruité, sec, ou réconfortant ?",
+                    "Je peux travailler avec ça. Dernière boussole: tu veux aller vers le frais, l'amer, le fruité, le sec, ou le réconfortant ?"
+                  ]
+                end
+
+      options[@chat.messages.where(role: "bartender").count % options.length]
+    end
+
     def recommend_cocktail(decision = {})
       cocktail = fetch_cocktail_from_api(decision)
 
@@ -61,7 +85,7 @@ Rails.application.config.to_prepare do
       excluded_names = (proposed_names_in_chat + existing_cocktail_names).uniq
       selected_tags = mood_tags(decision)
 
-      candidates = COCKTAIL_CATALOG.reject do |candidate|
+      candidates = MessagesController::COCKTAIL_CATALOG.reject do |candidate|
         excluded_names.include?(candidate[:name].downcase) ||
           constraints[:excluded].intersect?(candidate[:ingredients]) ||
           (require_included && constraints[:included].any? { |ingredient| candidate[:ingredients].exclude?(ingredient) })
@@ -82,7 +106,7 @@ Rails.application.config.to_prepare do
     def cocktail_candidate_score(candidate, selected_tags, constraints)
       tag_score = (candidate[:tags] & selected_tags).size * 5
       included_score = (candidate[:ingredients] & constraints[:included]).size * 4
-      alcohol_score = alcohol_preference == :with && candidate[:ingredients].intersect?(LIQUOR_INGREDIENTS) ? 2 : 0
+      alcohol_score = alcohol_preference == :with && candidate[:ingredients].intersect?(MessagesController::LIQUOR_INGREDIENTS) ? 2 : 0
       mocktail_penalty = candidate[:tags].include?("mocktail") && alcohol_preference == :with ? -5 : 0
 
       tag_score + included_score + alcohol_score + mocktail_penalty
