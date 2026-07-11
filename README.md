@@ -14,6 +14,12 @@ Application en ligne :
 https://bill-jcparfait-8fb7a6f900f1.herokuapp.com
 ```
 
+Release de démonstration :
+
+```text
+https://github.com/jcparfait/Bill/releases/tag/v1.0.0-demo
+```
+
 Compte de démonstration :
 
 ```text
@@ -162,7 +168,14 @@ APP_PROTOCOL=http
 En production Heroku :
 
 ```bash
-heroku config:set   GITHUB_TOKEN=github_pat_...   GITHUB_MODELS_API_BASE=https://models.inference.ai.azure.com   GITHUB_MODELS_MODEL=gpt-4o   APP_HOST=bill-jcparfait-8fb7a6f900f1.herokuapp.com   APP_PROTOCOL=https   RAILS_LOG_LEVEL=info   --app bill-jcparfait
+heroku config:set \
+  GITHUB_TOKEN=github_pat_... \
+  GITHUB_MODELS_API_BASE=https://models.inference.ai.azure.com \
+  GITHUB_MODELS_MODEL=gpt-4o \
+  APP_HOST=bill-jcparfait-8fb7a6f900f1.herokuapp.com \
+  APP_PROTOCOL=https \
+  RAILS_LOG_LEVEL=info \
+  --app bill-jcparfait
 ```
 
 Le token GitHub doit être un fine-grained personal access token avec :
