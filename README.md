@@ -23,6 +23,18 @@ Mot de passe: 123456
 
 Le compte démo contient déjà quelques conversations et cocktails enregistrés afin de montrer le parcours sans partir d'une base vide.
 
+## Aperçu
+
+<p align="center">
+  <img src="docs/screenshots/mobile-home.jpg" alt="Accueil mobile de Bill" width="220">
+  <img src="docs/screenshots/mobile-chat.jpg" alt="Conversation mobile avec Bill" width="220">
+  <img src="docs/screenshots/mobile-cocktails.jpg" alt="Bibliothèque personnelle de cocktails" width="220">
+</p>
+
+<p align="center">
+  <img src="docs/screenshots/mobile-login.jpg" alt="Page de connexion mobile" width="220">
+</p>
+
 ## Pourquoi ce projet
 
 Bill n'est pas seulement un chatbot. L'objectif est de montrer une application Rails complète qui combine :
@@ -150,14 +162,7 @@ APP_PROTOCOL=http
 En production Heroku :
 
 ```bash
-heroku config:set \
-  GITHUB_TOKEN=github_pat_... \
-  GITHUB_MODELS_API_BASE=https://models.inference.ai.azure.com \
-  GITHUB_MODELS_MODEL=gpt-4o \
-  APP_HOST=bill-jcparfait-8fb7a6f900f1.herokuapp.com \
-  APP_PROTOCOL=https \
-  RAILS_LOG_LEVEL=info \
-  --app bill-jcparfait
+heroku config:set   GITHUB_TOKEN=github_pat_...   GITHUB_MODELS_API_BASE=https://models.inference.ai.azure.com   GITHUB_MODELS_MODEL=gpt-4o   APP_HOST=bill-jcparfait-8fb7a6f900f1.herokuapp.com   APP_PROTOCOL=https   RAILS_LOG_LEVEL=info   --app bill-jcparfait
 ```
 
 Le token GitHub doit être un fine-grained personal access token avec :
@@ -214,6 +219,4 @@ Vérifications manuelles effectuées pour la démo :
 
 - Ajouter des tests d'intégration avec mocks pour TheCocktailDB.
 - Ajouter une CI GitHub Actions.
-- Ajouter des captures d'écran dans le README.
 - Améliorer l'accessibilité clavier et les états focus.
-- Préparer une release GitHub `v1.0.0-demo`.
