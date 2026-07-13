@@ -1,24 +1,21 @@
 # Bill
 
-Bill est une application web Rails qui simule un bar conversationnel. L'utilisateur discute avec Bill, décrit son humeur, ses goûts ou ses contraintes, puis l'application recommande un cocktail réel avec sa recette et ses ingrédients.
+[![CI](https://github.com/jcparfait/Bill/actions/workflows/ci.yml/badge.svg?branch=master)](https://github.com/jcparfait/Bill/actions/workflows/ci.yml)
+![Ruby](https://img.shields.io/badge/Ruby-3.3.5-CC342D?logo=ruby&logoColor=white)
+![Rails](https://img.shields.io/badge/Rails-8.1-CC0000?logo=rubyonrails&logoColor=white)
+![PostgreSQL](https://img.shields.io/badge/PostgreSQL-production-4169E1?logo=postgresql&logoColor=white)
+![Heroku](https://img.shields.io/badge/Deployed-Heroku-430098?logo=heroku&logoColor=white)
 
-Le projet combine une interface Rails / Hotwire, une authentification Devise, une voix conversationnelle pilotée par LLM, une logique métier Ruby pour limiter les coûts en tokens et une intégration avec TheCocktailDB pour récupérer de vraies fiches cocktails.
+**Bill** est une application web Rails qui simule un bar conversationnel. L’utilisateur décrit son humeur, ses goûts ou ses contraintes, puis l’application recommande un cocktail réel avec sa recette et ses ingrédients.
 
-> Projet initialement réalisé en formation, repris et nettoyé pour devenir un projet portfolio présentable à un recruteur.
+Le projet combine une interface Rails / Hotwire, une authentification Devise, une voix conversationnelle pilotée par LLM, une logique métier Ruby pour limiter les coûts en tokens et une intégration avec TheCocktailDB.
 
-## Démo
+> Projet initialement réalisé en formation, puis repris, enrichi et nettoyé pour devenir un projet portfolio présentable à un recruteur.
 
-Application en ligne :
+## Démonstration
 
-```text
-https://bill-jcparfait-8fb7a6f900f1.herokuapp.com
-```
-
-Release de démonstration :
-
-```text
-https://github.com/jcparfait/Bill/releases/tag/v1.0.0-demo
-```
+- [Application en ligne](https://bill-jcparfait-8fb7a6f900f1.herokuapp.com)
+- [Release GitHub v1.0.0](https://github.com/jcparfait/Bill/releases/tag/v1.0.0-demo)
 
 Compte de démonstration :
 
@@ -27,7 +24,7 @@ Email: demo@bill.app
 Mot de passe: 123456
 ```
 
-Le compte démo contient déjà quelques conversations et cocktails enregistrés afin de montrer le parcours sans partir d'une base vide.
+Le compte contient déjà quelques conversations et cocktails enregistrés afin de montrer le parcours sans partir d’une base vide.
 
 ## Aperçu
 
@@ -43,33 +40,33 @@ Le compte démo contient déjà quelques conversations et cocktails enregistrés
 
 ## Pourquoi ce projet
 
-Bill n'est pas seulement un chatbot. L'objectif est de montrer une application Rails complète qui combine :
+Bill n’est pas seulement un chatbot. L’application combine :
 
 - une expérience conversationnelle naturelle ;
-- une vraie logique métier côté serveur ;
-- un service externe pour obtenir des données fiables ;
+- une logique métier côté serveur ;
+- une API externe pour obtenir des données fiables ;
 - une interface responsive avec Turbo Streams ;
 - une authentification et une collection personnelle par utilisateur.
 
 ## Fonctionnalités principales
 
-- Création de compte et connexion utilisateur avec Devise.
-- Discussion avec Bill, un barman fictif au ton calme, ironique et légèrement absurde.
-- Compréhension du mood, des préférences et des contraintes d'ingrédients.
-- Recommandation d'un cocktail adapté après échange conversationnel.
-- Récupération des ingrédients, proportions et instructions depuis TheCocktailDB.
-- Carte cocktail interactive : enregistrer ou passer la recommandation.
-- Prévention des doublons dans une même conversation et avec les cocktails déjà enregistrés.
-- Bibliothèque personnelle de cocktails.
-- Historique des conversations.
-- Profil utilisateur avec déconnexion et gestion de compte.
-- Interface responsive desktop / mobile.
+- création de compte et connexion avec Devise ;
+- discussion avec Bill, un barman fictif au ton calme, ironique et légèrement absurde ;
+- compréhension du mood, des préférences et des contraintes d’ingrédients ;
+- recommandation d’un cocktail adapté après l’échange ;
+- récupération des ingrédients, proportions et instructions depuis TheCocktailDB ;
+- carte cocktail interactive pour enregistrer ou passer une recommandation ;
+- prévention des doublons dans une conversation et dans la collection personnelle ;
+- bibliothèque personnelle de cocktails ;
+- historique des conversations ;
+- profil utilisateur et gestion du compte ;
+- interface responsive desktop et mobile.
 
 ## Stack technique
 
 | Partie | Technologies |
 | --- | --- |
-| Backend | Ruby on Rails 8.1 |
+| Backend | Ruby 3.3.5, Ruby on Rails 8.1 |
 | Base de données | PostgreSQL |
 | Authentification | Devise |
 | UI | Rails views, Hotwire, Turbo Streams, Stimulus |
@@ -77,7 +74,7 @@ Bill n'est pas seulement un chatbot. L'objectif est de montrer une application R
 | IA conversationnelle | RubyLLM, GitHub Models, Azure OpenAI Playground |
 | API externe | TheCocktailDB |
 | Déploiement | Heroku |
-| Tests | Minitest Rails |
+| Tests et qualité | Minitest, GitHub Actions, Brakeman, RuboCop |
 
 ## Architecture simplifiée
 
@@ -91,53 +88,42 @@ Bill n'est pas seulement un chatbot. L'objectif est de montrer une application R
 ├── config/
 │   ├── routes.rb          # Routes Devise, chats, messages, cocktails
 │   └── initializers/      # RubyLLM et fallback cocktail
-├── db/                    # Schema, migrations, seeds
+├── db/                    # Schéma, migrations et seeds
 └── test/                  # Tests Rails
 ```
 
 ## Logique de recommandation
 
-Bill utilise l'IA pour la conversation et le ton, mais la recommandation n'est pas laissée entièrement au modèle.
+Bill utilise l’IA pour la conversation et le ton, mais la recommandation n’est pas laissée entièrement au modèle.
 
-Le flux principal :
-
-1. Le contrôleur analyse la conversation et demande au LLM une décision structurée : continuer à discuter ou recommander.
-2. Le LLM renvoie une réponse JSON courte : action, mood, tags, ingrédients à inclure ou exclure, alcool ou sans alcool.
-3. Le code Ruby applique les contraintes métier : pas de doublon, respect des exclusions, prise en compte des cocktails déjà enregistrés.
-4. L'application choisit des candidats dans un catalogue interne.
+1. Le contrôleur analyse la conversation et demande au LLM une décision structurée : continuer ou recommander.
+2. Le LLM renvoie une réponse JSON courte avec l’action, le mood, les tags et les contraintes.
+3. Le code Ruby applique les règles métier : exclusions, alcool ou sans alcool, et prévention des doublons.
+4. L’application choisit des candidats dans un catalogue interne.
 5. TheCocktailDB fournit la fiche réelle du cocktail.
-6. Bill formule une recommandation courte, sans répéter la recette, car la carte cocktail l'affiche déjà.
+6. Bill formule une recommandation courte, tandis que la carte affiche la recette.
 
-Cette approche permet de garder l'intérêt IA du projet tout en évitant que le LLM contrôle toute la logique métier.
+Cette séparation évite que le LLM contrôle toute la logique métier et rend le comportement plus prévisible.
 
 ## Points techniques intéressants
 
-- Utilisation de Turbo Streams pour afficher les messages et la carte cocktail sans rechargement complet.
-- Séparation entre cocktail proposé et cocktail réellement sauvegardé.
-- Fallback Ruby si l'IA ou l'API externe échoue.
-- Exclusion des cocktails déjà proposés dans le chat.
-- Exclusion des cocktails déjà présents dans la collection utilisateur.
-- Prompt court pour réduire la consommation de tokens.
-- Pages d'erreur personnalisées `404`, `422`, `500`.
-- Configuration Heroku avec variables d'environnement pour GitHub Models.
+- Turbo Streams pour afficher les messages et la carte cocktail sans rechargement complet ;
+- séparation entre cocktail proposé et cocktail réellement sauvegardé ;
+- fallback Ruby si l’IA ou l’API externe échoue ;
+- exclusion des cocktails déjà proposés dans le chat ;
+- exclusion des cocktails déjà présents dans la collection utilisateur ;
+- prompt court pour réduire la consommation de tokens ;
+- pages d’erreur personnalisées `404`, `422` et `500` ;
+- configuration Heroku par variables d’environnement.
 
 ## Installation locale
 
-Prérequis :
-
-- Ruby compatible Rails 8.1 ;
-- PostgreSQL ;
-- Bundler ;
-- un jeton GitHub avec l'autorisation `Models: Read-only` pour activer l'IA.
-
-Installation :
+Prérequis : Ruby 3.3.5, PostgreSQL, Bundler et un jeton GitHub avec l’autorisation `Models: Read-only` pour activer l’IA.
 
 ```bash
 bundle install
 cp .env.example .env
-bin/rails db:create
-bin/rails db:migrate
-bin/rails db:seed
+bin/rails db:create db:migrate db:seed
 bin/rails server
 ```
 
@@ -147,17 +133,9 @@ Puis ouvrir :
 http://localhost:3000
 ```
 
-## Variables d'environnement
+## Variables d’environnement
 
-En local, créer un fichier `.env` à partir de `.env.example` :
-
-```bash
-cp .env.example .env
-```
-
-Variables principales :
-
-```text
+```env
 GITHUB_TOKEN=github_pat_...
 GITHUB_MODELS_API_BASE=https://models.inference.ai.azure.com
 GITHUB_MODELS_MODEL=gpt-4o
@@ -178,12 +156,6 @@ heroku config:set \
   --app bill-jcparfait
 ```
 
-Le token GitHub doit être un fine-grained personal access token avec :
-
-```text
-Account permissions > Models > Read-only
-```
-
 ## Routes principales
 
 | Domaine | Routes |
@@ -196,40 +168,26 @@ Account permissions > Models > Read-only
 | Cocktails | `GET /cocktails`, `POST /cocktails`, `GET /cocktails/:id`, `PATCH /cocktails/:id`, `DELETE /cocktails/:id` |
 | Profil | `GET /profile` |
 
-## Tests et qualité
+## Tests et intégration continue
 
 Commandes utiles :
 
 ```bash
 bin/rails test
-bundle exec brakeman
+bundle exec brakeman --no-pager
 bundle exec rubocop
 RAILS_ENV=production bin/rails assets:precompile
 ```
 
-Vérifications manuelles effectuées pour la démo :
-
-- inscription ;
-- connexion ;
-- conversation avec Bill ;
-- appel IA via GitHub Models ;
-- recommandation cocktail ;
-- enregistrement d'un cocktail ;
-- refus d'un cocktail ;
-- gestion d'un cocktail déjà enregistré ;
-- page Mes cocktails ;
-- page Profil ;
-- affichage mobile ;
-- favicon et pages d'erreur personnalisées.
+Le workflow GitHub Actions prépare PostgreSQL et exécute automatiquement la suite de tests Rails à chaque push ou pull request vers `master`.
 
 ## Limites connues
 
-- L'IA dépend du quota GitHub Models disponible sur le token configuré.
-- TheCocktailDB peut ne pas contenir exactement toutes les contraintes demandées ; l'application cherche alors le cocktail le plus proche.
-- Les tests automatisés doivent encore être renforcés sur le parcours complet chat + API externe.
+- l’IA dépend du quota GitHub Models disponible sur le token configuré ;
+- TheCocktailDB peut ne pas contenir exactement toutes les contraintes demandées ;
+- les tests automatisés doivent encore être renforcés sur le parcours complet chat et API externe.
 
-## Roadmap courte
+## Roadmap
 
-- Ajouter des tests d'intégration avec mocks pour TheCocktailDB.
-- Ajouter une CI GitHub Actions.
-- Améliorer l'accessibilité clavier et les états focus.
+- ajouter des tests d’intégration avec mocks pour TheCocktailDB ;
+- améliorer l’accessibilité clavier et les états de focus.
